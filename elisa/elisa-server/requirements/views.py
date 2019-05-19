@@ -1,0 +1,27 @@
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
+from . import models, serializers
+
+
+class RequirementsViewSet(ModelViewSet):
+    """
+    API endpoint that allows requirements to be viewed or edited.
+    """
+    serializer_class = serializers.RequirementSerializer
+    queryset = models.Requirement.objects.all()
+
+    def post(self, request, requirement_id):
+        serializer = serializers.RequirementSerializerPost
+        if serializer.is_valid():
+            serializer.save(id=requirement_id)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+
+class RequirementEventViewSet(ModelViewSet):
+    """
+    API endpoint that allows requirement events to be viewed or edited.
+    """
+    queryset = models.RequirementEvent.objects.all()
+    serializer_class = serializers.RequirementEventSerializer
+
