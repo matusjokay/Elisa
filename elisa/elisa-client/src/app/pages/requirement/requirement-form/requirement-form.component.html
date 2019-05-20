@@ -1,0 +1,71 @@
+<div fxLayout="column" fxLayoutAlign="center center" class="requirement-form">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Elisa</mat-card-title>
+    </mat-card-header>
+    <form (ngSubmit)="onSubmit()" [formGroup]="requirementForm">
+      <mat-card-content fxLayout="column">
+        <div fxLayout="column">
+          <mat-form-field fxFlex="100">
+            <mat-label>Teacher</mat-label>
+            <mat-select formControlName="teacher_id" (selectionChange)="setCoursesForm($event)">
+              <mat-option *ngFor="let option of optionsUsers | keyvalue" [value]="option.key">
+                {{option.value.username}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field fxFlex="100">
+            <mat-label>Subject</mat-label>
+            <mat-select formControlName="course_id">
+              <mat-option *ngFor="let option of optionsSubjects" [value]="option.id">
+                {{option.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-button-toggle-group #group="matButtonToggleGroup" [value]="1">
+            <mat-button-toggle *ngFor="let type of types" (change)="selectType(type.id)" [value]="type.id">{{type.name}}</mat-button-toggle>
+          </mat-button-toggle-group>
+          <div fxFlex="100" class='app-calendar'>
+            <full-calendar
+              #calendar
+              defaultView="resourceTimelineDay"
+              height="parent"
+              [plugins]="calendarPlugins"
+              [events]="calendarEvents"
+              [columnHeader]="calendarHeader"
+              resourceLabelText=" "
+              [resources]="resources"
+              [header]="false"
+              minTime="7:00:00"
+              maxTime="22:00:00"
+              resourceAreaWidth = "100px"
+              slotWidth="3"
+              slotDuration = "1:00:00"
+              [eventStartEditable]="true"
+              [eventDurationEditable]="true"
+              [dragRevertDuration]="true"
+              [selectable]="true"
+              (select)="handleSelect($event)"
+              schedulerLicenseKey = 'GPL-My-Project-Is-Open-Source'
+            ></full-calendar>
+          </div>
+          <button type="button" (click)="reset()">Reset</button>
+          <mat-form-field fxFlex="100">
+            <mat-label>Notes</mat-label>
+            <textarea
+              matInput
+              cdkTextareaAutosize
+              cdkAutosizeMinRows="10"
+              cdkAutosizeMaxRows="15"
+              formControlName="comment"
+              placeholder="Requirement notes"></textarea>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+      <mat-card-actions fxFlexAlign="end">
+        <button mat-raised-button color="primary">Send</button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+</div>

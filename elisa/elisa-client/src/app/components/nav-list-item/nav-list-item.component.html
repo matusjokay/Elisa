@@ -1,0 +1,12 @@
+<a mat-list-item [routerLink]="item.route" i18n="{{item.i18n}}}"
+   (click)="onItemSelected(item)">
+   <!--[ngClass]="{'active': item.route ? router.isActive(item.route, true): false, 'expanded': expanded}">-->
+  <mat-icon class="test" *ngIf="item.iconName">{{item.iconName}}</mat-icon>
+  <span class="test">
+    {{item.displayName}}
+  </span>
+</a>
+<div *ngIf="expanded">
+  <app-nav-list-item *ngFor="let child of item.children" [item]="child">
+  </app-nav-list-item>
+</div>

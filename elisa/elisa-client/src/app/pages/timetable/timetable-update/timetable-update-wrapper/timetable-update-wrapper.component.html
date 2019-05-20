@@ -1,0 +1,44 @@
+<mat-sidenav-container class="example-container">
+  <mat-sidenav mode="side" position="end" opened>
+    <mat-card>
+      <mat-card-title>Course</mat-card-title>
+      <mat-card-content>
+        <app-timetable-update-form [timetableMain]="main"></app-timetable-update-form>
+      </mat-card-content>
+    </mat-card>
+    <mat-divider></mat-divider>
+    <mat-card>
+      <mat-card-title>Collision</mat-card-title>
+      <mat-card-content>
+        <mat-list>
+          <mat-list-item *ngFor="let item of main.collisions">
+
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+    <mat-divider></mat-divider>
+    <mat-card *ngIf="main.requiremenets">
+      <mat-card-title>Requirement</mat-card-title>
+      <mat-card-content>
+        <mat-list>
+          <!--<mat-list-item *ngFor="let item of main.requiremenets">-->
+          <mat-list-item >
+
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+    <mat-card>
+      <mat-card-content fxLayout="column" fxLayoutAlign="space-between">
+        <button mat-raised-button class="mat-primary">Save</button>
+        <button mat-raised-button class="mat-primary">Save new version</button>
+        <button mat-raised-button class="mat-primary">Merge</button>
+        <button mat-raised-button class="mat-primary">Finalize</button>
+      </mat-card-content>
+    </mat-card>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <app-timetable-update-main #main></app-timetable-update-main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

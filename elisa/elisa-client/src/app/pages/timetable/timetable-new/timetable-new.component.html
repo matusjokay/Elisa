@@ -1,0 +1,20 @@
+<mat-card>
+  <mat-card-title>New timetable</mat-card-title>
+  <mat-card-content>
+    <form (ngSubmit)="onSubmit()" [formGroup]="schemaForm">
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput type="text" placeholder="Name" formControlName="name">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <mat-select formControlName="parent_schema">
+          <mat-option *ngFor="let option of schemas" [value]="option.name">
+            {{option.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button color="primary">Create</button>
+    </form>
+  </mat-card-content>
+</mat-card>

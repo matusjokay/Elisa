@@ -1,0 +1,53 @@
+<!--<mat-toolbar>-->
+  <!--<mat-form-field>-->
+    <!--<mat-select (selectionChange)="schemaChange($event.value)" [(value)]="activeSchema">-->
+      <!--<mat-option *ngFor="let option of timetableSchemas" [value]="option.name">{{option.name}}</mat-option>-->
+    <!--</mat-select>-->
+  <!--</mat-form-field>-->
+  <!--<mat-form-field>-->
+    <!--<mat-select (selectionChange)="schemaChange($event.value)" [(value)]="activeVersion">-->
+      <!--<mat-option *ngFor="let option of timetableVersions" [value]="option.id">{{option.name}}</mat-option>-->
+    <!--</mat-select>-->
+  <!--</mat-form-field>-->
+<!--</mat-toolbar>-->
+<div fxLayout="column" fxLayoutAlign="center center" class="requirement-form">
+  <mat-card>
+    <mat-card-content fxLayout="column">
+      <div id="external-events" #externals fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="20px">
+        <div *ngFor="let item of activeActivityCategories" class="fc-event" [ngStyle] = "{'backgroundColor':item.color, 'width': '100px','height': '20px'}"
+             [attr.data-type]="item.id" [attr.data-color]="item.color" ngDraggable [zIndex]="99999" [zIndexMoving]="99999" [trackPosition]="false">
+          {{item.name}}
+        </div>
+      </div>
+      <div fxLayout="column" fxLayoutGap="40px">
+        <app-timetable
+          #groupCalendar
+          [options]="calendarOptions"
+          resourceName="Groups"
+          (resizeEvent)="resizeEvent($event)"
+          (dragEvent)="dragEvent($event)"
+          (clickEvent)="clickEvent($event)"
+          (dropEvent)="dropEvent($event)">
+        </app-timetable>
+        <app-timetable
+          #roomCalendar
+          [options]="calendarOptions"
+          resourceName="Room"
+          (resizeEvent)="resizeEvent($event)"
+          (dragEvent)="dragEvent($event)"
+          (clickEvent)="clickEvent($event)"
+          (dropEvent)="dropEvent($event)">
+        </app-timetable>
+        <app-timetable
+          #userCalendar
+          [options]="calendarOptions"
+          resourceName="Teacher"
+          (resizeEvent)="resizeEvent($event)"
+          (dragEvent)="dragEvent($event)"
+          (clickEvent)="clickEvent($event)"
+          (dropEvent)="dropEvent($event)">
+        </app-timetable>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

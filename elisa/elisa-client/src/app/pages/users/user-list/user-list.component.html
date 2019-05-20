@@ -1,0 +1,35 @@
+<div fxLayout="column" fxLayoutAlign="center center">
+  <div class="col-xs-12">
+    <h2 i18n="@@Users">Users</h2>
+  </div>
+  <div>
+    <mat-form-field>
+      <mat-select>
+        <mat-option>Scheme 1</mat-option>
+        <mat-option>Scheme 2</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button>Add</button>
+    <button>Import</button>
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
+  </div>
+
+  <mat-table [dataSource]="dataSource" matSort>
+
+    <ng-container matColumnDef="id">
+      <mat-header-cell  *matHeaderCellDef mat-sort-header> No. </mat-header-cell>
+      <mat-cell  *matCellDef="let element"> {{element.id}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header = "last_name" > name </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.first_name}} {{element.last_name}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row  *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row  *matRowDef="let row; columns: displayedColumns;" (click)="showDetails(row)"></mat-row>
+  </mat-table>
+  <mat-paginator [pageSizeOptions]="pageSizeOptions"></mat-paginator>
+</div>
