@@ -1,0 +1,38 @@
+<div fxLayout="column" fxLayoutAlign="center center" class="timetable-update-form">
+      <div fxLayout="column">
+        <mat-form-field fxFlex="100">
+          <mat-label>Course</mat-label>
+          <mat-select (selectionChange)="timetableMain.courseChange($event.value)">
+            <mat-option *ngFor="let course of timetableMain.courses | keyvalue" [value]="course.key">
+              <div fxLayout="row">
+                <span fxFlexAlign="start">{{course.value.code}}</span>
+                <span fxFlex fxFlexAlign="end">{{course.value.name}}</span>
+              </div>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field fxFlex="100">
+          <mat-label>Group</mat-label>
+          <mat-select (selectionChange)="timetableMain.addGroup($event.value)">
+            <mat-option *ngFor="let group of timetableMain.groups | keyvalue" [value]="group.key">
+              {{group.value.abbr}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-list>
+          <mat-list-item *ngFor="let id of timetableMain.activeGroups">
+            {{timetableMain.groups[id].abbr}}
+          </mat-list-item>
+        </mat-list>
+        <mat-form-field fxFlex="100">
+          <mat-label>Room</mat-label>
+          <mat-select (selectionChange)="timetableMain.roomChange($event.value)">
+            <mat-option *ngFor="let room of timetableMain.rooms | keyvalue" [value]="room.key">
+              {{room.value.name}} - {{room.value.category}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+  <mat-slide-toggle fxFlexAlign="start" (change)="showChild($event)">Show child's events</mat-slide-toggle>
+  <mat-slide-toggle fxFlexAlign="start" (change)="showParent($event)">Parent's events</mat-slide-toggle>
+</div>

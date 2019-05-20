@@ -1,0 +1,17 @@
+<div fxLayout="row" fxLayoutAlign="center center" class="login-main">
+    <form (ngSubmit)="onSubmit()" [formGroup]="userForm">
+      <div fxLayout="column">
+        <mat-form-field>
+          <input matInput placeholder="Username" formControlName="username" [value]="user.username">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="First Name" formControlName="firstName" [value]="user.first_name">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Last Name" formControlName="lastName" [value]="user.last_name">
+        </mat-form-field>
+        <button mat-raised-button color="primary" [disabled]="!userForm.valid">Add</button>
+        <button mat-raised-button color="primary" [disabled]="!userForm.valid">Remove</button>
+      </div>
+    </form>
+</div>

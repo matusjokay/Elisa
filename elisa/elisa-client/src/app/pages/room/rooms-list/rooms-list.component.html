@@ -1,0 +1,50 @@
+<div fxLayout="column" fxLayoutAlign="center center">
+  <div class="col-xs-12">
+    <h2 i18n="@@Courses">Courses</h2>
+  </div>
+  <div>
+    <mat-form-field>
+      <mat-label>Schema</mat-label>
+      <mat-select (selectionChange)="schemaChange($event.value)">
+        <mat-option *ngFor="let option of schemas" [value]="option.name">{{option.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button>Import</button>
+    <button>Add</button>
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
+  </div>
+
+  <mat-table [dataSource]="dataSource" matSort>
+
+    <ng-container matColumnDef="id">
+      <mat-header-cell  *matHeaderCellDef mat-sort-header> No. </mat-header-cell>
+      <mat-cell  *matCellDef="let element"> {{element.id}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <mat-header-cell  *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+      <mat-cell  *matCellDef="let element"> {{element.name}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="capacity">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Capacity </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.capacity}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="category">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Category </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.category}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="department">
+      <mat-header-cell *matHeaderCellDef mat-sort-header = "department.name" > Department </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.department.name}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row  *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row  *matRowDef="let row; columns: displayedColumns;" (click)="showDetails(row)"></mat-row>
+  </mat-table>
+  <mat-paginator [pageSizeOptions]="pageSizeOptions"></mat-paginator>
+</div>
