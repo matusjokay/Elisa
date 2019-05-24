@@ -1,0 +1,20 @@
+<div fxLayout="row" fxLayoutAlign="center center" class="login-main">
+  <form (ngSubmit)="onSubmit()" [formGroup]="groupForm">
+    <div fxLayout="column">
+      <mat-form-field>
+        <input matInput required placeholder="Name" formControlName="name" [value]="data.group.name ? data.group.name : ''">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput required placeholder="Abbr" formControlName="abbr" [value]="data.group.abbr ? data.group.abbr : ''">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Parent</mat-label>
+        <select matNativeControl formControlName="parent">
+          <option *ngFor="let group of data.groups | keyvalue" [value]="group.key">{{group.value.abbr}}</option>
+        </select>
+      </mat-form-field>
+      <button mat-raised-button color="primary" [disabled]="!groupForm.valid">{{newGroup ? 'Add' : 'Update'}}</button>
+      <button *ngIf="!newGroup" mat-raised-button color="primary" (click)="removeGroup()">Remove</button>
+    </div>
+  </form>
+</div>

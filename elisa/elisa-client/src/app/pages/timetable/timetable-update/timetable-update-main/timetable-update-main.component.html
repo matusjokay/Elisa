@@ -13,7 +13,7 @@
 <div fxLayout="column" fxLayoutAlign="center center" class="requirement-form">
   <mat-card>
     <mat-card-content fxLayout="column">
-      <div id="external-events" #externals fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="20px">
+      <div id="external-events" #externals fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="20px">
         <div *ngFor="let item of activeActivityCategories" class="fc-event" [ngStyle] = "{'backgroundColor':item.color, 'width': '100px','height': '20px'}"
              [attr.data-type]="item.id" [attr.data-color]="item.color" ngDraggable [zIndex]="99999" [zIndexMoving]="99999" [trackPosition]="false">
           {{item.name}}

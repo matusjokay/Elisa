@@ -3,9 +3,11 @@ import {DepartmentService} from '../../../services/department.service';
 import {TimetableService} from '../../../services/timetable.service';
 import {RoomService} from '../../../services/room.service';
 import {Course} from '../../../models/course';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {zip} from 'rxjs';
 import {Room} from '../../../models/room';
+import {CourseDetailsComponent} from '../../course/course-details/course-details.component';
+import {RoomDetailsComponent} from '../room-details/room-details.component';
 
 @Component({
   selector: 'app-rooms-list',
@@ -28,6 +30,7 @@ export class RoomsListComponent implements OnInit {
     private roomService: RoomService,
     private departmentService: DepartmentService,
     private timetableService: TimetableService,
+    public dialog: MatDialog,
   ) { }
 
   ngOnInit() {
@@ -75,6 +78,26 @@ export class RoomsListComponent implements OnInit {
   }
 
   showDetails(row){
-    // console.log(row);
+    const dialogRef = this.dialog.open(RoomDetailsComponent, {
+      width: '500px',
+      data: {room: row, departments: this.departments}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.ngOnInit();
+      }
+    });
+  }
+
+  addRoom(){
+    const dialogRef = this.dialog.open(RoomDetailsComponent, {
+      width: '500px',
+      data: {departments: this.departments}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.ngOnInit();
+      }
+    });
   }
 }

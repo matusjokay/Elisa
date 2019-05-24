@@ -1,0 +1,4 @@
+<div class="collision-right" fxLayout="row" fxLayoutAlign="start center" [style.border-color]="(collision.status === 'unresolved') ? 'red' : 'blue'">
+  <span fxLayoutGap="20px">Type: {{collision.type}}</span><button mat-icon-button (click)="openCollisionDetail()"><mat-icon>create</mat-icon></button>
+</div>
+

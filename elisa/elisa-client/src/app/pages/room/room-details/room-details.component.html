@@ -1,0 +1,23 @@
+<div fxLayout="row" fxLayoutAlign="center center" class="login-main">
+  <form (ngSubmit)="onSubmit()" [formGroup]="roomForm">
+    <div fxLayout="column">
+      <mat-form-field>
+        <input matInput required placeholder="Name" formControlName="name" [value]="data.room.name ? data.room.name : ''">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput required placeholder="Capacity" formControlName="capacity" [value]="data.room.capacity ? data.room.capacity : ''">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput required placeholder="Category" formControlName="category" [value]="data.room.category ? data.room.category : ''">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Department</mat-label>
+        <select matNativeControl required formControlName="department">
+          <option *ngFor="let department of data.departments | keyvalue" [value]="department.key">{{department.value.name}}</option>
+        </select>
+      </mat-form-field>
+      <button mat-raised-button color="primary" [disabled]="!roomForm.valid">{{newRoom ? 'Add' : 'Update'}}</button>
+      <button *ngIf="!newRoom" mat-raised-button color="primary" (click)="removeCourse()">Remove</button>
+    </div>
+  </form>
+</div>

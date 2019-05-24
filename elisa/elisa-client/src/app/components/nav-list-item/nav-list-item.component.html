@@ -6,7 +6,7 @@
     {{item.displayName}}
   </span>
 </a>
-<div *ngIf="expanded">
+<div *ngIf="expanded" class="expandedArea">
   <app-nav-list-item *ngFor="let child of item.children" [item]="child">
   </app-nav-list-item>
 </div>

@@ -50,7 +50,7 @@
               schedulerLicenseKey = 'GPL-My-Project-Is-Open-Source'
             ></full-calendar>
           </div>
-          <button type="button" (click)="reset()">Reset</button>
+
           <mat-form-field fxFlex="100">
             <mat-label>Notes</mat-label>
             <textarea
@@ -64,6 +64,7 @@
         </div>
       </mat-card-content>
       <mat-card-actions fxFlexAlign="end">
+        <button mat-raised-button color="primary" (click)="reset()">Reset</button>
         <button mat-raised-button color="primary">Send</button>
       </mat-card-actions>
     </form>

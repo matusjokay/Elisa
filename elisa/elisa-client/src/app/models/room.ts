@@ -1,5 +1,6 @@
 import {Equipment} from './equipment';
 import {Department} from './department';
+import {Event} from './event.model';
 
 export class Room {
   public id: number;
@@ -8,7 +9,7 @@ export class Room {
   public category: string;
   public department: number;
   public departmentObject: Department;
-  public events: string[];
+  public events: Event[];
   public equipment: Equipment[];
   constructor() {  }
 }

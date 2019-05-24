@@ -1,0 +1,49 @@
+<div class="data-list" fxLayout="column" fxLayoutAlign="center center">
+  <div class="header" >
+    <div class="col-xs-12">
+      <h2 i18n="@@Groups">Groups</h2>
+    </div>
+    <div class="header-buttons" fxLayout="row" fxLayoutAlign="start center">
+      <mat-form-field>
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+      </mat-form-field>
+      <!--<mat-form-field>-->
+      <!--<mat-label>Schema</mat-label>-->
+      <!--<mat-select (selectionChange)="schemaChange($event.value)">-->
+      <!--<mat-option *ngFor="let option of schemas" [value]="option.name">{{option.name}}</mat-option>-->
+      <!--</mat-select>-->
+      <!--</mat-form-field>-->
+      <div>
+        <button mat-raised-button>Import</button>
+        <button mat-raised-button (click)="addGroup()">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <mat-table class="data-table" [dataSource]="dataSource" matSort>
+
+    <ng-container matColumnDef="id">
+      <mat-header-cell  *matHeaderCellDef mat-sort-header> No. </mat-header-cell>
+      <mat-cell  *matCellDef="let element"> {{element.id}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <mat-header-cell  *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+      <mat-cell  *matCellDef="let element"> {{element.name}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="abbr">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Abbr </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.abbr}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="parent">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Parent </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{groups[element.parent] ? groups[element.parent].abbr : ''}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row  *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row  *matRowDef="let row; columns: displayedColumns;" (click)="showDetails(row)"></mat-row>
+  </mat-table>
+  <mat-paginator [pageSizeOptions]="pageSizeOptions"></mat-paginator>
+</div>

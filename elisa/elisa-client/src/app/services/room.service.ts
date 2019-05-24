@@ -33,4 +33,16 @@ export class RoomService {
         }
       ));
   }
+
+  deleteRoom(data: any) {
+    
+  }
+
+  createRoom(post: any) {
+    
+  }
+
+  updateRoom(post: any) {
+    
+  }
 }
