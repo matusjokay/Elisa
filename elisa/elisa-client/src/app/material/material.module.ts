@@ -68,7 +68,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     MatSlideToggleModule,
     MatTabsModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
   ],
   declarations: [
   ]

@@ -34,4 +34,21 @@ export class UserService {
         }
       ));
   }
+
+  deleteUser(user: User) {
+    return this.http.delete(environment.APIUrl + 'users/' + user.id + '/').
+    pipe(
+      map((response: any) => {
+          return response;
+        }
+      )).subscribe();
+  }
+
+  createUser(post: any) {
+    
+  }
+
+  updateUser(post: any) {
+    
+  }
 }

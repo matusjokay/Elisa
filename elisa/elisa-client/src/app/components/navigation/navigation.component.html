@@ -1,9 +1,16 @@
 <mat-sidenav-container class="example-container">
-  <mat-sidenav mode="side" opened class="sideNavBar">
-    <mat-nav-list>
+  <mat-sidenav mode="side" opened class="sideNavBar" [disableClose]="true">
+    <div fxLayout="column" fxLayoutAlign="center center">
+      <h1>Elisa</h1>
+      <span>{{userName}}</span>
+      <button mat-raised-button (click)="logout()">Logout</button>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-nav-list fxLayout="column">
       <app-nav-list-item *ngFor="let item of menu" [item]="item"></app-nav-list-item>
     </mat-nav-list>
-    <mat-nav-list>
+    <mat-divider></mat-divider>
+    <mat-nav-list class="languages" fxLayout="row">
       <mat-list-item>
         <a  href="" (click)="changeLang('sk')">
           <span>SK</span>

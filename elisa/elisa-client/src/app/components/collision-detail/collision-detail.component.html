@@ -1,0 +1,38 @@
+<h1 mat-dialog-title>Collision</h1>
+<div mat-dialog-content fxLayout="column" >
+  <span> Type: {{data.type}}</span>
+  <span> Time: {{data.start}} - {{data.end}}</span>
+  <h4>Status</h4>
+  <mat-form-field>
+    <mat-label>Status</mat-label>
+    <select matNativeControl required [(ngModel)]="data.status">
+      <option value="unresolved">unresolved</option>
+      <option value="resolved">resolved</option>
+    </select>
+  </mat-form-field>
+  <h4>Events</h4>
+  <div fxLayoutAlign="center center">
+    <table mat-table [dataSource]="data.events">
+      <ng-container matColumnDef="courseName">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let event"> {{event.course.name}} </td>
+      </ng-container>
+      <ng-container matColumnDef="courseDay">
+        <th mat-header-cell *matHeaderCellDef> day </th>
+        <td mat-cell *matCellDef="let event"> {{event.day}} </td>
+      </ng-container>
+      <ng-container matColumnDef="courseTime">
+        <th mat-header-cell *matHeaderCellDef> day </th>
+        <td mat-cell *matCellDef="let event"> {{event.startTime}} - {{event.endTime}} </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+      <tr mat-row *matRowDef="let myRowData; columns: columnsToDisplay"></tr>
+    </table>
+  </div>
+  <mat-form-field>
+    <textarea matInput [(ngModel)]="data.note" placeholder="Note"></textarea>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Save</button>
+</div>

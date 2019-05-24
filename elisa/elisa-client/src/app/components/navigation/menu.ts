@@ -41,11 +41,11 @@ export const navItems: NavItem[] = [
     iconName: 'storage',
     i18n:"@@data",
     children:[
-      {
-        displayName: 'Versions',
-        route: [{outlets:{adminView:['version-list']}}],
-        i18n:"@@Versions"
-      },
+      // {
+      //   displayName: 'Versions',
+      //   route: [{outlets:{adminView:['version-list']}}],
+      //   i18n:"@@Versions"
+      // },
       {
         displayName: 'Courses',
         route: [{outlets:{adminView:['course-list']}}],
@@ -62,15 +62,20 @@ export const navItems: NavItem[] = [
         i18n:"@@departments"
       },
       {
+        displayName: 'Groups',
+        route: [{outlets:{adminView:['group-list']}}],
+        i18n:"@@Requirements"
+      },
+      {
         displayName: 'Rooms',
         route: [{outlets:{adminView:['room-list']}}],
         i18n:"@@rooms"
       },
-      {
-        displayName: 'Equipments',
-        route: [{outlets:{adminView:['equipment-list']}}],
-        i18n:"@@equipments"
-      },
+      // {
+      //   displayName: 'Equipments',
+      //   route: [{outlets:{adminView:['equipment-list']}}],
+      //   i18n:"@@equipments"
+      // },
       {
         displayName: 'Requirements',
         route: [{outlets:{adminView:['Requirement-list']}}],

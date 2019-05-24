@@ -38,9 +38,23 @@ export class UserListComponent implements OnInit {
   showDetails(row){
     const dialogRef = this.dialog.open(UserDetailsComponent, {
       width: '500px',
-      data: {user: row['user']}
+      data: row
     });
     dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.ngOnInit();
+      }
+    });
+  }
+
+  addUser(){
+    const dialogRef = this.dialog.open(UserDetailsComponent, {
+      width: '500px',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.ngOnInit();
+      }
     });
   }
 

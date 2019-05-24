@@ -25,12 +25,31 @@ export class GroupService {
     return this.http.get<Group[]>(environment.APIUrl + 'groups/').
     pipe(
       map((data: any) =>{
-        return data.reduce(function(r, e) {
+        let test = data.reduce(function(r, e) {
           r[e.id] = e;
           r[e.id]["events"] = [];
+          r[e.id]["children"] = [];
           return r;
         }, {});
+        for(let id in test) {
+          if(test[id]["parent"] !== null){
+            test[test[id]["parent"]].children.push(id);
+          }
+        }
+        return test;
         }
       ));
+  }
+
+  deleteGroup(group: any) {
+
+  }
+
+  createGroup(post: any) {
+
+  }
+
+  updateGroup(post: any) {
+
   }
 }

@@ -20,8 +20,15 @@
           </mat-select>
         </mat-form-field>
         <mat-list>
-          <mat-list-item *ngFor="let id of timetableMain.activeGroups">
-            {{timetableMain.groups[id].abbr}}
+          <mat-list-item *ngFor="let group of timetableMain.activeGroups">
+            <div fxLayout="row" fxLayoutAlign="end center">
+              <span>
+                {{group.abbr}}
+              </span>
+              <button mat-icon-button (click)="timetableMain.removeGroup(group.id)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
           </mat-list-item>
         </mat-list>
         <mat-form-field fxFlex="100">
@@ -33,6 +40,6 @@
           </mat-select>
         </mat-form-field>
       </div>
-  <mat-slide-toggle fxFlexAlign="start" (change)="showChild($event)">Show child's events</mat-slide-toggle>
-  <mat-slide-toggle fxFlexAlign="start" (change)="showParent($event)">Parent's events</mat-slide-toggle>
+  <mat-slide-toggle fxFlexAlign="start" (change)="timetableMain.showChild($event)">Show child's events</mat-slide-toggle>
+  <mat-slide-toggle fxFlexAlign="start" (change)="timetableMain.showParent($event)">Parent's events</mat-slide-toggle>
 </div>

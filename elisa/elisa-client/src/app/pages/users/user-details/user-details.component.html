@@ -2,16 +2,22 @@
     <form (ngSubmit)="onSubmit()" [formGroup]="userForm">
       <div fxLayout="column">
         <mat-form-field>
-          <input matInput placeholder="Username" formControlName="username" [value]="user.username">
+          <input matInput required placeholder="Username" formControlName="username" [value]="data.username ? data.username : ''">
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="First Name" formControlName="firstName" [value]="user.first_name">
+          <input matInput required placeholder="First Name" formControlName="firstName" [value]="data.first_name ? data.first_name : ''">
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Last Name" formControlName="lastName" [value]="user.last_name">
+          <input matInput required placeholder="Last Name" formControlName="lastName" [value]="data.last_name ? data.last_name : ''">
         </mat-form-field>
-        <button mat-raised-button color="primary" [disabled]="!userForm.valid">Add</button>
-        <button mat-raised-button color="primary" [disabled]="!userForm.valid">Remove</button>
+        <mat-form-field>
+          <mat-label>Role</mat-label>
+          <select matNativeControl required formControlName="role">
+            <option value="MAIN_TIMETABLE_CREATOR">MAIN_TIMETABLE_CREATOR</option>
+          </select>
+        </mat-form-field>
+        <button mat-raised-button color="primary" [disabled]="!userForm.valid">{{newUser ? 'Add' : 'Update'}}</button>
+        <button *ngIf="!newUser" mat-raised-button color="primary" (click)="removeUser()">Remove</button>
       </div>
     </form>
 </div>

@@ -1,10 +1,12 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {Course} from '../../../models/course';
 import {CourseService} from '../../../services/course.service';
 import {TimetableService} from '../../../services/timetable.service';
 import {zip} from 'rxjs';
 import {DepartmentService} from '../../../services/department.service';
+import {UserDetailsComponent} from '../../users/user-details/user-details.component';
+import {CourseDetailsComponent} from '../course-details/course-details.component';
 
 @Component({
   selector: 'app-course-list',
@@ -27,6 +29,7 @@ export class CourseListComponent implements OnInit {
     private courseService: CourseService,
     private departmentService: DepartmentService,
     private timetableService: TimetableService,
+    public dialog: MatDialog,
   ) { }
 
   ngOnInit() {
@@ -36,6 +39,7 @@ export class CourseListComponent implements OnInit {
         this.getSchemeData();
       }
     );
+
   }
 
   getSchemeData(){
@@ -59,7 +63,6 @@ export class CourseListComponent implements OnInit {
       };
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
-
     });
   }
 
@@ -75,7 +78,26 @@ export class CourseListComponent implements OnInit {
   }
 
   showDetails(row){
-    // console.log(row);
+    const dialogRef = this.dialog.open(CourseDetailsComponent, {
+      width: '500px',
+      data: {course: row, departments: this.departments}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.ngOnInit();
+      }
+    });
+  }
 
+  addCourse(){
+    const dialogRef = this.dialog.open(CourseDetailsComponent, {
+      width: '500px',
+      data: {departments: this.departments}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.ngOnInit();
+      }
+    });
   }
 }

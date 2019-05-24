@@ -5,11 +5,14 @@ import {environment} from '../../../environments/environment';
 import {catchError, map, share} from 'rxjs/operators';
 import {BehaviorSubject, Observable, throwError} from 'rxjs';
 
+
+enum Roles{
+  MAIN_TIMETABLE_CREATOR = "3",
+}
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
   isLogged: BehaviorSubject<boolean>;
 
   constructor(private http: HttpClient) { }
@@ -19,21 +22,29 @@ export class AuthService {
     body['username'] = user.username;
     body['password'] = user.password;
 
-    return this.http.post(environment.APIUrl + environment.LoginUrl,
+    return this.http.post(environment.APIUrl + 'login/',
       body
     ).pipe(
       map((response: any) => {
         localStorage.setItem('token',response.access);
         localStorage.setItem('refresh_token',response.refresh);
-        localStorage.setItem('role',"3");
-          return response;
+        localStorage.setItem('name',response.name);
+        let roles = response.role.map(role => {
+          return Roles[role];
+        });
+        localStorage.setItem('roles',roles);
+        localStorage.setItem('active_role',String(Math.max(roles)));
+        return response;
         }
       ));
   }
 
   logout(){
     localStorage.removeItem('token');
-    localStorage.removeItem('role');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('roles');
+    localStorage.removeItem('active_role');
+    localStorage.removeItem('name');
   }
 
   public isAuthenticated(): boolean {

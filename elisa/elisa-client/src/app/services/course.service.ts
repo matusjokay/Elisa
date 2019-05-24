@@ -32,4 +32,16 @@ export class CourseService {
         }
       ));
   }
+
+  deleteCourse(data: Course) {
+    
+  }
+
+  createCourse(post: any) {
+    
+  }
+
+  updateCourse(post: any) {
+    
+  }
 }

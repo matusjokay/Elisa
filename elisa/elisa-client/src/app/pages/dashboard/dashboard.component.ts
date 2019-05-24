@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {TimetableService} from '../../services/timetable.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,8 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor() { }
+  constructor(private timetableService: TimetableService) { }
 
   ngOnInit() {
+    if(!localStorage.getItem('active_scheme')){
+      this.timetableService.getLastScheme().subscribe(result=>{
+        localStorage.setItem('active_scheme',result);
+      });
+    }
   }
 }

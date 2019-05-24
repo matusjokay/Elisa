@@ -34,6 +34,13 @@ import {VersionListComponent} from './pages/version/version-list/version-list.co
 import { RoomsListComponent } from './pages/room/rooms-list/rooms-list.component';
 import { EquipmentsListComponent } from './pages/equipment/equipments-list/equipments-list.component';
 import {AuthentificationModule} from './authentification/authentification.module';
+import { CollisionCardComponent } from './components/collision-card/collision-card.component';
+import { CollisionDetailComponent } from './components/collision-detail/collision-detail.component';
+import { EventDetailComponent } from './components/event-detail/event-detail.component';
+import { CourseDetailsComponent } from './pages/course/course-details/course-details.component';
+import { GroupDetailsComponent } from './pages/group/group-details/group-details.component';
+import { GroupListComponent } from './pages/group/group-list/group-list.component';
+import { RoomDetailsComponent } from './pages/room/room-details/room-details.component';
 
 
 @NgModule({
@@ -57,7 +64,14 @@ import {AuthentificationModule} from './authentification/authentification.module
     CourseListComponent,
     VersionListComponent,
     RoomsListComponent,
-    EquipmentsListComponent
+    EquipmentsListComponent,
+    CollisionCardComponent,
+    CollisionDetailComponent,
+    EventDetailComponent,
+    CourseDetailsComponent,
+    GroupDetailsComponent,
+    GroupListComponent,
+    RoomDetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -76,6 +90,13 @@ import {AuthentificationModule} from './authentification/authentification.module
     multi: true
   }],
   bootstrap: [AppComponent],
-  entryComponents:[UserDetailsComponent]
+  entryComponents:[
+    UserDetailsComponent,
+    CourseDetailsComponent,
+    RoomDetailsComponent,
+    GroupDetailsComponent,
+    CollisionDetailComponent,
+    EventDetailComponent
+  ]
 })
 export class AppModule { }

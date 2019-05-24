@@ -14,12 +14,4 @@ export class TimetableUpdateFormComponent implements OnInit {
 
   ngOnInit() {
   }
-
-  showParent(event){
-    // console.log(event.checked);
-  }
-
-  showChild(event){
-    // console.log(event.checked);
-  }
 }
