@@ -36,6 +36,7 @@ class RequirementSerializer(serializers.ModelSerializer):
 
 class RequirementSerializerPost(serializers.ModelSerializer):
     events = RequirementEventSerializer(many=True)
+    created_by = None
     comments = CommentSerializer(many=True)
 
     @transaction.atomic
