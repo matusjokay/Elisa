@@ -22,5 +22,4 @@ timetables_router.register(
 
 urlpatterns = [
     path('', include(timetables_router.urls)),
-    path('timetable-latest/', timetables.LatestTimetableViewSet.as_view()),
 ]

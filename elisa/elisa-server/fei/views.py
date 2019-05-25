@@ -11,7 +11,6 @@ from django_fsm import TransitionNotAllowed
 from django_tenants.utils import get_tenant_model
 from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
-from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
