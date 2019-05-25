@@ -6,35 +6,12 @@ from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from django_fsm import TransitionNotAllowed
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_extensions.mixins import NestedViewSetMixin
 
 from authentication.permissions import IsMainTimetableCreator, IsLocalTimetableCreator, IsTeacher
 from . import models, serializers
-
-
-class LatestTimetableViewSet(RetrieveAPIView):
-    """
-    API endpoint that returns latest timetable version owned by user and sorted by updated_at
-    """
-    serializers = serializers.TimetableSerializer
-
-    def retrieve(self, request, *args, **kwargs):
-        timetable = None
-        if request.user.has_role(settings.MAIN_TIMETABLE_CREATOR) \
-                or request.user.has_role(settings.LOCAL_TIMETABLE_CREATOR):
-            timetable = models.Timetable.objects.filter(owner=request.user).latest('updated_at')
-        elif request.user.has_role(settings.TEACHER):
-            timetable = models.Timetable.objects.filter(status=models.Timetable.PUBLISHED_FOR_TEACHERS)\
-                .latest('updated_at')
-
-        if timetable is not None:
-            serializer = serializers.TimetableSerializer(timetable)
-            return Response(serializer.data)
-
-        return Response("No latest version", status=404)
 
 
 class TimetableViewSet(NestedViewSetMixin, ModelViewSet):
@@ -66,6 +43,25 @@ class TimetableViewSet(NestedViewSetMixin, ModelViewSet):
             print("No timetable found for users %s" % self.request.user.id)
 
         return timetables
+
+    """
+    API endpoint that returns latest timetable version owned by user and sorted by updated_at
+    """
+    @action(detail=False, methods=['get'])
+    def latest(self, request):
+        timetable = None
+        if request.user.has_role(settings.MAIN_TIMETABLE_CREATOR) \
+                or request.user.has_role(settings.LOCAL_TIMETABLE_CREATOR):
+            timetable = models.Timetable.objects.filter(owner=request.user).latest('updated_at')
+        elif request.user.has_role(settings.TEACHER):
+            timetable = models.Timetable.objects.filter(status=models.Timetable.PUBLISHED_FOR_TEACHERS) \
+                .latest('updated_at')
+
+        if timetable is not None:
+            serializer = serializers.TimetableSerializer(timetable)
+            return Response(serializer.data)
+
+        return Response("No latest version", status=404)
 
     # TODO merge methods below to one, with changing method called on timetable instance if possible
     @action(detail=True, methods=['post'], permission_classes=[IsMainTimetableCreator])
