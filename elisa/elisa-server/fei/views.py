@@ -31,20 +31,23 @@ def get_schema(schema_name):
     return version
 
 
-class LatestVersionView(RetrieveAPIView):
-    """
-    API endpoint that returns latest version according to status
-    """
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+class VersionViewSet(viewsets.ModelViewSet):
 
-    def retrieve(self, request, *args, **kwargs):
+    serializer_class = VersionSerializer
+    permission_classes = (IsMainTimetableCreator,)
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticatedOrReadOnly])
+    def latest(self, request, pk=None):
+        """
+        API endpoint that returns latest version according to status
+        """
         if request.user.is_anonymous:
             query = Q(status=Version.PUBLIC)
         else:
             # logged users can get work in progress and public versions
             query = Q(status__in=[Version.PUBLIC, Version.WORK_IN_PROGRESS])
 
-        # without public
+            # without public
         query = query & ~Q(schema_name='public')
 
         try:
@@ -58,12 +61,13 @@ class LatestVersionView(RetrieveAPIView):
         serializer = VersionSerializer(version)
         return Response(serializer.data)
 
+    def get_queryset(self):
+        """
+        Returns list of versions without public
+        """
+        queryset = Version.objects.filter(~Q(schema_name='public'))
 
-class VersionViewSet(viewsets.ModelViewSet):
-
-    queryset = Version.objects.all()
-    serializer_class = VersionSerializer
-    permission_classes = (IsMainTimetableCreator,)
+        return queryset
 
     """
     Create new version
