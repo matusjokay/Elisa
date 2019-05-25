@@ -48,7 +48,3 @@ class Requirement(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
     events = GenericRelation(RequirementEvent)
     comments = GenericRelation(Comment)
-
-
-
-

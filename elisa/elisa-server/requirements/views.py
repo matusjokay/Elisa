@@ -10,12 +10,10 @@ class RequirementsViewSet(ModelViewSet):
     serializer_class = serializers.RequirementSerializer
     queryset = models.Requirement.objects.all()
 
-    def post(self, request, requirement_id):
-        serializer = serializers.RequirementSerializerPost
-        if serializer.is_valid():
-            serializer.save(id=requirement_id)
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return serializers.RequirementSerializerPost
+        return serializers.RequirementSerializer
 
 
 class RequirementEventViewSet(ModelViewSet):
