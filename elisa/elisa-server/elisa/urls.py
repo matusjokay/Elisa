@@ -33,7 +33,7 @@ router.register(r'room-categories', school.RoomCategoryViewSet)
 router.register(r'rooms', school.RoomViewSet)
 router.register(r'activity-categories', school.ActivityCategoryViewSet)
 router.register(r'activities', school.ActivityViewSet)
-router.register(r'versions', fei.VersionViewSet)
+router.register(r'versions', fei.VersionViewSet, basename='versions')
 router.register(r'users', fei.UserViewSet)
 router.register(r'requirements', requirements.RequirementsViewSet)
 router.register(r'requirements-events', requirements.RequirementEventViewSet)
@@ -44,7 +44,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('', include('fei_importexport.urls')),
     path('', include('timetables.urls')),
-    path('version-latest/', fei.LatestVersionView.as_view()),
     path('', include('authentication.urls')),
     path('teachers/', fei.TeachersList.as_view()),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
