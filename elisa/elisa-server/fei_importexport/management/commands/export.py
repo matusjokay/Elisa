@@ -9,7 +9,7 @@ from django_tenants.utils import get_tenant_model
 
 def get_schema(schema_name):
     try:
-        version = get_tenant_model().objects.get(name=schema_name)
+        version = get_tenant_model().objects.get(schema_name=schema_name)
     except utils.DatabaseError:
         raise ValueError("Database error.")
     except get_tenant_model().DoesNotExist:
