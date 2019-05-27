@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
-import {map} from 'rxjs/operators';
+import {map, share} from 'rxjs/operators';
 import {Room} from '../models/room';
 
 @Injectable({
@@ -13,16 +13,24 @@ export class RoomService {
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<Room[]>{
-    return this.http.get<Room[]>(environment.APIUrl + 'rooms/').
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Timetable-Version', localStorage.getItem('active_scheme'));
+    let options = ({headers: headers});
+
+    return this.http.get<Room[]>(environment.APIUrl + 'rooms/',options).
     pipe(
       map((data: Room[]) =>{
           return data;
         }
-      ));
+      ),share());
   }
 
   getAllMap(): Observable<Room[]>{
-    return this.http.get<Room[]>(environment.APIUrl + 'rooms/').
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Timetable-Version', localStorage.getItem('active_scheme'));
+    let options = ({headers: headers});
+
+    return this.http.get<Room[]>(environment.APIUrl + 'rooms/',options).
     pipe(
       map((data:any) =>{
         return data.reduce(function(r, e) {
@@ -31,7 +39,7 @@ export class RoomService {
           return r;
         }, {});
         }
-      ));
+      ),share());
   }
 
   deleteRoom(data: any) {
@@ -44,5 +52,35 @@ export class RoomService {
 
   updateRoom(post: any) {
     
+  }
+
+  importCategoryRooms() {
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Timetable-Version', localStorage.getItem('active_scheme'));
+    let options = ({headers: headers});
+    let body = {};
+    return this.http.post(environment.APIUrl + 'room-categories/import',
+      body,
+      options).pipe(
+      map((response: any) => {
+        this.importRooms();
+          return response;
+        }
+      ));
+  }
+
+  importRooms(){
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Timetable-Version', localStorage.getItem('active_scheme'));
+    let options = ({headers: headers});
+    let body = {};
+
+    return this.http.post(environment.APIUrl + 'rooms/import',
+      body,
+      options).pipe(
+      map((response: any) => {
+          return response;
+        }
+      ));
   }
 }

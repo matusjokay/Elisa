@@ -30,17 +30,17 @@ export class TimetableNewComponent implements OnInit {
 
   onSubmit(){
     let post = this.schemaForm.value;
+    if(post['parent_schema'] === null){
+      delete post['parent_schema'];
+    }
     post['is_active'] = true;
     this.timetableService.createSchema(post).subscribe(response =>{
       this.createDefaultVersion();
     });
-      // this.createDefaultVersion();
   }
 
   createDefaultVersion(){
     let defaultVersion = {
-      minor_version: 0,
-      major_version: 1,
       name: "Nový rozvrh",
     };
     this.timetableService.createVersion(defaultVersion).subscribe();

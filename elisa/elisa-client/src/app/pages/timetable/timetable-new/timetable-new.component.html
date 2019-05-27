@@ -7,7 +7,7 @@
         <input matInput type="text" placeholder="Name" formControlName="name">
       </mat-form-field>
       <mat-form-field>
-        <mat-label>Name</mat-label>
+        <mat-label>Parent scheme</mat-label>
         <mat-select formControlName="parent_schema">
           <mat-option *ngFor="let option of schemas" [value]="option.name">
             {{option.name}}

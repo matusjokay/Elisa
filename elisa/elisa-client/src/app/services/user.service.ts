@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {map} from 'rxjs/operators';
+import {map, share} from 'rxjs/operators';
 import {User} from '../models/user';
 import {Observable} from 'rxjs';
 
@@ -18,7 +18,7 @@ export class UserService {
       map((data: any) =>{
         return data;
         }
-      ));
+      ),share());
   }
 
   getAllMap(): Observable<User>{
@@ -27,12 +27,12 @@ export class UserService {
       map((data: any) =>{
         return data.reduce(function(r, e) {
           r[e.id] = e;
-          r[e.id]["requirement"] = [];
-          r[e.id]["events"] = [];
+          r[e.id].requirements = {};
+          r[e.id].events = [];
           return r;
         }, {});
         }
-      ));
+      ),share());
   }
 
   deleteUser(user: User) {

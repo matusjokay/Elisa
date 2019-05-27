@@ -14,6 +14,9 @@
           <mat-label>Role</mat-label>
           <select matNativeControl required formControlName="role">
             <option value="MAIN_TIMETABLE_CREATOR">MAIN_TIMETABLE_CREATOR</option>
+            <option value="LOCAL_TIMETABLE_CREATOR">LOCAL_TIMETABLE_CREATOR</option>
+            <option value="TEACHER">TEACHER</option>
+            <option value="STUDENT">STUDENT</option>
           </select>
         </mat-form-field>
         <button mat-raised-button color="primary" [disabled]="!userForm.valid">{{newUser ? 'Add' : 'Update'}}</button>

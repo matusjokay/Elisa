@@ -21,7 +21,6 @@ export class AuthService {
     let body = {};
     body['username'] = user.username;
     body['password'] = user.password;
-
     return this.http.post(environment.APIUrl + 'login/',
       body
     ).pipe(

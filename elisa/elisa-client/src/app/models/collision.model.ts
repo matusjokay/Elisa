@@ -27,4 +27,18 @@ export class Collision {
       return this;
     }
   }
+
+  generateExport(version){
+    let events = [];
+    this.events.forEach(event=>{
+      events.push(event.id);
+    });
+
+    let exportCollision = {
+      "status": this.status,
+      "type": this.type,
+      "timetable": version,
+      "events": events
+    };
+  }
 }
