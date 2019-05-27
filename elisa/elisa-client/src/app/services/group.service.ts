@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
-import {map} from 'rxjs/operators';
+import {map, share} from 'rxjs/operators';
 import {Group} from '../models/group';
 
 @Injectable({
@@ -13,16 +13,22 @@ export class GroupService {
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<Group[]>{
-    return this.http.get<Group[]>(environment.APIUrl + 'groups/').
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Timetable-Version', localStorage.getItem('active_scheme'));
+    let options = ({headers: headers});
+    return this.http.get<Group[]>(environment.APIUrl + 'groups/',options).
     pipe(
       map((data: Group[]) =>{
           return data;
         }
-      ));
+      ),share());
   }
 
   getAllMap(): Observable<Group[]>{
-    return this.http.get<Group[]>(environment.APIUrl + 'groups/').
+    let headers: HttpHeaders = new HttpHeaders();
+    headers = headers.append('Timetable-Version', localStorage.getItem('active_scheme'));
+    let options = ({headers: headers});
+    return this.http.get<Group[]>(environment.APIUrl + 'groups/',options).
     pipe(
       map((data: any) =>{
         let test = data.reduce(function(r, e) {
@@ -38,7 +44,7 @@ export class GroupService {
         }
         return test;
         }
-      ));
+      ),share());
   }
 
   deleteGroup(group: any) {

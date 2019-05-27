@@ -15,13 +15,13 @@ export class VersionListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    zip(
-      this.timetableService.getAllSchemas(),
-      this.timetableService.getTimetableVersions(1)
-      ).subscribe(([schemasData,versionsData])=>{
-        // this.schemas = schemasData;
-
-    });
+    // zip(
+    //   this.timetableService.getAllSchemas(),
+    //   this.timetableService.getTimetableVersions(1)
+    //   ).subscribe(([schemasData,versionsData])=>{
+    //     // this.schemas = schemasData;
+    //
+    // });
   }
 
 }

@@ -1,7 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import interactionPlugin, {Draggable} from '@fullcalendar/interaction';
-import {zip} from 'rxjs';
 import {Course} from '../../../../models/course';
 import {Room} from '../../../../models/room';
 import {Requirement} from '../../../../models/requirement';
@@ -27,6 +26,13 @@ export class TimetableUpdateMainComponent implements OnInit {
   @ViewChild('groupCalendar') groupCalendar: TimetableComponent;
   @ViewChild('roomCalendar') roomCalendar: TimetableComponent;
   @ViewChild('userCalendar') userCalendar: TimetableComponent;
+  Days = {
+    1: "monday",
+    2: "tuesday",
+    3: "wednesday",
+    4: "thursday",
+    5: "friday",
+  };
   courses: Course[];
   teachers: any;
   rooms: Room[];
@@ -34,6 +40,11 @@ export class TimetableUpdateMainComponent implements OnInit {
   groups: Group[];
   events: Event[];
   collisions: any = [];
+
+  newEvents: Event[] = [];
+  newCollisions: Collision[] = [];
+  updateEvents: Event[] = [];
+  deleteEvents: string[] = [];
 
   newEventsCounter = 0;
   newCollisionsCounter = 0;
@@ -43,7 +54,7 @@ export class TimetableUpdateMainComponent implements OnInit {
   calendarOptions: any = [];
 
   activeSchema: string;
-  activeVersion: string;
+  activeVersion: number;
   activeActivityCategories;
   activeCourse: Course;
   activeTeacher: any;
@@ -51,6 +62,7 @@ export class TimetableUpdateMainComponent implements OnInit {
   activeRoom: Room;
 
   @ViewChild('externals') externals: ElementRef;
+  private activeRequirement: any[];
 
   constructor(
     private userService: UserService,
@@ -68,63 +80,121 @@ export class TimetableUpdateMainComponent implements OnInit {
       events: [
       ],
       editable: true,
-      // selectable: true,
       eventClick: true,
       droppable: true,
       plugins: [resourceTimelinePlugin,interactionPlugin],
     };
-
-    // this.getDefaultVersion();
-    this.getData(1);
+    this.activeVersion = 1;
+    this.getDefaultVersion();
+    // this.getData(1);
   }
 
   getDefaultVersion(){
-    this.timetableService.getLastScheme().subscribe(version =>{
+    this.timetableService.getTimetableVersionLatest().subscribe((version: any) => {
+      this.activeVersion = version.id;
+      this.getData();
     });
-      // this.timetableService.getTimetableVersions().subscribe((version: any) => {
-      //     this.activeVersion = version;
-      //     this.getData(version);
-      //     return version;
-      // });
   }
 
-  getData(version){
-    zip(
-      this.userService.getAllMap(),
-      this.roomService.getAllMap(),
-      this.groupService.getAllMap(),
-      this.courseService.getCoursesByTeacherMap(),
-      this.requirementService.getAll(),
-      this.timetableService.getAllEvents(version),
-      this.timetableService.getAllCollisions(version),
-      this.timetableService.getActivitiesGroup(),
-    ).subscribe(([usersData,roomsData, groupsData,coursesData,requirementsData,eventsData,collisionsData,activityCategories]) =>{
-    // ).subscribe(([usersData,roomsData, groupsData,coursesData,requirementsData,activityCategories]) =>{
-      this.teachers = usersData;
-      this.rooms = roomsData;
-      this.groups = groupsData;
-      this.courses = coursesData;
-      this.requirements = requirementsData;
-      this.events = eventsData;
-      this.events = [];
-      this.collisions = collisionsData;
-      this.collisions = [];
-      this.activeActivityCategories = activityCategories;
+  /**
+   * loading necessary data
+   */
+  getData(){
+    this.loadUsers();
+  }
 
-      this.parseRequirements();
-      this.parseEvents();
+  loadUsers(){
+    this.userService.getAllMap().subscribe(result=>{
+      this.teachers = result;
+      this.loadRooms()
+    });
+  }
+  loadRooms(){
+    this.roomService.getAllMap().subscribe(result=>{
+      this.rooms = result;
+      this.loadGroups();
+    });
+  }
+  loadGroups(){
+    this.groupService.getAllMap().subscribe(result=>{
+      this.groups = result;
+      this.loadCourses();
+    });
+  }
+  loadCourses(){
+    this.courseService.getCoursesByTeacherMap().subscribe(result=>{
+      this.courses = result;
+      this.loadRequirements();
+    })
+
+  }
+  loadRequirements(){
+      this.requirementService.getAll().subscribe(result=>{
+        this.requirements = result;
+        this.loadActivitiesGroups();
+      });
+
+  }
+  loadActivitiesGroups(){
+    this.timetableService.getActivitiesGroup().subscribe(result=>{
+      this.activeActivityCategories = result;
+      this.loadEvents();
       new Draggable(this.externals.nativeElement,{itemSelector: '.fc-event'});
     });
   }
+  loadEvents(){
+      this.timetableService.getAllEvents(this.activeVersion).subscribe(result=>{
+        console.log(result);
+        this.events = result.map(event=>{
+          let rooms: Room[] = [];
+          event.rooms.forEach(room=>{
+            rooms.push(this.rooms[room]);
+          });
+          let groups: Group[] = [];
+          event.groups.forEach(group=>{
+            groups.push( this.groups[group]);
+          });
+          let parsedEvent = new Event(
+            event.id,
+            event.activity.category,
+            this.courses[event.activity.courses[0]],
+            this.teachers[event.teacher],
+            rooms,
+            this.Days[event.day],
+            event.duration.lower,
+            event.duration.upper,
+            groups,
+            "old",
+            this.activeActivityCategories.find(category => category.id === event.activity.category).color
+            );
+          return parsedEvent;
+        });
+        this.loadCollisions();
+      });
 
+  }
+  loadCollisions(){
+      this.timetableService.getAllCollisions(this.activeVersion).subscribe(result=>{
+        this.collisions = result;
+        this.parseRequirements();
+        this.parseEvents();
+      });
+  }
+
+  /**
+   * drop extrenal event to calendar
+   * @param arg
+   */
   dropEvent(arg){
     this.newEventsCounter++;
+    let rooms: Room[] = [];
+    rooms.push(this.rooms[this.activeRoom.id]);
     let event = new Event(
       "new"+this.newEventsCounter,
       arg.draggedEl.getAttribute('data-type'),
       this.courses[this.activeCourse.id],
       this.teachers[this.activeTeacher.id],
-      this.rooms[this.activeRoom.id],
+      rooms,
       arg.resource.id,
       arg.date.getHours(),
       arg.date.getHours()+1,
@@ -140,6 +210,7 @@ export class TimetableUpdateMainComponent implements OnInit {
     this.userCalendar.addEvent(calendarEvent);
 
     this.events[event.id] = event;
+    this.newEvents.push(this.events[event.id]);
 
     this.activeTeacher['events'].push(event);
     this.activeRoom['events'].push(event);
@@ -151,6 +222,10 @@ export class TimetableUpdateMainComponent implements OnInit {
     this.detectCollisions(event);
   }
 
+  /**
+   * resize event, change time
+   * @param arg
+   */
   resizeEvent(arg){
     let event = this.events[arg.event.id];
     event.startTime = arg.event.start.getHours();
@@ -160,6 +235,12 @@ export class TimetableUpdateMainComponent implements OnInit {
 
     let calendarEvent = event.generateEventCalendar();
 
+    /**
+     * if event is not new or wasn't updated add it to array for updates
+     */
+    if(event.status !== 'new' && this.updateEvents.indexOf(event) === -1){
+      this.updateEvents.push(event);
+    }
     this.userCalendar.updateEvent(arg.event,calendarEvent);
     this.roomCalendar.updateEvent(arg.event,calendarEvent);
     this.groupCalendar.updateEvent(arg.event,calendarEvent);
@@ -168,6 +249,10 @@ export class TimetableUpdateMainComponent implements OnInit {
     this.detectCollisions(event);
   }
 
+  /**
+   * drag events in calendar
+   * @param arg
+   */
   dragEvent(arg){
     let event = this.events[arg.event.id];
     event.startTime = arg.event.start.getHours();
@@ -178,11 +263,17 @@ export class TimetableUpdateMainComponent implements OnInit {
     this.userCalendar.updateEvent(arg.event,event.generateEventCalendar());
     this.roomCalendar.updateEvent(arg.event,event.generateEventCalendar());
 
-
+    if(event.status !== 'new' && this.updateEvents.indexOf(event) === -1){
+      this.updateEvents.push(event);
+    }
     this.removeEventFromCollisions(event);
     this.detectCollisions(event);
   }
 
+  /**
+   * show event details
+   * @param arg
+   */
   clickEvent(arg){
     let event = this.events[arg.event.id];
 
@@ -206,7 +297,9 @@ export class TimetableUpdateMainComponent implements OnInit {
         event.groups.forEach((group:Group) =>{
           group.events.splice(group.events.indexOf(event),1);
         });
-
+        if(event.status !== 'new'){
+          this.deleteEvents.push(event.id);
+        }
         delete this.events[arg.event.id];
         this.reloadCourse();
         this.reloadRoom();
@@ -216,6 +309,10 @@ export class TimetableUpdateMainComponent implements OnInit {
 
   }
 
+  /**
+   * set course
+   * @param id
+   */
   courseChange(id){
     if(this.activeCourse !== id){
       this.activeCourse = this.courses[id];
@@ -224,13 +321,65 @@ export class TimetableUpdateMainComponent implements OnInit {
     this.reloadCourse();
   }
 
+  /**
+   * load event for calendar after course change
+   */
   reloadCourse(){
+
+    let requirement: Requirement;
+    if(this.activeTeacher.requirements[this.activeCourse.id]){
+      requirement = this.activeTeacher.requirements[this.activeCourse.id];
+      this.activeRequirement = this.generateEventCalendar(requirement);
+    }
+    else if(this.activeTeacher.requirements['all']){
+      requirement = this.activeTeacher.requirements['all'];
+      this.activeRequirement = this.generateEventCalendar(requirement);
+    }
+    else{
+      requirement = null;
+      this.activeRequirement = null;
+    }
     let events = this.activeTeacher.events.map((event: Event) => {
       return event.generateEventCalendar();
-    })
+    });
+
+    if(this.activeRequirement){
+      events = events.concat(this.activeRequirement);
+    }
     this.userCalendar.setEvents(events);
+    if(this.activeRoom){
+      this.reloadRoom();
+    }
+    if(this.groups){
+      this.groupsChange();
+    }
   }
 
+  Types = {
+    1 : "green",
+    2 : "yellow",
+    3 : "red",
+  };
+
+  generateEventCalendar(requirement){
+    let calendarEvents: any[] = [];
+    requirement.events.forEach(obj =>{
+      let calendarEvent = {
+        startTime: obj.start,
+        endTime: obj.end,
+        resourceId: this.Days[obj.day],
+        rendering: 'background',
+        backgroundColor: this.Types[obj.type],
+      };
+      calendarEvents.push(calendarEvent);
+    });
+    return calendarEvents;
+  }
+
+  /**
+   * change room
+   * @param id
+   */
   roomChange(id){
     if(this.activeCourse != id){
       this.activeRoom = this.rooms[id];
@@ -238,33 +387,58 @@ export class TimetableUpdateMainComponent implements OnInit {
     this.reloadRoom();
   }
 
+  /**
+   * load events for calendar after room change
+   */
   reloadRoom(){
     let events = this.activeRoom.events.map((event: Event) => {
       return event.generateEventCalendar();
     });
+    if(this.activeRequirement){
+      events = events.concat(this.activeRequirement);
+    }
     this.roomCalendar.setEvents(events);
   }
 
+  /**
+   * add new group
+   * @param id
+   */
   addGroup(id){
     this.activeGroups.push(this.groups[id]);
     this.groupsChange();
   }
 
+  /**
+   * remove group
+   * @param id
+   */
   removeGroup(id){
     this.activeGroups.splice(this.activeGroups.map(function(group) {return group.id}).indexOf(id),1);
     this.groupsChange();
   }
 
+  /**
+   * show parents event of chosen groups
+   * @param event
+   */
   showParent(event){
     this.parentCheck = event.checked;
     this.groupsChange();
   }
 
+  /**
+   * show childs events of chosen groups
+   * @param event
+   */
   showChild(event){
     this.childCheck = event.checked;
     this.groupsChange();
   }
 
+  /**
+   * reload calendar events of groups
+   */
   groupsChange(){
     let events = [];
     this.activeGroups.forEach((group: Group)=> {
@@ -301,6 +475,9 @@ export class TimetableUpdateMainComponent implements OnInit {
         })
       }
     });
+    if(this.activeRequirement){
+      events = events.concat(this.activeRequirement);
+    }
     this.groupCalendar.setEvents(events);
   }
 
@@ -318,16 +495,39 @@ export class TimetableUpdateMainComponent implements OnInit {
     return calendarEvents;
   }
 
+  /**
+   * parse requirements by teacher
+   */
   private parseRequirements() {
     this.requirements.forEach(obj =>{
-      this.teachers[obj.teacherId].requirements[(obj.courseId ? obj.courseId : "all")].push(obj);
-    })
+      let index = (obj.course ? obj.course.toString() : "all");
+      // this.teachers[obj.teacher]['requirements'][index] = obj;
+      this.teachers[this.courses[obj.course].id_teacher]['requirements'][index] = obj;
+    });
   }
 
+  /**
+   * parse events
+   */
   private parseEvents() {
 
+    this.events.forEach((event: Event)=>{
+      event.teacher.events.push(event);
+
+      event.rooms.forEach(room=>{
+        room.events.push(event);
+      });
+
+      event.groups.forEach(group=>{
+        group.events.push(event);
+      });
+    });
   }
 
+  /**
+   * detect collision after event change
+   * @param event
+   */
   private detectCollisions(event : Event) {
     event.teacher['events'].forEach(teacherEvent => {
       this.compareEvents(teacherEvent, event, 'teacher');
@@ -349,6 +549,12 @@ export class TimetableUpdateMainComponent implements OnInit {
     });
   }
 
+  /**
+   * compare events for collisions
+   * @param event
+   * @param newEvent
+   * @param type
+   */
   private compareEvents(event,newEvent,type){
     if(event.day === newEvent.day && event.id != newEvent.id){
       if((event.startTime < newEvent.endTime && event.endTime >= newEvent.endTime)
@@ -391,6 +597,7 @@ export class TimetableUpdateMainComponent implements OnInit {
           collision.type = type;
           collision.status = "unresolved";
           this.collisions.push(collision);
+          this.newCollisions.push(collision);
         }
       }
     }
@@ -407,15 +614,65 @@ export class TimetableUpdateMainComponent implements OnInit {
     event.collisions = [];
   }
 
+  /**
+   * send data to server
+   */
   saveData(){
+    // check new events
+    if(this.newEvents){
+      let newEventsExport = [];
+      this.newEvents.forEach((event: Event) => {
+        newEventsExport.push(event.generateExport(this.activeVersion));
+      });
+      this.timetableService.saveEvents(newEventsExport,1).subscribe(result =>{
+        for(let index = 0; index < result.length; index++){
+          let oldId = this.newEvents[index].id;
+          this.newEvents[index].id = result[index].id;
+          this.events[result[index].id] = this.newEvents[index];
+          delete this.events[oldId];
+        }
+      });
+    }
+
+    // check updated events
+    if(this.updateEvents){
+      this.updateEvents.forEach((event: Event) => {
+        this.timetableService.updateEvent(event.generateExport(this.activeVersion),this.activeVersion).subscribe();
+      });
+    }
+
+    // delete events
+    if(this.deleteEvents){
+      this.deleteEvents.forEach(eventId =>{
+        this.timetableService.deleteEvent(this.activeVersion,eventId).subscribe();
+      });
+      this.deleteEvents = [];
+    }
+
+    // create new collision events
+    if(this.newCollisions){
+      let newCollisionsExport = [];
+      this.newCollisions.forEach((collision: Collision) => {
+        newCollisionsExport.push(collision.generateExport(this.activeVersion));
+      });
+      this.timetableService.saveCollision(newCollisionsExport,this.activeVersion).subscribe();
+    }
   }
 
+  /**
+   * create new version of timetable scheme
+   */
   createNewVersion(){
+    let body = {
+      name: "new_version"
+    }
+    this.timetableService.createVersion(body).subscribe();
   }
 
-  mergeTimetable(){
-  }
-
+  /**
+   * publish scheme
+   */
   finalizeTimetable(){
+    this.timetableService.finalizeVersion(this.activeVersion).subscribe();
   }
 }

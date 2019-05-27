@@ -3,6 +3,14 @@ import {Course} from './course';
 import {Room} from './room';
 import {Group} from './group';
 
+enum Days{
+  "monday" = 1,
+  "tuesday" = 2,
+  "wednesday" = 3,
+  "thursday" = 4,
+  "friday" = 5,
+}
+
 export class Event {
   id: string;
   idType: number;
@@ -18,13 +26,12 @@ export class Event {
   color: string;
 
 
-  constructor(id: string, idType: number, idCourse: Course, idTeacher: number, idRoom: Room, day: string, startTime: number, endTime: number, groups: Group[], status : string, color : string) {
+  constructor(id: string, idType: number, idCourse: Course, idTeacher: number, idRoom: Room[], day: string, startTime: number, endTime: number, groups: Group[], status : string, color : string) {
     this.id = id;
     this.idType = idType;
     this.course = idCourse;
     this.teacher = idTeacher;
-    this.rooms = [];
-    this.rooms.push(idRoom);
+    this.rooms = idRoom;
     this.day = day;
     this.startTime = startTime;
     this.endTime = endTime;
@@ -52,5 +59,32 @@ export class Event {
       color: this.color,
     };
     return calendarEvent;
+  }
+
+  generateExport(version){
+    let rooms = [];
+    this.rooms.forEach(room=>{
+      rooms.push(room.id);
+    });
+    let groups = [];
+    this.groups.forEach(group=>{
+      groups.push(group.id);
+    });
+    let exportEvent = {
+      "duration":{
+        "start":this.startTime,
+        "end":this.endTime,
+      },
+      "day": Days[this.day],
+      "activity": {
+        "category": this.idType,
+        "courses" : [this.course.id]
+      },
+      "timetable": version,
+      "teacher": this.teacher.id,
+      "rooms": rooms,
+      "groups": groups,
+    };
+    return exportEvent;
   }
 }

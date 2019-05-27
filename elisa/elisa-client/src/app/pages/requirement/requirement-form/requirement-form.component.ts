@@ -4,6 +4,7 @@ import {EventInput} from "@fullcalendar/core/structs/event";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import interactionPlugin from "@fullcalendar/interaction";
 import {RequirementService} from '../../../services/requirement.service';
+import {CourseService} from '../../../services/course.service';
 
 @Component({
   selector: 'app-requirement-form',
@@ -29,39 +30,35 @@ export class RequirementFormComponent implements OnInit {
   resources;
   duration;
 
-  constructor(private dataService: RequirementService
+  constructor(private dataService: RequirementService, private coursesService: CourseService
   ){}
 
   ngOnInit() {
-    this.dataService.getUser().subscribe(
-      (response: any) => {
-        this.optionsUsers = response.reduce(function(r, e) {
-          if(!r[e.user.id]){
-            r[e.user.id] = [];
-            r[e.user.id]["id"] = e.user.id;
-            r[e.user.id]["username"] = e.user.username;
-            r[e.user.id]["subjects"] = [];
-          }
-          r[e.user.id]["subjects"].push(e.subject);
-          return r;
-        }, {});
-      });
+    this.loadData()
+  }
+
+  loadData(){
+    this.dataService.getUser().subscribe(response => {
+      this.optionsUsers = response;
+    });
 
     this.requirementForm = new FormGroup({
       'teacher_id': new FormControl(),
       'course_id': new FormControl({value: '', disabled: true} ),
       'comment': new FormControl(),
     });
+
     this.initOptions();
   }
 
   setCoursesForm(event){
+    console.log(this.optionsUsers[event.value]);
     this.optionsSubjects = this.optionsUsers[event.value]["subjects"];
     this.requirementForm.get('course_id').enable();
   }
   onSubmit(){
     let post = this.requirementForm.value;
-    let request  = [];
+    let request  = {};
     request['teacher'] = parseInt(post['teacher_id']);
     request['course'] = parseInt(post['course_id']);
     request['events'] = [];

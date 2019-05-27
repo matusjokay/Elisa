@@ -100,4 +100,8 @@ export class RoomsListComponent implements OnInit {
       }
     });
   }
+
+  roomsImport(){
+    this.roomService.importCategoryRooms().subscribe();
+  }
 }
