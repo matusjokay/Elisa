@@ -52,7 +52,6 @@ export class RequirementFormComponent implements OnInit {
   }
 
   setCoursesForm(event){
-    console.log(this.optionsUsers[event.value]);
     this.optionsSubjects = this.optionsUsers[event.value]["subjects"];
     this.requirementForm.get('course_id').enable();
   }
