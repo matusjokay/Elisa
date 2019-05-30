@@ -20,7 +20,6 @@ export class RequirementService {
     return this.http.get<any[]>(environment.APIUrl + "teachers/",options)
       .pipe(
         map((response: any) => {
-          console.log(response);
           return response.reduce(function(r, e) {
             if(!r[e.user.id]){
               r[e.user.id] = [];
@@ -41,7 +40,6 @@ export class RequirementService {
     headers = headers.append('Timetable-Version', localStorage.getItem('active_scheme'));
     let options = ({headers: headers});
 
-    console.log(body);
     this.http.post(environment.APIUrl + "requirements/",
       body,
       options

@@ -144,7 +144,6 @@ export class TimetableUpdateMainComponent implements OnInit {
   }
   loadEvents(){
       this.timetableService.getAllEvents(this.activeVersion).subscribe(result=>{
-        console.log(result);
         this.events = result.map(event=>{
           let rooms: Room[] = [];
           event.rooms.forEach(room=>{

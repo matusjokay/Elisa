@@ -32,7 +32,6 @@ export class CourseService {
 
     return this.http.get<Course[]>(environment.APIUrl + "teachers/", options).pipe(
       map((response: any) => {
-        console.log(response);
         return response.reduce(function(r, e) {
           r[e.subject.id] = e.subject;
           r[e.subject.id]["id_teacher"] = e.user.id;

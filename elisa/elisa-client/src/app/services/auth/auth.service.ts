@@ -8,6 +8,8 @@ import {BehaviorSubject, Observable, throwError} from 'rxjs';
 
 enum Roles{
   MAIN_TIMETABLE_CREATOR = "3",
+  LOCAL_TIMETABLE_CREATOR = "2",
+  TEACHER = "1",
 }
 @Injectable({
   providedIn: 'root'

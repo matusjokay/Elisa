@@ -22,7 +22,6 @@ export class Requirement {
   };
 
   generateEventCalendar(){
-    console.log(this);
     let calendarEvents: any[];
     this.events.forEach(obj =>{
       let calendarEvent = {
