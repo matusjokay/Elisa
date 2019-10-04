@@ -1,0 +1,17 @@
+Systém si na svoju funkčnosť vyžaduje prostredie, na ktorom je podporovaný Python 3
+a databáza PostgreSQL. V prípade potreby vyvíjať bude nevyhnutná inštalácia Node.js.
+Postup konfigurácie a spustenia vývojového prostredia sa nachádza popísaný na priloženom
+médiu v priečinku so zdrojovými súbormi aplikácie v súbore README.md jednotlivo pre server
+a pre klienta. Pre prípad potreby sme nami použivané prostredie popísali v kapitole
+\ref{subsec:develop_env}.
+
+Na vývoj, prípadne testovanie, je možné aplikáciu spúšťať lokálne prostredníctvom web serverov.
+Na samotné produkčné nasadenie celého systému je však potrebné použitie reálneho plnohodnotného
+servra, na ktorý sa následne nahrajú všetky potrebné statické súbory výslednej aplikácie
+(HTML, CSS, JS, ...) a budú servírované ako webové služby. Pri tomto nasadení odporúčame
+postupovať podľa platnej dokumentácie Django
+\footnote{\url{https://docs.djangoproject.com/en/1.11/howto/deployment/}}.
+
+Kvôli bezpečnosti systému je vhodné na komunikáciu medzi klientom a servrom využiť niektorú
+so šifrovacích služieb, napr. službu Let's Encrypt\footnote{\url{https://letsencrypt.org/}}.
+

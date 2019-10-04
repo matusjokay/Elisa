@@ -1,0 +1,55 @@
+% Using modified https://github.com/Kyslik/FEIstyle
+\documentclass[dp]{FEIstyle}
+
+\usepackage{morewrites} % needed for minted
+\usepackage[newfloat]{minted}
+\usepackage{pdfpages}
+\usepackage{gensymb}    % degree symbol
+
+\FEIauthor{Bc. Martin Račák}
+\FEItitle{Rozvrhový systém pre~FEI}
+\FEItitleEn{Timetabling system for~FEI}
+\FEIkeywords{rozvrhy, rozvrhový systém, klient-server, REST, webová služba}
+\FEIkeywordsEn{timetables, timetabling system, client-server, REST, web service}
+\FEIregNr{FEI-5384-53920}
+\FEIsupervisor{Mgr. Ing. Matúš Jókay, PhD.}
+%\FEIconsultant{Ing. John Doe}
+
+\FEIglossaries{includes/glossary}
+\bibliography{includes/bibliography.bib}
+
+\iffalse \input{includes/glossary} \fi
+
+\begin{document}
+\frontmatter
+
+\FEIpdfInfo
+% \FEIcover
+\FEItitlePage
+\includepdf{includes/assignment.pdf}
+\FEIthanks{includes/thanks}
+\FEIabstract{includes/abstract}
+\FEIabstractEn{includes/abstractEN}
+%\FEIdeclaration{includes/declaration}
+\FEIcontent
+\FEIlistOfFiguresAndTables
+% \FEIlistOfAlgorithms
+\FEIlistOfListings
+\FEIlistOfGlossaries
+
+\mainmatter
+
+\FEIintroduction{includes/introduction}
+\FEIcore{includes/core}
+\FEIconclusion{includes/conclusion}
+% \FEIresume{includes/resume}
+% bibliography should use UTF-8 accents (write as is ľščťžýáí...) NOT converted by BibDesk
+% http://tex.stackexchange.com/questions/57743/how-to-write-%C3%A4-and-other-umlauts-and-accented-letters-in-bibliography
+\FEIbibliography %includes/bibliography.bib
+
+\backmatter
+
+\FEIlistOfAppendix
+\FEIappendix{Technická dokumentácia}{includes/technical-documentation}
+\FEIappendix{Obsah elektronického nosiča}{includes/dir-structure}
+\end{document}

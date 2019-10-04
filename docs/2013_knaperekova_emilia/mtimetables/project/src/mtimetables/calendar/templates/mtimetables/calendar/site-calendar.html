@@ -1,0 +1,337 @@
+{% extends 'site-form.html' %}
+{% load tools %}
+{% load brutalform %}
+{% load bootstrap3 %}
+{% load staticfiles %}
+
+
+{% block modal %}
+	{% if onetimeevent_form %}
+		<div class="modal fade" id="modal-onetimeevent" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					{% include 'site_parts/form-modal.html' with form=onetimeevent_form heading='Create one time event' action_url='/timetable/onetimeevent/create/' %}
+				</div>
+			</div>
+		</div>
+	{% endif %}
+	{% if semesterevent_form %}	
+		<div class="modal fade" id="modal-semesterevent" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					{% include 'site_parts/form-modal.html' with form=semesterevent_form heading='Create semester event' action_url='/timetable/semesterevent/create/' %}
+				</div>
+			</div>
+		</div>
+	{% endif %}
+{% endblock modal %}
+
+
+
+{% block left_panel %}
+
+	{% if activity_filter_form %}
+		<aside id="left-panel" class="">
+			<div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<div class="pagination no-activities-hide">
+							<div class="btn-group">
+								<button class="btn btn-sm btn-default submit left">{% bootstrap_icon 'chevron-left' %}</button>
+								<button class="btn btn-sm btn-default submit right">{% bootstrap_icon 'chevron-right' %}</button>
+							</div>
+						</div>
+						<a data-toggle="collapse" href="#collapse-activity-filter">
+							{# Toggle activity filter  #}
+							<span class="pull-right">{% bootstrap_icon 'chevron-down' %}</span>
+						</a>
+					</div>
+					<div id="collapse-activity-filter" class="panel-collapse collapse in">
+						<div class="panel-body">
+							<form id="activity-filter" method="GET" action="{% url 'mtimetables:data:activitydefinition_list' %}">
+								{% brutalform activity_filter_form 0 collapsible=False layout="horizontal" counter=0 %}
+								<div class="form-group{% if form.layout == "horizontal" or not form.layout %} col-md-offset-2 col-md-10{% endif %}">
+									<button class="btn btn-primary" type="submit">{% bootstrap_icon "ok" %} Apply filter</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				<div id="activity-list-wrapper">
+					<div class="alert alert-info">Please use activity filter to show activites.</div>
+				</div>
+				
+			</div>
+		</aside>
+
+	{% endif %}
+
+{% endblock left_panel %}
+
+
+{% block main_class %}{% if activity_filter_form %}{{ block.super }}{% endif %}{% endblock main_class %}
+
+
+{% block ribbon_left %}
+		
+	<div class="no-calendar-hide">
+		<button id="btn-hide-weekend" class="btn btn-sm btn-default" title="Hide weekend">{% bootstrap_icon 'eye-close' %}</button>
+		<button id="btn-show-weekend" class="btn btn-sm btn-default" title="Show weekend">{% bootstrap_icon 'eye-open' %}</button>
+		{% if render_toolbar %}
+			<div class="btn-group">
+				<button class="btn btn-sm btn-default event-input-method" name="draganddrop" title="Mode drag&drop">{% bootstrap_icon 'move' %}</button>
+				<button class="btn btn-sm btn-default event-input-method" name="semesterevent" title="Mode semester events">{% bootstrap_icon 'th' %}</button>
+				<button class="btn btn-sm btn-default event-input-method" name="onetimeevent" title="Mode one time events">{% bootstrap_icon 'th-list' %}</button>
+			</div>
+		{% endif %}
+	</div>
+{% endblock ribbon_left %}
+
+
+{% block ribbon_right %}
+	<div class="no-calendar-hide">
+		<span class="calendar-period"></span>
+		<div class="btn-group">
+			<button type="submit" name="calendar-previous" id="btn-previous" class="btn btn-sm btn-default" title="Previous">{% bootstrap_icon 'chevron-left' %}</button>
+			<button type="submit" name="calendar-next" id="btn-next" class="btn btn-sm btn-default" title="Next">{% bootstrap_icon 'chevron-right' %}</button>
+		</div>
+	</div>
+{% endblock ribbon_right %}
+
+
+{% block form_submit_text %}Apply filter{% endblock form_submit_text %}
+
+
+{% block content %}
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<a data-toggle="collapse" href="#collapse-calendar-filter">
+				<span class="pull-right">{% bootstrap_icon 'chevron-down' %}</span>
+			</a>
+		</div>
+		<div id="collapse-calendar-filter" class="panel-collapse collapse in">
+			<div class="panel-body">
+				<div id="calendar-filter">
+					{{ block.super }}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="calendar-wrapper">
+		{% include 'mtimetables/calendar/calendar.html' %}
+	</div>
+
+	<div id="bottom-panel" class="panel panel-warning">
+		<div class="panel-heading">
+			<a data-toggle="collapse" href="#collapse-bottom-panel-content">
+				<span class="pull-right">{% bootstrap_icon 'chevron-up' %}</span>
+			</a>
+		</div>
+		<div id="collapse-bottom-panel-content" class="panel-collapse collapse">
+			<div class="panel-body"></div>
+		</div>
+	</div>
+
+{% endblock content %}
+
+
+
+{% block scripts %}
+
+	{{ block.super }}
+
+	<link href="{% static 'calendar/style.css' %}" rel="stylesheet" />
+	<script type="text/javascript" src="{% static 'calendar/script.js' %}"></script>
+
+
+	<script type="text/javascript">
+
+		$(function() {
+
+
+//* * * * * global calendar page display settings * * * * *
+
+			global_calendar_success_url = undefined;
+
+			// show/hide weekend buttons
+			var buttons = $('#btn-hide-weekend, #btn-show-weekend').click(function(event) {
+				$(buttons).toggle();
+				$('.cal-cell-weekend', $('table')).toggle();
+				event.preventDefault();
+				event.stopPropagation();
+			});
+
+			// bind events to page view
+			{% if not calendar %}
+				$('.no-calendar-hide').hide();
+			{% endif %}
+
+			// set event input methods
+			$('.event-input-method').on('click', function(event) {
+				$(this).parent().children('.btn').removeClass('active');
+				$(this).addClass('active');
+				$('#calendar-wrapper').trigger('set_calendar_input_method', [$(this).attr('name')]);
+				return false;
+			});
+	
+
+
+//* * * * * calendar-view-form settings * * * * *
+			
+			// toggle month, week and day form fields
+			$('#id_month', $('#calendar-filter')).change(function() {
+				$('#id_week', $('#calendar-filter')).val('');
+				$('#id_day', $('#calendar-filter')).val('');
+			});
+			$('#id_week', $('#calendar-filter')).change(function() {
+				$('#id_month', $('#calendar-filter')).val('');
+				$('#id_day', $('#calendar-filter')).val('');
+			});
+			$('#id_day', $('#calendar-filter')).change(function() {
+				$('#id_week', $('#calendar-filter')).val('');
+				$('#id_month', $('#calendar-filter')).val('');
+			});
+
+			// get currently selected month or week option as jquery object
+			var getActivePeriod = function() {
+				var active_period = undefined;
+				if ($('#id_month', $('#calendar-filter')).val()) {
+					active_period = $('#id_month :selected', $('#calendar-filter'));
+				} else if ($('#id_week', $('#calendar-filter')).val()) {
+					active_period = $('#id_week :selected', $('#calendar-filter'));
+				}
+				return active_period;
+			}
+
+			// disable previous or next form buttons in terms of active period
+			var disablePrevNext = function(period) {
+				$('#btn-previous, #btn-next').removeClass('disabled');
+				if (!period)
+					period = getActivePeriod();
+				if (period) {
+					var n = $(period).parent().children().length;
+					var index = $(period).index();
+					if (index == 1)
+						$('#btn-previous').addClass('disabled');
+					if (index >= n-2)
+						$('#btn-next').addClass('disabled');
+				}
+			}
+
+			disablePrevNext();
+
+			var calendarFilterBeforeSubmit = function() {
+				$('.no-calendar-hide').hide();
+				$('#calendar-wrapper').html(tools.getAjaxLoaderHtml());
+				$('#collapse-calendar-filter').collapse('hide');
+			};
+
+			var calendarFilterSuccess = function(responseText, statusText, xhr) {
+				$('#calendar-wrapper').html(responseText);
+				$('.no-calendar-hide').show();
+			};
+
+			window.onpopstate = function(event) {
+				var url = document.URL.split('?');
+				$.ajax(url[0], {
+					type: 'POST',
+					data: ['csrfmiddlewaretoken='+tools.getCSRF(), url[1] || ''].join('&'),
+					beforeSend: calendarFilterBeforeSubmit,
+					success: function(responseText, statusText, xhr) {
+						calendarFilterSuccess(responseText, statusText, xhr);
+					},
+				});
+			};
+
+			$('#calendar-view-form').ajaxForm({
+				resetForm: false,
+				beforeSubmit: calendarFilterBeforeSubmit,
+				success: function(responseText, statusText, xhr, form) {
+					disablePrevNext();
+					calendarFilterSuccess(responseText, statusText, xhr);
+					if (global_calendar_success_url)
+						history.pushState({}, "", global_calendar_success_url);
+				},
+			});
+
+
+
+//* * * * * activity-filter form settings * * * * *
+
+			var activities_limit = 10;
+			var activities_page = 1;
+			$('#activity-filter').ajaxForm({
+				resetForm: false,
+				replaceTarget: false,
+				data: {
+					'format': 'json',
+					// 'limit': activities_limit,
+					'page': function() {return activities_page;}
+				},
+				beforeSerialize: function(form, options) {
+					$('#activity-list-wrapper').html(tools.getAjaxLoaderHtml());
+					$('#collapse-activity-filter').collapse('hide');
+					$('#left-panel').scrollTop(0);
+				},
+				success: function(responseText, statusText, xhr, form) {
+					// triggered event will be processed by Calendar class
+					// responseText if of json content-type
+					$('#activity-list-wrapper').html('<ul id="activity-list" class="nav nav-aside tab-pane"></ul>');
+					if (responseText.length > 0) {
+						$('.no-activities-hide').show();
+						$('#left-panel .pagination .submit.right').removeClass('disabled');
+					} else {
+						$('#left-panel .pagination .submit.right').addClass('disabled');
+					}
+					if (activities_page > 1) {
+						$('#left-panel .pagination .submit.left').removeClass('disabled');
+					}
+					$('#calendar-wrapper').trigger('calendar_json_activites_loaded', [responseText]);
+				},
+				error: function() {
+					$('#activity-list-wrapper').html('<p>Invalid filter or pagination.</p>');
+				},
+			});
+			$('#left-panel .pagination .submit.right').click(function() {
+				activities_page++;
+				$('#activity-filter').submit();
+			});
+			$('#left-panel .pagination .submit.left').click(function() {
+				if (activities_page > 1)
+					activities_page--;
+				else
+					$(this).addClass('disabled');
+				$('#activity-filter').submit();
+			});
+			$('#activity-filter button[type="submit"]').click(function() {
+				activities_page = 1;
+			});
+
+
+
+//* * * * * create timetable callendar instance * * * * *
+
+			$('#calendar-wrapper').timetableCalendar({
+				data: {
+					{% if view.room %}room: {id: {{ view.room.id }}, capacity: {{ view.room.capacity }}, name: "{{ view.room.name }}"},{% endif %}
+					{% if view.group %}group: {id: {{ view.group.id }}, name: "{{ view.group.name }}"},{% endif %}
+					{% if view.user %}user: {id: {{ view.user.id }}, name: "{{ view.user }}"},{% endif %}
+					{% if view.subject %}subject: {id: {{ view.subject.id }}, name: "{{ view.subject.name }}"},{% endif %}
+				}
+			});
+
+			{% if render_toolbar %}
+				$('.event-input-method').first().trigger('click');
+			{% endif %}
+
+
+		});
+
+
+	</script>
+
+{% endblock scripts %}

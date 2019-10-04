@@ -1,0 +1,171 @@
+{% extends 'site-base.html' %}
+{% block heading %}<h1>Hello world!</h1>{% endblock %}
+
+{% block content %}
+
+	<p>This is hello world test app.</p>
+
+	<h3>Delegated event handlers test</h3>
+
+	<button class="btn btn-default add-row-a">add row A</button>
+	<button class="btn btn-default add-row-b">add row B</button>
+
+	<p>&nbsp;</p>
+
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>col 0</th>
+				<th>col 1</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><span class="cell-value">0, 0</span></td>
+				<td><span class="cell-value">0, 1</span></td>
+			</tr>
+			<tr>
+				<td><span class="cell-value">1, 0</span></td>
+				<td><span class="cell-value">1, 1</span></td>
+			</tr>
+			<tr>
+				<td><span class="cell-value">2, 0</span></td>
+				<td><span class="cell-value">2, 1</span></td>
+			</tr>
+		</tbody>
+	</table>
+	
+{% endblock content %}
+
+
+{% block scripts %}
+	{{ block.super }}
+	<script type="text/javascript">
+
+		// JAVASCRIPT EVENTS AND NAMESPACES
+
+		$(function() {
+
+			$('.add-row-a').on('click', {table: $('table tbody')}, namespaceA.add_row);
+			$('.add-row-b').on('click', {table: $('table tbody')}, namespaceB.add_row);
+
+			$('table').on('myevent.namespaceA', 'tr', function(event) {
+				console.log('A event matched');
+				var new_element = $('<span/>', {class: 'pull-right', html: 'a'});
+				$(this).children('td').first().append(new_element);
+			});
+
+			$('table').on('myevent.namespaceB', 'tr', function(event) {
+				console.log('B event matched');
+				var new_element = $('<span/>', {class: 'pull-right', html: 'b'});
+				$(this).children('td').first().append(new_element);
+			});
+
+			$('table tr').trigger('myevent.namespaceA');
+			$('table tr').trigger('myevent.namespaceB');
+
+		});
+
+		var namespaceA = {
+
+			add_row: function(event) {
+				var target = event.data.table;
+				var row_count = $(target).children('tr').length;
+				var new_row = $('<tr/>').append($('<td/>').html(row_count + ', 0')).append($('<td/>').html(row_count + ', 1'));
+				$(target).append(new_row);
+
+				$(new_row).trigger('myevent.namespaceA');
+
+				$('.cell-value').each(function() {
+					new TableCell(this);
+				});
+			}
+
+		}
+
+		var namespaceB = {
+
+			add_row: function(event) {
+				var target = event.data.table;
+				var row_count = $(target).children('tr').length;
+				var new_row = $('<tr/>').append($('<td/>').html('<span class="cell-value">' + row_count + ', 0</span>')).append($('<td/>').html('<span class="cell-value">' + row_count + ', 1</span>'));
+				$(target).append(new_row);
+
+				$(new_row).trigger('myevent.namespaceB');
+			}
+
+		}
+
+
+
+		// JQUERY .DATA() TEST
+
+		$(function() {
+
+
+			// $('th').each(function() {
+			// 	var heading_obj = new TableHeading(this);
+			// });
+
+
+			$('td .cell-value').each(function() {
+				var cell_obj = new TableCell(this);
+			});
+
+
+		});
+
+		function TableCell(html_node) {
+			this.html_node = html_node;
+			$(this.html_node).data('obj', this);
+			tools.watch(this, 'text', $(this.html_node).text(), this.updateHtml);
+			TableCell.all.push(this);
+		};
+		TableCell.all = [];
+		TableCell.prototype.updateHtml = function(val) {
+			$(this.html_node).html(val);
+		};
+
+		function TableHeading(html_node) {
+			this.html_node = html_node;
+			$(this.html_node).data('obj', this);
+			tools.bind(this, 'text', this.html_node);
+			TableHeading.all.push(this);
+		};
+		TableHeading.all = [];
+
+		function HWTable(html_node) {
+			this.html_node = html_node;
+			$(this.html_node).data('obj', this);
+			this.cells = []
+			this.headings = []
+
+			// ATTENTION: watch does not work for array push, only for assignment
+			tools.watch(this, 'headings', this.headings, this.onAddHeading)
+
+			var instance = this;
+
+			$('th', $(html_node)).each(function() {
+				console.log('th loop', this);
+				if ($(this).data('obj'))
+					instance.headings.push($(this).data('obj'));
+				else
+					instance.headings.push(new TableHeading(this));
+			});
+
+
+			$('td .cell-value', $(html_node)).each(function() {
+				if ($(this).data('obj'))
+					instance.cells.push($(this).data('obj'));
+				else
+					instance.cells.push(new TableCell(this));
+			});
+
+		};
+		HWTable.prototype.onAddHeading = function() {
+			console.log('added new heading to HWTable');
+		};
+
+
+	</script>
+{% endblock scripts %}

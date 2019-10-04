@@ -1,0 +1,29 @@
+{% extends "site-base.html" %}
+
+{% block content %}
+
+<table class="table">
+
+	<thead>
+		<th>Event</th>
+		<th>Conflict events</th>
+	</thead>
+
+	<tbody>
+		{% for event, conflicts in object_list.items %}
+			<tr>
+				<td><a href="{% url 'mtimetables:timetable:'|add:event.model_type|add:'_update' event.id %}">{{ event }}</a></td>
+				<td>
+					<ul>
+						{% for conflict_event in conflicts %}
+							<li><a href="{% url 'mtimetables:timetable:'|add:event.model_type|add:'_update' event.id %}">{{ conflict_event }}</a></li>
+						{% endfor %}
+					</ul>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+	
+</table>
+	
+{% endblock content %}

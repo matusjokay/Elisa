@@ -1,0 +1,1307 @@
+\section{Analýza problému}
+\label{sec:analysis}
+
+Prv než existovali počítače, školské rozvrhy zostavoval ručne rozvrhár, ktorý
+ich následne fyzicky zverejnil tak, aby k nim študenti a vyučujúci mali prístup.
+Príchod počítačov a internetu umožnil nielen ich jednoduchšiu publikáciu online,
+ale tiež možnosť ich automaticky generovať. Keďže sa však jedná o NP-úplný
+optimalizačný problém, neexistuje efektívny algoritmus na jeho absolútne
+riešenie v polynomiálnom čase. Generátory rozvrhov preto zvyčajne využívajú
+rôzne typy aproximačných algoritmov: evolučné algoritmy, lokálne vyhľadávanie,
+greedy algoritmy, dynamické programovanie a pod.
+
+Osobitným problémom je spôsob, akým rozvrh prezentovať používateľom tak, aby
+používateľské rozhranie bolo účinné a jednoduché na používanie. Tiež je potrebné
+zaistiť čo najefektívnejšie vkladanie požiadaviek do systému a manuálnu úpravu
+rozvrhov. Zdá sa, že aj keď rozvrhový softvér je v dnešnej dobe pomerne
+efektívny v generovaní rozvrhov, ešte stále existuje značný potenciál na jeho
+zlepšenie v oblasti komunikácie s používateľmi. 
+
+\subsection{Proces tvorby rozvrhu}
+\label{subsec:timetabling}
+
+Tvorba vzdelávacieho rozvrhu na semester alebo skúškové obdobie je optimalizačný
+problém, ktorého cieľom je z množiny všetkých prípustných riešení nájsť to
+najlepšie. Vyhľadávací priestor riešení býva obmedzený požiadavkami či už
+časovými (kedy), priestorovými (kde), personálnymi (kto), prípadne ďalšími.
+Tieto obmedzenia je možné rozdeliť na tvrdé, ktoré by rozvrh mal spĺňať úplne
+(vyučujúci a študenti môžu byť naraz v jednom časovom okamihu iba na jednom
+mieste, miestnosti majú obmedzenú kapacitu) a mäkké, pri ktorých hľadáme ich
+optimálnu kombináciu (vyučujúci preferujú určité časové úseky, snaha vyhnúť sa
+prvým a posledným časovým úsekom). \cite{lukac} Tieto požiadavky sa v čase, teda
+aj v priebehu obdobia, no ktoré bol rozvrh zostavený, môžu meniť. Počas daného
+obdobia môže byť napr. potrebné do rozvrhu zaradiť predtým neplánovanú
+jednorázovú udalosť s vysokou prioritou (konferencia, mimovýučbová prednáška).
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{figures/course-timetabling.png}
+  \caption{\label{fig:course_timetabling} Životný cyklus rozvrhu na semester
+    \cite{unitime_hl}}
+\end{figure}
+
+Zodpovednosť za tvorbu a úpravu rozvrhov máva vo vzdelávacích inštitúciach jeden
+alebo viacero rozvrhárov. Rozvrh môže byť generovaný automaticky, vytvorený
+manuálne rozvrhárom, prípadne môže ísť o kombináciu týchto dvoch prístupov.
+Obmedzenia na rozvrh niekedy do systému vkladajú aj zástupcovia jednotlivých
+oddelení inštitúcie, prípadne jednotliví vyučujúci a študenti. Na tvorbu rozvrhu
+na nové obdobie sa zvyčajne využívajú dáta z predchádzajúcich období, pokiaľ sú
+dostupné. Na obrázku \ref{fig:course_timetabling} je znázornená schéma životného
+cyklu rozvrhu na semester.
+
+\subsection{Existujúce systémy}
+\label{subsec:existing_systems}
+
+Na trhu je viacero softvérov na tvorbu školských rozvrhov. Líšia sa v mnohých
+znakoch, z ktorých najdôležitejšie sú:
+
+\begin{itemize}
+\item podporovaná platforma (hardvér, \acrshort{os});
+\item licencia (cena);
+\item cieľová skupina -- stredné školy, univerzity, iné vzdelávacie inštitúcie
+  atď.;
+\item spôsob tvorby rozvrhu -- automatický, manuálny, kombinácia;
+\item algoritmus používaný na generovanie rozvrhu;
+\item typ rozvrhu -- na semester, skúškové obdobie;
+\item druh vstupných obmedzení (požiadaviek) na rozvrh;
+\item import a export dát.
+\end{itemize}
+
+Autorka v práci Rozvrhový systém pre vysoké školy \cite{knap} popísala rozvrhové
+systémy Roger, FET a Wise Timetable. My sme sa rozhodli spomenúť niekoľko
+ďalších, ktoré sme zhodnotili v nasledujúcich podkapitolách.
+
+\subsubsection{Prime Timetable}
+\label{subsubsec:prime_timetable}
+
+\emph{Informácie v tejto kapitole sme čerpali z oficiálnej stránky Prime
+  Timetable \cite{prime_timetable} a z vlastnej skúsenosti s jeho používaním.}
+
+Prime Timetable je multiplatformový školský rozvrhový systém na manuálnu aj
+automatickú tvorbu rozvrhu. Je používaný na rozvrhovanie na základných,
+stredných a vysokých školách a tiež aj na iných vzdelávacích inštitúciách ako aj
+na plánovanie rôznych udalostí (napr. školské tábory, kurzy). Softvér je
+implementovaný ako webová aplikácia pre moderné prehliadače, v ktorých beží
+klientská časť ako \acrshort{spa}, pričom generátor rozvrhov dosahuje najlepší
+výkon v prehliadači Chrome. Existuje aj zastaralá verzia aplikácie, ktorá
+používa Microsoft Silverlight a funguje napr. v starších verziách prehliadača
+Internet Explorer.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/prime-timetable.jpg}
+  \caption{\label{fig:prime-timetable} Náhľad používateľského
+    rozhrania Prime Timetable \cite{prime_timetable}}
+\end{figure}
+
+Dáta as do systému dajú vkladať ručne alebo importovať z tabuľkového editora,
+\acrshort{xml}, prípadne z lokálneho súboru. K dispozícií je tiež niekoľko
+ukážkových súborov dát. Export je možný do tabuľkového editora, lokálneho
+súboru, \acrshort{csv}, obrázku, \acrshort{html}, \acrshort{xml} a
+\acrshort{pdf}. Výsledný rozvrh sa dá aj vytlačiť, zdieľať s ostatnými
+používateľmi na základe rolí alebo publikovať na webe. Na úprave rozvrhu môže
+pracovať viacero rozvrhárov súčasne, avšak v okrajových prípadoch môže dôjsť k
+strate prevedených zmien. Nepodarilo sa nám zistiť aký algoritmus je použitý na
+generovanie rozvrhu.
+
+Tento systém je proprietárny a jeho používanie je spoplatnené formou ročných
+plánov, ktorých cena sa odvíja od počtu učiteľov (používateľov). K dispozícii je
+tiež 30-dňová skúšobná doba, ktorá je zadarmo a aj demo verzia aplikácie, v
+ktorej sa neukladajú žiadne vykonané zmeny.
+
+Medzi prednosti Prime Timetable patrí jeho príjemné, responzívne používateľské
+rozhranie, prístup k rozvrhom aj offline a jednoduchosť zdieľania výsledných
+rozvrhov. Generovanie rozvrhov na strane klienta môže byť výhodou alebo aj
+nevýhodou, v závislosti od výkonu zariadenia a počtu vstupných parametrov do
+generátora (veľkosti vyhľadávajúceho priestoru). Jasnou nevýhodou je
+proprietárna softvérová licencia, ktorá neumožňuje úpravu aplikácie priamo
+inštitúciou na základe jej špecifických požiadaviek a tiež nutnosť používať a
+ukladať dáta na server poskytovateľa. Po vyskúšaní demo verzie programu sme
+nadobudli presvedčenie, že je vhodný skôr pre menšie inštitúcie (základné a
+stredné školy) a len s ťažkosťami dokáže naplniť požiadavky vysokej školy.
+
+\subsubsection{Mimosa}
+\label{subsubsec:mimosa}
+
+\emph{Informácie v tejto kapitole sme čerpali z oficiálnej stránky Mimosa
+  \cite{mimosa}.}
+
+Mimosa je softvér na tvorbu rozvrhov a plánovanie udalostí, používaný v rôznych
+druhoch škôl, univerzít a firiem. Môže byť použitý v každom prostredí, kde je
+potrebné efektívne rozvrhovať komplexnú kombináciu obmedzených zdrojov.
+Podporuje tvorbu rozvrhov manuálne, automaticky alebo kombináciu obidvoch metód.
+Rozlišuje rozvrh na výučbové obdobie (opakovanie udalostí) a skúškové obdobie
+(jednorázové udalosti).
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.8\textwidth]{figures/mimosa.jpg}
+  \caption{\label{fig:mimosa} Náhľad používateľského rozhrania Mimosa
+    \cite{soft112}}
+\end{figure}
+
+Importovať a exportovať údaje je možné cez systémovú schránku (clipboard) vo
+formáte tabuľkového editora alebo pomocou súborov vo formáte \acrshort{csv},
+iCalendar, vCalendar alebo ako textové či binárne súbory Mimosa (vlastný
+formát). Výsledný rozvrh môže byť vytlačený alebo publikovaný ako webová
+stránka.
+
+Je to proprietárna desktopová aplikácia, určená pre \acrshort{os} Windows. Je
+implementovaná v jazyku Borland Delphi a využíva vlastnú databázu. Používateľ
+platí za licenciu jednorázovo a získa tým doživotné bezplatné aktualizácie
+programu a bezplatnú podporu cez email a telefón. Dostupná je aj freeware verzia
+softvéru Mimosa, ktorá obsahuje základné funkcie komerčnej verzie s obmedzeným
+počtom záznamov a tiež aj bezplatná 60-dňová skúšobná verzia s takmer plnou
+funkcionalitou.
+
+Výhodou programu Mimosa je jeho obsiahla funkcionalita, vyspelosť a flexibilita,
+ktorú nadobudol aj vďaka viac ako 15-ročnému vývoju a nasedeniu v mnohých
+inštitúciách. Nevýhodou je jeho proprietárna licencia, naviazanosť na jednu
+platformu a zastaralé používateľské rozhranie. Tým, že sa jedná o desktopovú
+aplikáciu, umožňuje iba značne obmedzenú kolaboráciu pri úprave rozvrhu.
+
+\subsubsection{UniTime}
+\label{subsubsec:unitime}
+
+\emph{Informácie v tejto kapitole sme čerpali z oficiálnej stránky UniTime
+  \cite{unitime} a z vlastnej skúsenosti s jeho používaním.}
+
+UniTime je obsiahly edukačný plánovací systém, zameraný na vysoké školy a
+univerzity. Podporuje tvorbu a údržbu rozvrhov na výučbové a skúškové obdobie,
+zdieľanie miestností na iné udalosti a rozvrhovanie študentov na jednotlivé
+predmety. Umožňuje viacerým univerzitným a úsekovým rozvrhárom koordinovať
+úsilie pri zostavovaní a úprave rozvrhu. Môže byť používaný samostatne alebo
+prepojený s existujúcim študentským informačným systémom. Dáta môžu byť do
+systému importované alebo z neho exportované vo formáte \acrshort{xml}, pričom
+ich formát reflektuje interný dátový model UniTime.
+
+Na generovanie rozvrhov využíva knižnicu CPSolver, ktorá slúži na riešenie
+problémov s obmedzeniami. Táto knižnica obsahuje framework založený na lokálnom
+vyhľadávaní, ktorý umožňuje modelovať problém s použitím primitív programovania
+s obmedzujúcimi podmienkami (constraint programming), teda premenných, hodnôt a
+obmedzení. Vyhľadávanie je založené na iteratívnom doprednom vyhľadávacom
+algoritme. Tento algoritmus je podobný lokálnym vyhľadávacím metódam, ale v
+kontraste s klasickými technikami lokálneho vyhľadávania operuje nad
+prípustnými, aj keď nie nevyhnutne kompletnými, riešeniami. Avšak všetky tvrdé
+obmedzenia musia byť splnené. Vďaka iteratívnemu charakteru algoritmu je možné
+generátor jednoducho spustiť, zastaviť alebo pokračovať v riešení od ľubovoľného
+prípustného riešenia, či už kompletného alebo nie.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=10cm]{figures/unitime.png}
+  \caption{\label{fig:unitime} Náhľad používateľského rozhrania
+    UniTime \cite{unitime}}
+\end{figure}
+
+Systém bol pôvodne vyvinutý ako spoločné úsilie členov fakúlt, študentov a
+zamestnancov univerzít v Severnej Amerike a Európe. Používajú ho viaceré
+inštitúcie v rôznych častiach sveta. Softvér je distribuovaný zdarma pod open
+source licenciou a v roku 2015 sa stal sponzorovaným projektom Apereo
+Foundation. Je to platformovo nezávislá webová aplikácia, implementovaná s
+použitím Java \acrshort{j2ee} a \acrshort{sql} databázy. Jej demo verzia je
+voľne dostupná na jej oficiálnej stránke, rovnako aj niekoľko súborov ukážkových
+dát. UniTime má rozsiahlu dokumentáciu a poskytuje tiež (obmedzenú) bezplatnú aj
+komerčnú podporu.
+
+Medzi jeho výhody patrí robustnosť, pokrytie veľkého množstva potrieb pri
+rozvrhovaní a vyspelosť algoritmu na generovanie rozvrhov. Nevýhodou je
+používateľsky neveľmi prívetivé, neresponzívne, pomalé grafické rozhranie a
+absencia webového \acrshort{api}.
+
+\section{Cieľ práce}
+\label{sec:goal}
+
+Cieľom našej práce bolo oboznámiť sa s prácou Rozvrhový systém pre vysoké školy
+(Emília Knapereková, 2014) \cite{knap}, vrámci ktorej vznikol prototyp
+rozvrhového systému, aktualizovať ho a pokračovať v jeho vývoji. Našim plánom
+tiež bolo zoznámiť sa s požiadavkami, ktoré sú kladené na tvorbu rozvrhu na
+\acrshort{fei} a zabezpečiť, aby ich výsledný systém spĺňal.
+
+Zvolili sme agilný, iteratívny prístup k vývoju systému, s krátkymi cyklami
+spätnej väzby a so zámerom zaistiť jeho flexibilný a efektívny vývoj a adekvátnu
+kvalitu. Výsledný systém by mal slúžiť v prvom rade ako nástroj pre rozvrhára na
+manuálnu tvorbu a úpravu rozvrhu, teda poskytovať minimálne nasledujúce funkcie:
+
+\begin{itemize}
+\item import a export dát z, resp. do \acrshort{ais},
+\item tvorba rozvrhu na semester a skúškové obdobie,
+\item detekciu kolízií rozvrhových akcií.
+\end{itemize}
+
+\subsection{Špecifikácia požiadaviek}
+\label{subsec:requirements}
+
+Práca Rozvrhový systém pre vysoké školy \cite{knap} obsahuje analýzu a
+špecifikáciu požiadaviek na rozvrhový systém. Pri jej tvorbe autorka vychádzala
+z poznatkov nadobudnutých počas tímového projektu, analýzy existujúcich riešení
+a konzultácií s rozvrhármi \acrshort{fei} \acrshort{stu}. Táto špecifikácia
+zostáva naďalej platná a vychádzali sme z nej pri návrhu zmien, resp. ďalšej
+implementácie systému. Keďže cieľom našej práce bol hlavne ďalší vývoj
+aplikácie, v tejto podkapitole sme ju preto iba zosumarizovali vo forme
+vysoko-úrovňového pohľadu na funkcionalitu systému s cieľom vytvoriť kontext pre
+čitateľa. Systém má umožňovať:
+
+\begin{itemize}
+\item Tvorbu rozvrhu na semester a skúškové obdobie.
+\item Import a export dát z, resp. do \acrshort{ais} čoho súčasťou je aj ich
+  korekcia pred ich ďalším spracovaním.
+\item Konfiguráciu nastavení systému ako sú napr. parametre generátora rozvrhov,
+  počet týždňov jednotlivých období, farby pre zobrazovanie rozvrhu atď.
+\item Vkladanie požiadaviek na rozvrh, vrátane osobných požiadaviek študentov a
+  vyučujúcich.
+\item Generovanie rozvrhu.
+\item Manuálnu úpravu rozvrhu pomocou príjemného drag-and-drop (ťahaj a pusť)
+  používateľského rozhrania.
+\item Kontrolu a zobrazovanie kolízií v rozvrhu.
+\item Rezerváciu miestností na výnimočnú udalosť.
+\item Navrhovanie zmien rozvrhu ostatnými používateľmi pre posúdenie rozvrhárom.
+\item Správu oprávnení používateľov.
+\item Prezeranie výsledného rozvrhu.
+\item Zálohovanie dát a verziovanie jednotlivých rozvrhov.
+\end{itemize}
+
+\subsection{Tvorba rozvrhov na FEI}
+\label{subsec:fei_timetabling}
+
+Proces tvorby rozvrhu na Fakulte elektrotechniky a informatiky STU sa v čase
+písania tejto práce významne neodlišoval od toho ako bol popísaný v práci mojej
+predchodkyne \cite{knap}, čo sme si overili na osobnom stretnutí s rozvrhárom
+Mgr. Dávidom Panczom, PhD. Na \acrshort{fei} sa rozvrhy na semester a skúškové
+obdobie tvoria oddelene. Každé z období má na starosti iný rozvrhár a každý z
+nich používa na ich tvorbu iný systém.
+
+Na tvorbu rozvrhov na semester sa používa starý program WinRozvrhy, ktorý
+vznikol dávnejšie priamo pre potreby FEI, aj napriek tomu že rozvrhár má k
+dispozícií novší program Roger, keďže rozvrh ním generovaný je nepoužiteľný a
+možnosti jeho manuálnej úpravy sú nedostatočné. Rozvrh na skúškové obdobie sa
+tvorí s pomocou MS Excel a súboru skriptov na import dát a čiastočnú kontrolu
+kolízií.
+
+Obom rozvrhárom je pred samotnou tvorbou rozvrhov doručený aktuálny súbor dát z
+\acrshort{ais}, ktorý obsahuje zoznamy miestností, učiteľov, predmetov atď.
+Zároveň im pred, ako aj počas obdobia tvorby rozvrhov prichádzajú požiadavky na
+rozvrh od vyučujúcich, ktoré musia pri jeho tvorbe zohľadňovať. Niektoré z nich
+je možné zadať do rozvrhového systému (napr. hodinové dotácie predmetov), ale
+veľkú časť z nich musí rozvrhár iba zobrať do úvahy počas manuálnej úpravy
+rozvrhu (napr. preferencie miestností alebo času). Pri tvorbe rozvrhov sa
+vychádza z predošlých rozvrhov na jednotlivé obdobia. Výsledný rozvrh na
+semester sa na záver importuje do \acrshort{ais}, kde si ho potom môžu
+používatelia prezerať a v prípade študentov sa aj prihlasovať na jednotlivé
+termíny cvičení. Rozvrh na semester aj skúškové obdobie sa tiež zverejní na
+stránke fakulty.
+
+Takýto proces tvorby rozvrhov na \acrshort{fei} je v oboch prípadoch zdĺhavý a
+neefektívny a potreba nového rozvrhového systému, ktorý by ho zlepšil je stále
+aktuálna.
+
+\section{Návrh}
+\label{sec:design}
+
+V tejto kapitole popisujeme návrh ďalšieho vývoja rozvrhového systému. V
+krátkosti približujeme pôvodný návrh rozvrhového systému našej predchodkyne,
+ktorý sme porovnali s našim návrhom, pričom vysvetľujeme motiváciu jednotlivých
+zmien a zvolených prístupov.
+
+\subsection{Architektúra systému}
+\label{subsec:architecture}
+
+Základným predpokladom je, že by systém mal byť platformovo nezávislý a
+umožňovať jednoduché zdieľanie rozvrhov. Logickou voľbou preto bolo
+implementovať ho formou webovej aplikácie.
+
+\subsubsection{Pôvodná architektúra}
+\label{subsubsec:legacy_arch}
+
+Na obrázku \ref{fig:pkg_diagram} môžme vidieť zjednodušený model pôvodnej
+architektúry systému reprezentovaný ako \acrshort{uml} diagram balíčkov.
+Balíčky, ktorých funkcionalitu moja predchodkyňa aspoň čiastočne implementovala,
+sú farebne zvýraznené. Nasleduje krátky popis jednotlivých balíčkov. \\
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics{figures/package_diagram.pdf}
+  \caption{\label{fig:pkg_diagram} Pôvodná architektúra -- diagram balíčkov
+    (zoskupení tried) \cite{knap}}
+\end{figure}
+
+\begin{description}
+\item[Backup] Zálohovanie jednotlivých verzií rozvrhu. K takto vytvorenej zálohe
+  sa bude môcť rozvrhár neskôr vrátiť.
+\item[Calendar] Zobrazovanie rozvrhových akcií v tabuľke. Podporuje rôzne typy
+  časových mriežok, medzi ktorými je možné prepínať pri zobrazení rozvrhu na
+  týždeň alebo deň. Ponúka tiež mesačný prehľad rozvrhových akcií (bez mriežky).
+\item[FEI] Import a export dát z, resp. do \acrshort{ais}. Pre každú inštitúciu
+  môže existovať podobný balíček, v závislosti od požadovaného formátu vstupných
+  alebo výstupných dát.
+\item[Authentication] Overenie totožnosti používateľa, na základe ktorej mu
+  systém pridelí práva na prístup k vybraným funkciám systému.
+\item[Permissions] Nastavenie oprávnení používateľov.
+\item[AmendmentProposals] Navrhovanie zmien v umiestnení rozvrhových akcií.
+\item[Timetable] Vytváranie rozvrhových akcií pre rozvrh na semester aj skúškový
+  rozvrh.
+\item[Data] Úprava dát, nevyhnutných pre tvorbu rozvrhu (zoznamy predmetov,
+  študentov, miestností, atď.). Import týchto údajov môže zabezpečiť osobitný
+  balíček (v našom prípade balíček \emph{FEI}).
+\item[Settings] Správa nastavení celého rozvrhového systému. Tento balíček je
+  využívaný všetkými ostatnými balíčkamikmi.
+\item[Generator] Generovanie rozvrhu na základe vstupných požiadaviek (z balíčka
+  \emph{Requirements}).
+\item[Requirements] Správa požiadaviek vyučujúcich, študentov, miestností. Bude
+  obsahovať rozhranie pre pripojenie modulov z balíčka
+  \emph{RequirementModules}.
+\item[RequirementModules] Implementácia jednotlivých typov požiadaviek na
+  rozvrh. Každý typ požiadavky bude musieť dodržať rozhranie na pripojenie k
+  modulu \emph{Requirements}.
+\end{description}
+
+Tieto balíčky korešpondujú s časťami webovej aplikácie, ktorá na serveri ukladá
+dáta do databázy a poskytuje ich cez protokol \acrshort{http} formou
+\acrshort{html} dokumentu tenkému klientovi, ktorý beží vo webovom prehliadači.
+Dáta sa upravujú prevažne cez formuláre, po odoslaní ktorých server ako odpoveď
+odošle opäť celý dokument, s menšími výnimkami, keď sa na komunikáciu používa
+\acrshort{ajax}, ktorý umožňuje so serverom komunikovať asynchrónne. Hlavná
+interakcia prebieha v balíčku \emph{Calendar} a \emph{Timetable}, ktoré slúžia
+na manipuláciu rozvrhu, pričom balíček \emph{Calendar} obsahuje aj drag-and-drop
+funkcionalitu, implementovanú v \acrshort{js}.
+
+\subsubsection{Navrhnuté zmeny}
+
+Architektúra pôvodného systému je vhodná skôr pre menej interaktívne aplikácie,
+v ktorých si klient vystačí s formulármi a minimálnou manipuláciou s
+\acrfull{dom}. Pokiaľ je potrebné, aby aplikácia poskytovala bohaté
+používateľské rozhranie, vrátane drag-and-drop s možnosťou komplexnej
+manipulácie dát, je vhodnejšie presunúť viac kompetencií na stranu klienta. To
+umožní predovšetkým lepšie riadiť zložitosť systému.
+
+Rozhodli sme sa preto zo systému klientskú časť osamostatniť do podoby
+\acrfull{spa}, teda jednostránkovej aplikácie, ktorá bude so serverom
+komunikovať pomocou webového \acrshort{api}, z ktorého sa tým pádom stane webová
+služba. To zo sebou prináša mnohé výhody, z ktorých niektoré sú:
+
+\begin{itemize}
+\item posielanie iba nevyhnutných dát znižuje odozvu klienta,
+\item uľahčenie manipulácie dát, keďže ich klient nemusí získavať z
+  \acrshort{dom},
+\item lepšie oddelenie zodpovedností klienta a servera zvyšuje možnosti ich
+  oddeleného vývoja a sprehľadňuje zdrojový kód,
+\item možnosť interoperability s inými službami, napr. automatizáciu importu a
+  exportu dát z, resp. do \acrshort{ais}, prístup k dátam o aktuálne
+  voľných miestnostiach pre aplikácie tretích strán atď.,
+\item možnosť poskytnúť offline funkcionalitu, napr. prehliadanie poslednej
+  načítanej verzie rozvrhov,
+\item možnosť implementácie viacerých klientov, napr. v podobe natívnych
+  mobilných aplikácií.
+\end{itemize}
+
+Nevýhodou takejto zmeny je, že sa tým zvýši náročnosť a zložitosť implementácie.
+Avšak tento nárast je v porovnaní s rýchlo rastúcou komplexnosťou systému,
+spôsobenou pridávaním novej funkcionality, konštantný, keďže sa po prvotnej
+úprave vývojového prostredia, použitých technológií a refaktoringu zdrojového
+kódu zastaví.
+
+Kvôli zmene tohto typu v podstate nie je potrebné meniť dátový model na strane
+servera, ktorý je bližšie popísaný v práci mojej predchodkyne \cite{knap}. Z
+pohľadu z diaľky by sa tak len zmenil formát a štruktúra \acrshort{url} zdrojov,
+ktoré server poskytuje. Avšak rozhodli sme sa ho upraviť z iných dôvodov. Hlavné
+zmeny sú nasledovné:
+
+\begin{itemize}
+\item Odstránenie balíčka \emph{Calendar}, ktorý slúžil na prezentáciu a úpravu
+  rozvrhu. Po zmene architektúry preberie na seba túto úlohu klient.
+\item Premenovanie balíčka \emph{Data} na \emph{School}, čo lepšie popisuje jeho
+  zameranie.
+\item Nastavenia rozvrhov (trvanie periód, počet týždňov atď.) sa budú ukladať
+  pre každý rozvrh osobitne do databázy, namiesto pre celý systém všeobecne v
+  konfiguračnom súbore. Zároveň sa tým stratí potreba explicitne rozdeľovať
+  rozvrhy na semester a skúškové obdobie do osobitných tried. Umožníme tým prácu
+  s rozvrhmi, ktoré majú rôzne parametre (napr. dĺžku vyučovacej hodiny). 
+\item S tým tiež súvisí zmena reprezentácie času konania udalosti v rozvrhu.
+  Neukladáme jej absolútny čas a dátum, ale iba relatívny. Rozvrh bude mať
+  nastavený počet týždňov obdobia, trvanie jednej časovej periódy (vyučovacej
+  hodiny) atď. Udalosť v rozvrhu tak bude obsahovať zoznam týždňov, v ktoré sa
+  uskutoční, konkrétny deň v týždni a interval časových periód, ktoré sú pre ňu
+  vyhradené. Napr. cvičenie z matematiky sa uskutoční prvých desať týždňov
+  semestra, v pondelok, počas tretej až štvrtej periódy. Týmto sa zjednoduší
+  reprezentácia udalostí a uľahčí výpočet ich kolízií.
+\end{itemize}
+
+\subsection{Webová služba}
+\label{subsec:server_design}
+
+Webová služba je softvérový systém, navrhnutý na podporu interoperabilných
+interakcií medzi počítačmi cez sieť. \cite{w3c_ws_gloss} Vo webovej službe sa
+webové technológie ako napr. \acrshort{http}, pôvodne navrhnuté na komunikáciu
+medzi človekom a počítačom, používajú na komunikáciu medzi zariadeniami, resp.
+programami. Môžeme identifikovať dve hlavné triedy webových služieb:
+
+\begin{itemize}
+\item \acrshort{rest} webové služby, ktorých primárnym cieľom je manipulácia
+  reprezentácií webových zdrojov s použitím uniformnej množiny bezstavových
+  operácií,
+\item svojvoľné webové služby, ktoré môžu exponovať ľubovoľnú množinu operácií.
+  \cite{w3c_ws_arch}
+\end{itemize}
+
+Rozhodli sme sa, že serverová časť rozvrhového systému bude \acrshort{rest}
+webová služba, pričom komunikácia bude prebiehať cez \acrshort{http}. Jej
+bezstavovosť zlepšuje prehľadnosť, objaviteľnosť a škálovateľnosť webového
+\acrshort{api} a znižuje previazanosť medzi serverom a klientom. \acrshort{rest}
+architektúra je v súčastnosti pomerne rozšírená, čoho dôsledkom je dostupnosť
+viacerých knižníc a frameworkov pre jej podporu v rôznych programovacích
+jazykoch, čo uľahčuje jej implementáciu.
+
+Serverová časť aplikácie tak bude mať na starosti všetko to čo predtým, okrem
+používateľského rozhrania. To znamená, že dáta:
+
+\begin{itemize}
+\item sa ukladajú do databázy,
+\item interne sú reprezentované formou entitných tried,
+\item externe sú reprezentované formou webových zdrojov,
+\item je možné s nimi manipulovať cez webové \acrshort{api},
+\item je možné ich importovať a exportovať z, resp. do preddefinovaných
+  formátov,
+\item je možné ich zálohovať,
+\item prístup k nim je autentifikovaný a autorizovaný.
+\end{itemize}
+
+Z biznis logiky ma na starosti:
+
+\begin{itemize}
+\item generovanie rozvrhov,
+\item výpočet kolízií rozvrhových akcií.
+\end{itemize}
+
+\subsubsection{REST}
+\label{subsubsec:rest}
+
+\acrfull{rest} alebo RESTful webové služby sú jedným so spôsobov ako zabezpečiť
+interoperabilitu medzi počítačovými systémami na internete. Webové služby, ktoré
+dodržujú tento architektonický štýl, dávajú dotazujúcim systémom možnosť
+pristupovať a manipulovať s textovými reprezentáciami webových zdrojov s
+použitím preddefinovanej množiny bezstavových operácií. Webové zdroje boli
+pôvodne definované ako dokumenty alebo súbory identifikované pomocou ich
+\acrshort{url}, ale dnes ich definícia zahŕňa každú entitu, ktorú je možné
+identifikovať, pomenovať, adresovať alebo s ňou akýmkoľvek spôsobom narábať na
+webe.
+
+Dotazy na \acrshort{uri} zdrojov v rámci \acrshort{rest} webovej služby vyvolajú
+odpoveď, ktorá býva najčastejšie vo formáte \acrshort{json}, \acrshort{xml}
+alebo \acrshort{html}. Odpoveď môže potvrdiť, že došlo k nejakej modifikácii
+uloženého zdroja a môže poskytnúť hypertextové odkazy na iné súvisiace zdroje
+alebo kolekcie zdrojov. Operácie, ktoré sú k dispozícii pri komunikácií cez
+\acrshort{http}, ktorý býva použitý najčastejšie, zahŕňajú tie, ktoré sú
+preddefinované \acrshort{http} slovesami (metódami), teda napr. \texttt{GET},
+\texttt{POST}, \texttt{PUT}, \texttt{DELETE} atď. Tým, že \acrshort{rest}
+systémy používajú bezstavový protokol, štandardné operácie a opätovne používajú
+komponenty, ktoré môžu byť spravované a aktualizované bez toho, aby to
+ovplyvnilo celý systém, aj keď práve beží, sa snažia dosiahnuť vysoký výkon,
+spoľahlivosť a schopnosť rásť. \cite{fielding}
+
+Na reprezentáciu zdrojov sme si vybrali formát \acrfull{json}. Je to ľahký,
+textový, jazykovo nezávislý formát výmeny údajov. Je odvodený z jazyka
+\acrfull{js}, ale v súčastnosti veľa programovacích jazykov podporuje jeho
+parsovanie a generovanie a zároveň je ľahko čitateľný aj pre ľudí. Zakladá sa na
+pároch atribútov a hodnôt. \cite{ecma_json}
+
+\subsubsection{Autentifikácia}
+\label{subsubsec:auth}
+
+V kontexte webovej služby je autentifikácia mechanizmus asociácie
+prichádzajúceho dotazu s množinou identifikačných údajov, čo môže byť napr.
+používateľ, od ktorého dotaz prišiel alebo token, ktorým bol podpísaný.
+\cite{django_rest_framework} Uvádzame niekoľko bežných schém, ktoré je možné
+použiť na implementáciu autentifikácie pre \acrshort{rest} webovú službu:
+
+\begin{description}
+\item[\acrshort{http} basic authentication] V preklade jednoduché overenie
+  prístupu, je metóda, v ktorej klient odošle používateľské meno a heslo ako
+  súčasť dotazu. Tieto údaje sú zakódované v kódovaní Base64 a nie sú pri
+  prenose nijako chránené. \cite{rfc7617} Keďže toto pole musí byť odoslané v
+  hlavičke každého dotazu, ktorý má byť autentifikovaný, klient (webový
+  prehliadač) by mal prístupové údaje po určitú dobu udržiavať vo svojej
+  vyrovnávacej pamäti, ak sa chce vyhnúť tomu, aby ich používateľ musel zakaždým
+  zadávať. \acrshort{http} neposkytuje webovému serveru spôsob ako klienta
+  inštruovať, aby používateľa ,,odhlásil``, teda uvoľnil prihlasovacie údaje z
+  vyrovnávacej pamäte. Existuje niekoľko možností ako v niektorých prehliadačoch
+  tieto údaje vymazať, avšak toto správanie je nekonzistentné medzi jednotlivými
+  prehliadačmi a ich verziami. Príklad výsledného poľa v hlavičke dotazu:
+
+  \texttt{Authorization: Basic dGVzdDoxMjPCow==}
+
+\item[Session manažment] Keďže HTTP protokol je z definície bezstavový, tak na
+  to, aby bolo možné asociovať dotaz s akýmkoľvek iným dotazom, je potrebné si
+  medzi jednotlivými dotazmi zapamätať nejaké údaje. Jedno z možných riešení je
+  vytvoriť na strane servera tzv. session (reláciu), do ktorej si môže server
+  ukladať ľubovoľné informácie o klientovi. Na strane klienta je potrebné uložiť
+  si iba session \acrshort{id}, ktoré sa pri každom dotaze odošle na server
+  najčastejšie vo forme \acrshort{http} cookie, prípadne ako \acrshort{url}
+  parameter. V prípade, že sa klient úspešne autentifikuje sa táto informácia
+  pridá do jeho session, čiže zostáva autentifikovaný po dobu platnosti session,
+  resp. pokiaľ neurobí dotaz na odhlásenie. Takýto prístup je rozšírený medzi
+  klasickými webovými aplikáciami.
+
+\item[Autentifikácia na základe tokenu] Token je reťazec podpísaný serverom,
+  ktorý klient získa ako odpoveď na požiadavku o jeho vytvorenie, v ktorej sa
+  preukáže svojimi prihlasovacími údajmi. Následne ho pridá do hlavičky každého
+  dotazu, ktorý má byť autentifikovaný. Na rozdiel od session manažmentu si
+  server nemusí nič pamätať, všetky potrebné údaje sú zakódované v tokene. Jeho
+  dôveryhodnosť a integrita by mala byť zabezpečená kombináciou správne
+  zvolených kryptografických primitív. Token máva spravidla časovo obmedzenú
+  platnosť. Je na klientovi ako si token uloží. Príklad výsledného poľa v
+  hlavičke dotazu:
+
+  \texttt{Authorization: Bearer 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b}
+  
+\item[Autentifikácia na základe dotazu] Požiadavky je možné autentifikovať tým,
+  že sa identifikačné údaje zaradia do parametrov \acrshort{url} reťazca,
+  namiesto využitia \acrshort{http} hlavičky. Je potrebné, aby klient a server
+  zdieľali spoločné tajomstvo, tzv. \acrshort{api} kľúč, a zároveň jeho
+  \acrshort{id}. Klient pri konštrukcii dotazu pridá medzi parametre
+  \acrshort{id} kľúča, spravidla aj časovú pečiatku (kvôli časovému obmedzeniu
+  platnosti dotazu), následne dotaz s použitím kľúča podpíše a výsledný podpis
+  tiež pridá medzi parametre dotazu. Výhodou tohto prístupu je, že umožňuje
+  priamy prístup tretích strán k privátnym dátam, bez nutnosti ich k tomu
+  ,,splnomocniť``, napr. pomocou proxy servera. Výsledný dotaz môže vyzerať
+  napr. takto:
+
+  \texttt{GET /object?timestamp=1490099398\&apiKey=7d129f12fa322280\&signature=
+    \\f213669fb72a47ae622a9b71f39a6c6d}
+\end{description}
+
+Na zabezpečenie dôveryhodnosti sa zvyčajne každá z týchto schéme používa v
+kombinácii s \acrshort{https}.
+
+Autentifikáciu \acrshort{rest} \acrshort{api} sme sa rozhodli riešiť pomocou
+tokenu, pretože zachováva bezstavovosť servera, je vhodná na použitie aj v
+klientoch, implementovaných ako natívne aplikácie (teda nielen v prehliadači) a
+zároveň existuje niekoľko štandardov, ktoré ju popisujú a pre ktoré sú k
+dispozícii voľne dostupné implementácie. Konkrétne sme si vybrali štandard
+\acrfull{jwt}.
+
+\subsubsection{JSON Web Token}
+
+\acrlong{jwt} je otvorený štandard, ktorý definuje kompaktný a sebestačný spôsob
+bezpečného prenosu informácií medzi zúčastnenými stranami ako \acrshort{json}
+objekt, ktorý obsahuje isté tvrdenia. Tokeny môžu byť podpísané s použitím
+tajomstva (s \acrshort{hmac} algoritmom) alebo privátneho kľúča (s
+\acrshort{rsa} algoritmom). Napríklad, server môže vygenerovať token, ktorý
+obsahuje tvrdenie ,,prihlásený ako admin`` a poskytnúť ho klientovi. Klient
+následne môže tento token použiť na dokázanie, že je prihlásený ako admin.
+\acrshort{jwt} je reprezentovaný ako sekvencia Base64URL zakódovaných častí
+oddelených bodkou, typicky:
+
+\begin{description}
+\item[Hlavička] Obsahuje typ tokenu, čo je \acrshort{jwt} a hašovací algoritmus,
+  ktorý sa používa, napr. \acrshort{hmac} SHA256. Príklad hlavičky:
+
+  \begin{minted}{json}
+  {
+    "alg": "HS256",
+    "typ": "JWT"
+  }
+  \end{minted}
+
+\item[Užitočné dáta] Obsahuje tvrdenia, čo sú výroky o entite (typicky
+  používateľovi) a ďalšie metadáta. Existujú tri typy tvrdení:
+
+  \begin{description}
+  \item[Rezervované tvrdenia] Množina preddefinovaných tvrdení, ktoré nie sú
+    povinné, ale odporúčané. Niektoré z nich sú: \textbf{iss} (vydavateľ),
+    \textbf{exp} (čas exspirácie), \textbf{sub} (predmet), \textbf{aud}
+    (publikum) a iné.
+  \item[Verejné tvrdenia] Tieto môžu byť definované ľubovoľne používateľmi
+    \acrshort{jwt}. Kvôli vyhnutiu sa kolízií by mali byť definované v
+    \acrshort{iana} \acrlong{jwt} registri alebo definované ako \acrshort{uri},
+    ktoré obsahuje kolízne rezistentný menný priestor.
+  \item[Privátne tvrdenia] Toto sú vlastné tvrdenia, vytvorené na zdieľanie
+    informácií medzi stranami, ktoré sa dohodli na ich použití.
+  \end{description}
+
+  Príklad užitočných dát:
+
+  \begin{minted}{json}
+  {
+    "sub": "1234567890",
+    "name": "John Doe",
+    "admin": true
+  }
+  \end{minted}
+
+\item[Podpis] Na vytvorenie podpisu je potrebné aplikovať algoritmus deklarovaný
+  v hlavičke na zreťazenie hlavičky a užitočných dát. Podpis sa používa na
+  overenie toho, že odosielateľ \acrshort{jwt} je ten, za koho sa vydáva a na
+  zaručenie, že správa nebola počas prenosu upravená. \cite{rfc7519, jwt_io}
+  Príklad konštrukcie podpisu:
+
+  \begin{verbatim}
+  HMACSHA256(
+    base64UrlEncode(hlavička) + "." + base64UrlEncode(užitočné dáta),
+    tajomstvo)
+  \end{verbatim}
+\end{description}
+
+Príklad výsledného tokenu (zalomenie riadkov len pre účely zobrazenia):
+
+\begin{verbatim}
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.
+TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
+\end{verbatim}
+
+\subsubsection{Návrh API}
+\label{subsubsec:api_design}
+
+V tejto časti popisujeme dizajn \acrshort{api}, ktoré bude webová služba
+poskytovať. Jedným z kľúčových princípov \acrshort{rest} je rozdelenie
+\acrshort{api} na logické zdroje. Sú manipulované cez \acrshort{http} dotazy,
+kde každá z možných metód má špecifický význam. Jednotlivé zdroje sú v
+\acrshort{uri} reprezentované podstatnými menami, ktoré dávajú zmysel z pohľadu
+konzumenta \acrshort{api}. Výstup, teda textová reprezentácia zdrojov, je vo
+formáte \acrshort{json}. Rovnako aj vstupné dáta, ktoré sú súčasťou tela dotazu.
+\acrshort{api} tiež vracia zmysluplné \acrshort{http} status kódy, napr.
+\texttt{201 Created} ako odpoveď na \texttt{POST} dotaz, ktorého výsledkom je
+vytvorenie zdroja alebo \texttt{204 No Content} ako odpoveď na úspešný dotaz,
+ktorej telo je prázdne (napr. \texttt{DELETE} dotaz). Zdroje môžu, ale nemusia,
+korešpondovať s entitami interného dátového modelu servera.
+
+Nasleduje popis významu akcií, ktoré je možné použiť na manipuláciu zdrojov,
+avšak jednotlivé zdroje ich nemusia podporovať všetky. Ich použitie sme
+ilustrovali na príklade jedného zdroja:
+
+\begin{itemize}
+\item \texttt{GET /rooms/} - načíta zoznam miestností,
+\item \texttt{GET /rooms/42/} - načíta konkrétnu miestnosť,
+\item \texttt{POST /rooms/} - vytvorí novú miestnosť,
+\item \texttt{PUT /rooms/42/} - aktualizuje miestnosť s \acrshort{id} 42,
+\item \texttt{PATCH /rooms/42/} - parciálne aktualizuje miestnosť s
+  \acrshort{id} 42,
+\item \texttt{DELETE /rooms/42/} - vymaže miestnosť s \acrshort{id} 42.
+\end{itemize}
+
+Medzi metódami \texttt{PUT} a \texttt{PATCH} existuje významná odlišnosť v tom,
+že \texttt{PUT} je na rozdiel od \texttt{PATCH} idempotentná. To znamená, že ak
+metódu \texttt{PUT} aplikujeme viac krát s tými istými dátami na rovnaký zdroj,
+výsledkom bude stále ten istý zdroj, čo pri \texttt{PATCH} platiť nemusí.
+Metódy, ktoré zdroje vytvárajú alebo aktualizujú (\texttt{POST}, \texttt{PUT} a
+\texttt{PATCH}), vracajú reprezentáciu zdroja, ktorý vytvoria alebo upravia,
+aby klient nemusel vytvárať nový dotaz, kvôli získaniu aktuálnej reprezentácie
+zdroja.
+
+Ak môže byť zdroj v relácii s viacerými zdrojmi, \acrshort{id} zdroja s ktorým
+je v relácii je obsiahnuté v jeho reprezentácii. Fakt, že zdroj môže byť v
+relácii iba s jedným iným zdrojom je vyjadrený tým, že jeho \acrshort{uri} sa
+skladá z \acrshort{uri} nadradeného zdroja, za ktorou nasledujú segmenty
+prislúchajúce jemu ako podradenému zdroju. Napr. udalosť musí prislúchať
+nejakému konkrétnemu rozvrhu. Jej cesta môže vyzerať nasledovne:
+\texttt{/timetables/7/events/14/} - udalosť s \acrshort{id} 14 prislúchajúca k
+rozvrhu s \acrshort{id} 7.
+
+Zdroje, pri ktorých to má zmysel, musí byť možné filtrovať na základe vybraných
+parametrov. Tieto parametre budú súčasťou \acrshort{url} dotazu na zdroj. Napr.
+dotaz \texttt{GET} \path{/rooms/?min_capacity=100} vyfiltruje miestnosti, ktoré
+majú kapacitu minimálne 100 ľudí. Koncové body, ktoré vracajú zoznam zdrojov,
+tak budú robiť po stranách, napr. \texttt{GET} \path{/rooms/?page=2} vráti druhú
+stranu. Súčasťou odpovede bude celkový počet zdrojov v zozname a počet zdrojov
+na stranu bude konštantný. Pokiaľ parameter \texttt{page} nebude súčasťou
+dotazu, vráti sa prvá strana zoznamu. Takisto musí byť možné v zdrojoch
+vyhľadávať na základe ich vybraných atribútov, ktoré sú reťazce. Napr. dotaz
+\texttt{GET} \path{/rooms/?search=ab} vyfiltruje miestnosti, ktorých názov
+obsahuje podreťazec \emph{ab}. Zdroje tiež bude možné zoradiť, napr. dotaz
+\texttt{GET} \path{/rooms/?ordering=name} zoradí miestnosti podľa názvu.
+Filtrovanie pomocou viacerých parametrov bude možné kombinovať. Napr. dotaz
+\texttt{GET} \path{/rooms/?page=2&min_capacity=100&ordering=name&search=ab}
+vyfiltruje miestnosti podľa kritérií, ktoré sú zjednotením predošlých príkladov.
+
+Autentifikácia \acrshort{api} je bezstavová. Používame \acrshort{jwt}, ktorý sa
+prenáša v hlavičke dotazu. Zdroje, ktoré neobsahujú citlivé údaje, sú na čítanie
+prístupné aj bez autentifikácie. Na zaistenie bezpečnosti \acrshort{api}
+využívame protokol \acrshort{tls}. Nasleduje krátky popis jednotlivých zdrojov:
+
+\begin{description}
+\item[activities] Kombinácia kategórie aktivity a voliteľne predmetu
+  (napr. mimoškolské aktivity nemusia súvisieť s predmetmi).
+\item[activity-categories] Kategórie aktivít, napr. prednáška, cvičenie, seminár
+  atď.
+\item[api-token-auth] Slúži na vytvorenie autentifikačného tokenu. Podporuje iba
+  metódu \texttt{POST}, ktorej vstupom je používateľské meno a heslo a výstupom
+  token.
+\item[api-token-refresh] Slúži na aktualizáciu autentifikačného tokenu.
+  Podporuje iba metódu \texttt{POST}, ktorej vstupom je aktuálny token a
+  výstupom obnovený token (s novým časom exspirácie).
+\item[courses] Vyučujúce predmety, obsahujú \acrshort{id} ich príslušného
+  oddelenia.
+\item[departments] Oddelenia školy členené hierarchicky. Obsahujú \acrshort{id}
+  rodiča, pokiaľ nie sú koreňom stromu. Napr. \acrshort{fei} je rodičom
+  \acrshort{uim} a pod.
+\item[equipment] Vybavenie, napr. tabuľa, projektor atď.
+\item[groups] Skupiny zamestnancov a študentov členené hierarchicky. Obsahujú
+  \acrshort{id} rodiča, pokiaľ nie sú koreňom stromu. Napr. Aplikovaná
+  informatika je rodičom skupiny Bezpečnosť informačných systémov.
+\item[room-categories] Kategórie miestností, napr. poslucháreň, posilovňa,
+  laboratórium atď.
+\item[rooms] Miestnosti v škole, obsahujú kategóriu, vybavenie a \acrshort{id}
+  ich príslušného oddelenia.
+\item[timetables] Rozvrhy na jednotlivé obdobia a ich metadáta.
+\item[events] Udalosti v rozvrhu, sú kombináciou aktivity, miestnosti, času
+  konania a voliteľne skupín. Každá udalosť patrí k práve jednému rozvrhu, preto
+  k nim nie je možné pristupovať osobitne, iba cez \acrshort{url} rozvrhu, napr.
+  \texttt{/timetables/7/events/}.
+\end{description}
+
+\subsection{Webový klient}
+\label{subsec:client_design}
+
+Webový klient je aplikácia, ktorá beží v internetovom prehliadači. S
+\acrshort{rest} \acrshort{api}, ktoré poskytuje server, komunikuje
+prostredníctvom \acrshort{http} (resp. \acrshort{https}) vo formáte
+\acrshort{json}. Obsahuje používateľské rozhranie (\acrshort{ui}), ktoré slúži
+na interakciu s rozvrhovým systémom, pričom používateľom poskytuje funkcionalitu
+definovanú v špecifikácii požiadaviek v kapitole \ref{subsec:requirements} a
+podrobnejšie v práci mojej predchodkyne \cite{knap}.
+
+\subsubsection{Nefunkcionálne požiadavky}
+
+Klient by mal spĺňať aj tieto nefunkcionálne požiadavky:
+
+\begin{itemize}
+\item podporovať minimálne posledné dve verzie najrozšírenejších moderných
+  webových prehliadačov,
+\item byť responzívny, čiže prispôsobovať svoje \acrshort{ui} veľkosti
+  zariadenia (resp. zobrazenia),
+\item mať príjemné a efektívne \acrshort{ui},
+\item v prípade, že používateľ nie je autentifikovaný, poskytnúť funkcionalitu,
+  na ktorú autentifikácia nie je potrebná,
+\item v prípade, že sa mu nepodarí vytvoriť spojenie so serverom, poskytnúť
+  funkcionalitu, na ktorú spojenie so serverom nie je potrebné,
+\item byť výkonný a minimalizovať množstvo prenášaných dát,
+\item byť bezpečný, teda obsahovať ochranu proti bežným hrozbám ako napr.
+  \acrfull{xss},
+\item byť prístupný pre používateľov s postihnutím.
+\end{itemize}
+
+\subsubsection{Používateľské rozhranie}
+\label{subsubsec:ui_design}
+
+Klient podporuje editovanie údajov o zdrojoch, alokovaných v rámci tvorby
+rozvrhu (predmety, miestnosti, študenti atď.), ako aj obmedzenia a požiadavky na
+rozvrh a parametre generátora pomocou prehľadných formulárov. Avšak
+najdôležitejšou časťou \acrshort{ui} je editácia jednotlivých rozvrhových akcií
+(udalostí) v rozvrhu. Klient musí pre zvolený rozvrh podporovať jeho zobrazenie
+v rôznych časových mriežkach (dennej, týždennej a pod.) a filtrovanie podľa
+rôznych zdrojov (miestností, predmetov, vyučujúcich a pod.), pričom jeho
+editácia prebieha pomocou drag-and-drop presúvania, resp. vytvárania rozvrhových
+akcií. Pri tejto časti \acrshort{ui} nám bol inšpiráciou Kalendár
+Google\footnote{\url{https://calendar.google.com}},
+FullCalendar\footnote{\url{https://fullcalendar.io/}} a Prime Timetable
+(podkapitola \ref{subsubsec:prime_timetable}). Tiež by mal prehľadne a v reálnom
+čase zobrazovať ich prípadné kolízie. Klient tiež musí poskytovať manažment
+osobitných rozvrhov a ich nastavení (počet týždňov, dni výuky, dĺžky časových
+periód v dni atď.).
+
+Podrobnejšie si popíšeme rozhranie, ktorá slúži na prezeranie a editovanie
+rozvrhov. Jeho návrh môžme vidieť na obrázku \ref{fig:client_design}. V hornej
+časti sa pod hlavným menu nachádza názov rozvrhu a vedľa neho lišty na
+filtrovanie zobrazených udalostí podľa typu zdroja a časovej granularity. Pod
+nimi sa nachádza lišta na filtrovanie zobrazených zdrojov (riadkov v mriežke)
+podľa ich špecifických parametrov. V prípade miestností ide napr. o ich
+kategóriu či vybavenie. Napravo od nej je vstupné pole pre vyhľadávací reťazec,
+ktorý slúži na filtrovanie zobrazených zdrojov na základe ich textových
+parametrov, v prípade miestností napr. podľa ich názvu alebo kategórie. Tieto
+spôsoby filtrovania je možné kombinovať, napr. vyhľadať miestnosti, ktorých
+názov obsahuje podreťazec \emph{ab} s minimálnou kapacitou 100 ľudí a súčasťou
+ich vybavenia je projektor.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{figures/client-design.png}
+  \caption{\label{fig:client_design} Návrh používateľského rozhrania klienta}
+\end{figure}
+
+Nasleduje samotný rozvrh, prezentovaný ako tabuľka, ktorej stĺpce (okrem prvého)
+sú časové jednotky a riadky tvoria zdroje, spĺňajúce filtrovacie kritériá,
+predvolene všetky. Ak je riadkov priveľa, sú stránkované. Na obrázku je ako
+príklad rozvrh miestností na jeden týždeň. Bunka, ktorá je priesečníkom
+miestnosti a dňa je ešte vertikálne rozdelená na časové periódy (vyučovacie
+hodiny). Udalosť je zobrazená ako dlaždica, okupujúca takú časť bunky, ktorá
+korešponduje s časom jej konania. Udalosti je možné v mriežke presúvať myšou
+spôsobom drag-and-drop. Rovnako aj meniť ich veľkosť (trvanie), resp. vytvárať
+nové udalosti potiahnutým kurzoru po neobsadenej časti mriežky. Po kliku na
+názov zdroja (miestnosti) v prvom stĺpci sa zobrazí detailný rozvrh pre daný
+zdroj tak, že riadkami v tabuľke budú časové periódy. Teda obsah jej riadku v
+zozname zdrojov sa v podstate otočí o $90\degree$ a udalosti sa namiesto
+zoradenia v jednom riadku zľava doprava, zobrazia po riadkoch zhora nadol.
+
+Dlaždice, reprezentujúce udalosti, sú farebne odlíšené a ich štítok a farba
+označujú zdroj, ktorý má v danom zobrazení najväčší zmysel. V našom príklade by
+to bola skratka a farba predmetu (resp. aktivity), pokiaľ by sme prezerali
+predmety, bola by to naopak názov a farba miestnosti. Svoju farbu môže mať
+priradený predmet, skupina (krúžok), miestnosť, resp. ich kategória, ktorá sa
+použije ako predvolená, ak nie je určená farba konkrétneho zdroja. Po vytvorení
+novej udalosti alebo kliknutím na už existujúcu udalosť sa otvorí dialógové
+okno, ktoré bude obsahovať formulár na editovanie jej atribútov.
+
+\section{Použité technológie}
+\label{sec:used_technologies}
+
+Prototyp, z ktorého vychádzame, bol implementovaný v jazyku Python 2 s použitím
+webového frameworku Django a databázy PostgreSQL na strane servera a na tvorbu
+grafického používateľského rozhrania využíva \acrshort{css} framework Boostrap a
+jazyk \acrlong{js} s knižnicou jQuery. V tejto kapitole popisujeme technológie,
+ktoré sme si vybrali na implementáciu nášho návrhu a zdôvodníme ich výber.
+
+\subsection{Serverová časť}
+\label{sec:back_end}
+
+Serverová časť systému pozostáva z webovej služby, ktorá poskytuje
+\acrshort{rest} \acrshort{api} a dáta ukladá do \acrshort{sql} databázy. Vznikla
+adaptáciou pôvodného prototypu systému.
+
+\subsubsection{Python}
+
+Python je vysoko-úrovňový, interpretovaný, interaktívny, programovací jazyk,
+vytvorený Guidom van Rossumom. Zahŕňa moduly, výnimky, dynamické typovanie a
+triedy. Kombinuje značnú expresivitu s veľmi čistou syntaxou a dobrou
+čitateľnosťou. \cite{python_faq} Zabezpečuje tiež automatickú správu pamäte a
+podporuje rozmanité programovacie paradigmy, vrátane objektovo-orientovanej,
+imperatívnej, procedurálnej a funkcionálnej. Má obsiahlu štandardnú knižnicu a
+jeho interpretre sú dostupné na širokej škále platforiem.
+
+Aj keď Python 3 vyšiel v roku 2008, Python 2 je stále široko používaný a
+podporovaný, keďže Python 3 nie je plne spätne kompatibilný. Pôvodný systém bol
+napísaný vo verzii Python 2.7 aj kvôli podpore knižníc tretích strán. Keďže
+všetky knižnice, ktoré sme potrebovali využiť v súčasnosti podporujú Python 3 a
+oficiálna podpora Python 2 končí v roku 2020 \cite{pep373} rozhodli sme sa
+prejsť na Python 3.5.
+
+\subsubsection{Django}
+\label{subsubsec:django}
+
+Django je slobodný a open-source, vysoko úrovňový webový framework, napísaný v
+jazyku Python. Kladie dôraz na znovupoužiteľnosť a modulárnosť komponentov,
+rýchly vývoj a princíp \acrshort{dry} (neopakuj sa). Súčasťou Djanga je
+\acrshort{orm} modul, ktorý slúži na popísanie databázovej štruktúry a prístup k
+databáze v Python kóde. Tiež obsahuje modul na návrh \acrshort{url} schémy,
+ktorá obsahuje jednoduché mapovanie medzi \acrshort{url} vzormi a spätnými
+volaniami Python funkcií. \cite{django}
+
+Django sme aktualizovali na verziu 1.11, čo je posledná verzia, ktorá podporuje
+súčasne Python 2 aj 3 a preto má tiež predĺženú podporu. Použili sme aj niekoľko
+modulov tretích strán, medzi inými:
+
+\begin{description}
+\item[Django \acrshort{mptt}] Nástroje na implementáciu ukladania hierarchických
+  dát v databáze s použitím štruktúry \acrfull{mptt}. Cieľom je, aby boli
+  operácie pre načítanie dát
+  efektívne.\footnote{\url{https://django-mptt.github.io/django-mptt/}}
+\item[Django \acrshort{rest} framework] Flexibilná sada nástrojov na vytváranie
+  webových \acrshort{api}. \cite{django_rest_framework}
+\item[Django \acrshort{rest} framework \acrshort{jwt}] Podpora autentifikácie
+  pomocou \acrshort{jwt} pre Django \acrshort{rest}
+  framework.\footnote{\url{https://getblimp.github.io/django-rest-framework-jwt/}}
+\item[Django REST Swagger] Generátor Swagger/OpenAPI dokumentácie pre Django
+  \acrshort{rest}
+  framework.\footnote{\url{https://django-rest-swagger.readthedocs.io}}
+\item[Django import/export] Poskytuje rozhranie na import a export dát v rôznych
+  formátoch.\footnote{\url{https://django-import-export.readthedocs.io/en/latest/}}
+\end{description}
+
+\subsubsection{PostgreSQL}
+
+PostgreSQL je objektovo-relačný databázový systém s dôrazom na rozšíriteľnosť a
+dodržiavanie štandardov. Jeho transakcie sú plne \acrshort{acid} kompatibilné.
+Je to slobodný a open-source softvér. Beží na všetkých hlavných operačných
+systémoch a má natívne programovacie rozhranie pre veľké množstvo programovacích
+jazykov a dobrú podporu vo frameworku Django. \cite{postgresql}
+
+\subsection{Klientská časť}
+\label{subsec:front_end}
+
+Klienta tvorí \acrshort{spa}, ktorá so serverom komunikuje prostredníctvom
+\acrshort{rest} \acrshort{api}. Na implementáciu sme si vybrali jazyk Elm,
+minimálne doplneným \acrlong{js}om, s použitím \acrshort{ui} frameworku
+Bootstrap. Na uľahčenie písania \acrshort{css} sme použili preprocesor Sass. Pre
+jazyk Elm neexistujú samostatné implementačné frameworky, ktoré by uľahčovali
+tvorbu aplikácií, akými sú napr. Angular alebo React pre \acrshort{js}. Túto
+rolu zohráva architektonický vzor \acrfull{tea}, ktorý má podporu v štandardnej
+knižnici, je popísaný v oficiálnej dokumentácii a je de facto štandardom pre
+tvorbu aplikácii v Elme. Viac sa mu venujeme v podkapitole \ref{subsubsec:tea}.
+
+\subsubsection{JavaScript}
+
+\acrfull{js} je vysoko-úrovňový, dynamický, netypovaný, interpretovaný
+programovací jazyk. Bol štandardizovaný v jazykovej špecifikácii ECMAScript. Je
+jednou zo základných webových technológií a podporujú ho všetky moderné
+prehliadače. \cite{flanagan} Je tiež možné ho použiť na strane servera s runtime
+prostredím, ako je napr. Node.js.
+
+\subsubsection{Elm}
+
+Elm je čisto funkcionálny programovací jazyk, ktorý sa kompiluje do
+\acrlong{js}u. Kladie silný dôraz na jednoduchosť, ľahkosť použitia a kvalitné
+nástroje. Má silné statické typovanie s odvodzovaním, aj vďaka čomu je v ňom
+takmer nemožné vyvolať chybu vykonávania programu (runtime error). Obsahuje
+vlastnú výkonnú implementáciu virtuálneho \acrshort{dom}. Vďaka svojmu typovému
+systému dokáže automaticky detegovať zmeny v \acrshort{api}. Túto informáciu
+využíva vo svojom oficiálnom katalógu balíčkov na vynútenie sémantického
+verziovania, pomocou čoho sa jeho používatelia vyhnú nepríjemným prekvapeniam
+pri aktualizácií balíčkov. \cite{elm}
+
+Tieto vlastnosti jazyka Elm prispievajú k dobrej udržovateľnosti a ľahkému
+refaktorovaniu kódu. Aj napriek tomu, že sa jedná o pomerne mladý jazyk (vznikol
+v roku 2012 \cite{elm_thesis}) s obmedzenou ponukou rozširujúcich balíčkov,
+usúdili sme, že jeho prednosti prevažujú nad týmto dočasným nedostatkom a
+rozhodli sme sa, že ho použijeme na implementáciu webového klienta. V prípade,
+že by sme potrebovali využiť \acrshort{js} knižnicu alebo funkcionalitu
+prehliadača, ktorú Elm natívne nepodporuje, je tak možné urobiť, keďže poskytuje
+dobrú interoperabilitu s \acrshort{js}. Pužili sme Elm vo verzii 0.18.
+
+\subsubsection{Sass}
+
+Sass je preprocesor a skriptovací jazyk, ktorý sa interpretuje do \acrshort{css}
+a je s ním plne kompatibilný. Rozširuje \acrshort{css} o niekoľko mechanizmov,
+ktoré sú prítomné vo viac tradičných programovacích jazykoch ako sú napr.
+premenné, logické vrstvenie blokov, cykly, mixiny a dedenie selektorov.
+\cite{sass} Hlavnou prednosťou Sass je, že urýchľuje a sprehľadňuje písanie
+\acrshort{css}.
+
+\subsubsection{Bootstrap}
+
+Bootstrap je jedným s najpopulárnejších \acrshort{html}, \acrshort{css} a
+\acrshort{js} front-end webový framework. Obsahuje šablóny pre typografiu,
+formuláre, tlačidlá, navigáciu a iné komponenty rozhrania, ako aj voliteľné
+\acrshort{js} rozšírenia. Takisto pomáha efektívne vytvárať responzívne stránky
+a aplikácie, ktorých vzhľad sa škáluje podľa veľkosti zariadenia, na ktorom sú
+zobrazené. Okrem \acrshort{css} je jeho zdrojový kód prístupný aj vo forme
+zdrojových kódov pre preprocesory Less a Sass. \cite{bootstrap}
+
+\subsection{Vývojové prostredie}
+\label{subsec:develop_env}
+
+Na vývoj sme použili \acrshort{os} Ubuntu 16.04 a editor \acrshort{gnu} Emacs.
+Využili sme databázu PostgreSQL vo verzii 9.5 zo systémového repozitára
+balíčkov. Na správu verzií Pythonu a jeho virtuálnych prostredí (virtualenv) sme
+použili nástroj pyenv a na inštaláciu rozširujúcich Python modulov nástroj pip.
+Na zostavovanie a opätovné živé načítanie klientského kódu sme použili nástroj
+webpack. Na inštaláciu Elm platformy, webpacku a ostatných balíčkov, potrebných
+na vývoj klienta, sme použili správcu balíčkov npm s Node.js 6.10. Webovú službu
+aj klienta sme spúšťali lokálne na vývojovom \acrshort{http} serveri, dodávanom
+spolu s Djangom, resp. webpackom. Klienta sme testovali v prehliadačoch Firefox
+a Chromium.
+
+\section{Implementácia}
+\label{sec:implementation}
+
+V tejto kapitole opisujeme náš postup pri aktualizácii pôvodného systému a
+realizácii navrhnutých zmien, pričom niektorým dôležitým častiam sa venujeme
+detailnejšie. Zameriame sa predovšetkým na webového klienta, ktorý tvorí
+používateľské rozhranie systému. Na záver spomenieme odporúčané prostredie pre
+nasadenie aplikácie. Vyvíjaný rozvrhový systém dostal pracovný názov Elisa.
+
+\subsection{Webová služba}
+\label{subsec:impl_server}
+
+Serverová časť systému, teda webová služba, vznikla transformáciou pôvodného
+prototypu. Keďže sme sa rozhodli zmeniť jeho architektúru a zároveň prejsť na
+Python 3 a najnovšie Django, jednoduchšie, než meniť zdrojové kódy pôvodného
+projektu, bolo vytvoriť nový Django projekt a z pôvodného prevziať a upraviť iba
+časti, ktoré sa nám hodili. To boli predovšetkým modely (entitné triedy), ktoré
+v podstate predstavujú rozloženie (schému) databázy s dodatočnými metadátami. V
+Djangu je takýto model tzv. jediný, konečný zdroj pravdy (single source of
+truth), ktorého prepojenie s relačnou databázou sprostredkúva objektovo-relačné
+mapovanie \acrshort{orm}. Cieľom je zachovať princíp \acrshort{dry}: definovať
+dátový model na jednom mieste a ostatné veci z neho automaticky derivovať.
+
+\subsubsection{Štruktúra služby}
+
+Z hľadiska organizácie zdrojového kódu, ako aj biznis logiky je možné štruktúru
+služby popísať pomocou horizontálneho a vertikálneho pohľadu. Pri jej členení
+sme vychádzali z konvencií frameworku Django.
+
+Horizontálne sa Django aplikácia skladá z hlavného projektu, čo je kolekcia
+nastavení (konfigurácia databázy, nastavenia Djanga samotného, nastavenia
+špecifické pre aplikáciu a pod.) a podaplikácií, tzv. apps, ktoré sú zároveň
+Python balíčkami. App je webová aplikácia, ktorá má vymedzenú funkcionalitu,
+napr. blog, zbierka obrázkov s mačičkami, systém komentárov atď. Jedna app môže
+byť vo viacerých projektoch. Apps v našej službe sú naše vlastné, ktoré do istej
+miery korešpondujú s balíčkami z návrhu v podkapitole
+\ref{subsubsec:legacy_arch} a tiež balíčky tretích strán, z ktorých niektoré sme
+popisujeme v podkapitole \ref{subsubsec:django}. Django projekt \texttt{elisa} v
+našom prípade korešponduje s balíčkom \emph{Settings}. Kostru Django projektu
+alebo app je možné automaticky generovať pomocným programom, ktorý je súčasťou
+distribúcie Djanga.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.17\textwidth]{figures/ws-vertical.pdf}
+  \caption{\label{fig:ws_vertical} Diagram vertikálnej štruktúry webovej služby}
+\end{figure}
+
+Na obrázku \ref{fig:ws_vertical} je znázornená vertikálna štruktúra služby.
+Funkcia jej častí je nasledovná:
+
+\begin{description}
+\item[Router] Porovnáva cestu (z \acrshort{url}) zdroja, na ktorý sa klient
+  dotazuje vo svojej požiadavke na server, so zoznamom regulárnych výrazov. Ak
+  nájde zhodu, zavolá k nemu prislúchajúci view.
+\item[View] Spracúva dotaz. Na základe jeho typu (\texttt{GET}, \texttt{POST},
+  \texttt{PUT} atď.) a parametrov rozhoduje, ktoré dáta budú prezentované
+  (vrátené). Manipuluje s reprezentáciou zdrojov.\footnote{Autori Djanga
+    používajú výraz view na pomenovanie komponentu, ktorý sa podobá controlleru
+    v \acrshort{mvc}, pozri
+    \url{https://docs.djangoproject.com/en/dev/faq/general/}.}
+\item[Reprezentácia] Slúži na serializáciu a deserializáciu inštancií modelov
+  do, resp. z ich reprezentácií (\acrshort{json}). Funguje podobne ako Django
+  formuláre. Validuje dáta.
+\item[Model] Jediný zdroj informácií o dátach a ich správaní v aplikácii.
+  Manažuje stav databázy.
+\item[Databáza] Perzistentné úložisko dát. Vo všeobecnosti je každý model
+  namapovaný na jednu tabuľku v databáze. Na reprezentáciu vzťahov medzi modelmi
+  môžu byť použité ďalšie tabuľky.
+\end{description}
+
+Na implementáciu \acrshort{api} sme použili Django REST framework. Rozdelili sme
+ho na dve Django app, a to \texttt{school} a \texttt{timetables}.
+\texttt{school} má na starosti zdroje, týkajúce sa školy ako takej. Teda
+miestnosti, predmety, oddelenia atď. Dáta v app \texttt{timetables} sa týkajú
+rozvrhov a importujú sa v nej moduly zo \texttt{school}, opačne to neplatí.
+Autentifikáciu sme implementovali s využitím balíčka (app) Django REST framework
+JWT, s exspiráciou tokenu po dvoch dňoch a s možnosťou obnovy tokenu (bez
+nutnosti opätovného prihlásenia) po dobu maximálne dvoch týždňov. Implementovali
+sme všetky koncové body, popísané v návrhu v podkapitole
+\ref{subsubsec:api_design}, avšak \acrshort{api} nemožno považovať za stabilné a
+jeho formát a funkcionalita podliehajú zmenám v závislosti od (budúcich) potrieb
+klienta. Výpis \ref{lst:resource_example} obsahuje príklad tela odpovedi na
+dotaz \texttt{GET} \path{/rooms/376/}.
+
+\begin{listing}
+  \begin{minted}{json}
+{
+  "id": 376,
+  "name": "cpu-a",
+  "capacity": 20,
+  "category": "učebňa počítačová",
+  "department": 356,
+  "equipment": [
+    {
+      "id": 41,
+      "name": "tabuľa",
+      "count": 1
+    },
+    {
+      "id": 46,
+      "name": "študentský počítač",
+      "count": 20
+    }
+  ]
+}
+  \end{minted} 
+  \caption{Príklad \acrshort{json} reprezentácie \acrshort{rest} \acrshort{api}
+    zdroja -- miestnosti}
+\label{lst:resource_example} 
+\end{listing}
+
+\newpage
+
+App \texttt{fei} slúži na import a export dát z \acrshort{fei}. Rozhodli sme sa
+ju implementovať nanovo s použitím balíčka Django import/export, ktorý tento
+proces robí robustnejším a uľahčuje prípadnú tvorbu analogickej app pre inú
+inštitúciu. Kvôli tomu sme potrebovali mierne upraviť formát vstupných
+\acrshort{csv} súborov, ktoré sme mali k dispozícii, avšak ich obsah a význam
+jednotlivých stĺpcov sa nezmenil a je popísaný v práci mojej predchodkyne, v
+prílohe A.4 \cite{knap}.
+
+\subsubsection{Dokumentácia API}
+
+Na testovanie a dokumentáciu \acrshort{api} sme použili balíček Django REST
+Swagger, ktorý slúži na generovanie dokumentácie vo formáte definovanom v
+špecifikácii OpenAPI (pôvodne Swagger). Tá určuje formát na popísanie
+\acrshort{rest} \acrshort{api} vo forme čitateľnej pre človeka aj počítač, s
+cieľom uľahčiť jeho tvorbu aj konzumáciu, vrátane generovania kódu a
+dokumentácie. \cite{swagger}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{figures/swagger-ui.png}
+  \caption{\label{fig:swagger_ui} \acrshort{api} dokumentácia vytvorená s
+    pomocou Swagger \acrshort{ui}}
+\end{figure}
+
+Django REST Swagger generuje z dátového modelu a tzv. Python docstringov, čo sú
+reťazce v zdrojovom kóde, slúžiace na jeho zdokumentovanie, najprv
+\acrshort{json} schému a následne používateľské rozhranie (webovú stránku), na
+ktoré využíva Swagger \acrshort{ui}. Ten umožňuje vizualizáciu a interakciu s
+\acrshort{api} zdrojmi, vrátane posielania \acrshort{http} dotazov. Ukážku takto
+vytvorenej dokumentácie môžeme vidieť na obrázku \ref{fig:swagger_ui}.
+
+\subsection{Webový klient}
+\label{subsec:impl_client}
+
+Webového klienta sme implementovali ako \acrshort{spa} (jednostránkovú
+aplikáciu). Technicky ide o jednu webovú stránku, ktorá sa snaží používateľovi
+sprostredkovať podobnú skúsenosť ako desktopová aplikácia. Všetky zdrojové kódy
+klienta (\acrshort{html}, \acrshort{js} a \acrshort{css}) sa načítajú pri
+jedinom načítaní stránky. Stránka, na ktorej klient beží, sa počas normálneho
+behu neobnoví, ale jej \acrshort{url} sa mení v závislosti od aktuálneho stavu
+(zobrazenia) aplikácie. Každú takúto \acrshort{url} je možné použiť na otvorenie
+klienta (napr. ju zdieľať). Funkčná je aj navigácia v histórii prehliadača, aj
+keď v skutočnosti sa pri jej použití nemení samotná stránka, iba jej obsah. Pri
+interakcii s aplikáciou klient na pozadí dynamicky komunikuje so serverom.
+
+Sústredili sme sa na implementáciu minimálnej podmnožiny požadovaných funkcií
+klienta, ktorá by umožnila použitie výsledného systému na \acrshort{fei}.
+Viaceré z implementovaných komponentov\footnote{Slovo komponent používame vo
+  význame ,,prvok aplikácie``, nie ,,objekt s enkapsulovaným stavom a
+  metódami``. V Elme objekty neexistujú.} sú vhodné na opätovné použitie, resp.
+poslúžia ako ukážka práce v jazyku Elm a využitia jeho prídavných balíčkov, čo
+pomôže pri ďalšom vývoji klienta. Medzi takéto komponenty patria:
+
+\begin{itemize}
+\item smerovanie (routing) medzi stránkami (zobrazeniami) aplikácie,
+\item vytváranie dotazov na server,
+\item spracovanie odpovedí zo servera,
+\item autentifikácia a autorizácia,
+\item formulárové prvky a ich validácia,
+\item dialógové okná,
+\item drag-and-drop vytváranie elementov,
+\item interoperabilita s \acrshort{js} (tzv. porty).
+\end{itemize}
+
+\subsubsection{The Elm Architecture}
+\label{subsubsec:tea}
+
+Elm poskytuje oficiálny spôsob ako organizovať prúd dát v aplikácii s názvom
+\acrfull{tea}. \acrshort{tea} je jednoduchý vzor pre návrh webových aplikácií.
+Jeho výhodou je modularita, znovupoužiteľnosť kódu a efektívne testovanie. Zdá
+sa, že táto architektúra je dôsledkom dizajnu Elmu samotného, keďže sa
+prirodzene vyskytuje v Elm aplikáciách aj bez jej zamýšľaného použitia.
+\acrshort{tea} je ľahké použiť v Elme, ale je užitočná v ľubovoľnej
+interaktívnej front-end aplikácii. Dá sa rozdeliť na tieto základné, čisto
+oddelené časti \cite{elm_guide}:
+
+\begin{description}
+\item[Model] Stav aplikácie.
+\item[Udpate] Slúži na aktualizáciu stavu.
+\item[View] Slúži na zobrazenie stavu (ako \acrshort{html}).
+\end{description}
+
+\acrshort{tea} na prvý pohľad pripomína tradičný vzor \acrfull{mvc}, avšak líši
+sa od neho v niekoľkých podstatných bodoch hlavne tým, že je viac obmedzený a
+deklaratívny:
+
+\begin{itemize}
+\item Model neobsahuje žiadnu biznis logiku, ani nijakým spôsobom nepopisuje
+  správanie aplikácie, iba reprezentuje formu dát a aktuálny stav. Je jediným
+  miestom, kde sa nachádzajú dáta aplikácie, pričom tieto dáta, tak ako všetky
+  premenné v Elme, sú nemenné (immutable). Vždy, keď sú dáta transformované
+  funkciou update, vytvorí sa nový model s aktualizovaným stavom.
+\item Update je jediným miestom, kde dochádza k transformácii modelu, čo
+  uľahčuje uvažovanie o správaní programu. Je to funkcia, ktorej vstupom je
+  správa a model a výstupom nový model, ktorý vznikne transformáciou predošlého
+  modelu v závislosti od správy.
+\item View je bezstavová funkcia, ktorej vstupom je model a výstupom
+  reprezentácia aktuálneho stavu (vo forme \acrshort{html}). Tiež sa v nej
+  registruje obsluha udalostí (množina event handlerov), ktorá emituje správy
+  pre runtime, ktorý následne vyvolá spustenie \texttt{update} funkcie.
+\item Vstupným bodom Elm programu je funkcia \texttt{main}. Má na starosti
+  prepojenie troch častí, popísaných vyššie. Jej výstupom je program, ktorý beži
+  v runtime. Ten umožňuje obsluhu používateľských interakcií a manažment stavu.
+  Runtime v nepretržitej slučke prijíma akcie od používateľa, mení stav a
+  reprezentuje jeho zmeny. \texttt{update} a \texttt{view} sú iba funkcie na
+  transformáciu dát, ich vykonávanie má na starosti runtime. \cite{tea} V
+  štandardnej knižnici Elmu je implementovaných niekoľko rôznych funkcií, ktoré
+  vytvoria program.
+\item Táto architektúra je do určitej miery vynútená aj na úrovni typového
+  systému, ktorý obmedzuje možné typy vstupov a výstupov update, view a funkcií
+  pre vytvorenie programu zo štandardnej knižnici. A teda nie je iba konvenciou.
+\item Dáta prúdia iba jedným smerom a na ich transformáciu sa používajú funkcie.
+\end{itemize}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{figures/tea.png}
+  \caption{\label{fig:tea} Diagram \acrlong{tea} \cite{tea}}
+\end{figure}
+
+Bez toho, aby sme zachádzali do podrobností sytaxe Elmu, si priblížime
+jednoduchý príklad programu v \acrshort{tea}, ktorého zdrojový kód môžeme vidieť
+na výpise \ref{lst:buttons}. Obsahuje počítadlo a dva tlačidlá, ktoré slúžia na
+jeho inkrementáciu a dekrementáciu. Ako \texttt{model} nám postačuje jedno celé
+číslo. Vstupom do funkcie \texttt{update} je okrem modelu správa, ktorá môže
+nadobúdať iba hodnoty \texttt{Increment} alebo \texttt{Decrement} a jej výstupom
+je nový model, teda aktualizovaná hodnota počítadla. Funkcia \texttt{view}
+reprezentuje \texttt{model} v \acrshort{html}, pričom pre jednotlivé tlačidlá
+registruje obsluhu udalosti kliknutia, ktorá bude produkovať správu
+\texttt{Increment}, resp. \texttt{Decrement}. \texttt{div} a \texttt{button} sú
+normálne Elm funkcie, ktorých vstupom je zoznam atribútov a zoznam detských
+uzlov. Celý view kód je kompletne deklaratívny. Nepotrebujeme upravovať
+\acrshort{dom} manuálne, túto prácu za nás robí Elm runtime. Počiatočný
+\texttt{model} a funkcie \texttt{update} a \texttt{view} prepája funkcia
+\texttt{beginnerProgram} z modulu \texttt{Html} štandardnej knižnice.
+
+\begin{listing}[hp]
+  \inputminted{elm}{listings/Buttons.elm}
+  \caption{Ukážka Elm programu v TEA \cite{elm_guide}}
+  \label{lst:buttons} 
+\end{listing}
+
+\subsubsection{Štruktúra klienta}
+
+Nášho klienta sme implementovali pomocou \acrshort{tea} hierarchicky. Každá
+signifikantná, samostatná časť (podstránka) aplikácie má vlastný model, update a
+view, ktoré sú súčasťou globálneho (koreňového) modelu, update a view. Podobným
+spôsobom bývajú implementované aj rozširujúce balíčky, ktoré poskytujú nejaké
+enkapsulované \acrshort{ui} komponenty ako napr. formuláre, dialógové okná,
+autocomplete a pod. Dáta, ktoré sú spoločné pre celú aplikáciu (všetky
+podstránky), v našom prípade informácie o prihlásenom používateľovi (dátový typ
+\texttt{User}), na vstup dostanú funkcie, ktoré ich potrebujú. Každá podstránka
+(zobrazenie) korešponduje s určitou \acrshort{url}, napr. zobrazenie rozvrhov má
+cestu \texttt{/timetables}.
+
+Keďže Elm je silno staticky typovaný, dáta ktoré poskytuje server vo formáte
+\acrshort{json} je potrebné previesť do Elm hodnôt, na čo sa používajú tzv.
+dekodéry. Štandardná knižnica poskytuje primitívne dekodéry pre základné dátové
+typy (\texttt{string}, \texttt{int}, \texttt{bool} a pod.), ktoré je možné
+kombinovať a vytvoriť tak dekodér pre zložený dátový typ (napr. zoznam
+predmetov). Takáto konverzia zároveň slúži aj na validáciu. Nielenže
+konvertujeme dáta z \acrshort{json}, ale sa tiež uisťujeme, že \acrshort{json}
+dodržuje určitú štruktúru. Možné chyby sa tak zachytia už pri prijatí dát a nie
+až pri ich použití. Obdobný proces sa používa na zakódovanie Elm hodnôt do
+\acrshort{json} hodnôt.
+
+Jediný stav aplikácie, ktorý sa zachováva aj po jej ukončení, je informácia o
+prihlásenom používateľovi. Po úspešnej autentifikácií sa autentifikačný token
+(\acrshort{jwt}) uloží do \texttt{localStorage}, čo je perzistentné úložisko
+prehliadača, v ktorom sú dáta uložené ako páry kľúčov a hodnôt.
+\texttt{localStorage} je vymedzený pôvodom dokumentu (pravidlá same-origin),
+teda k tým istým dátam nie je možné pristupovať z dokumentov s dvomi rôznymi
+\acrshort{url}. \cite{flanagan} Po spustení klienta prebehne pokus o načítanie
+tokenu z \texttt{localStorage}. Ak sa tam nejaký nachádza a je valídny, tak sa
+používateľ pokladá za prihláseného. Pomocou \texttt{localStorage} tak vieme
+zachovať aktuálny stav (resp. jeho časť) klienta aj po vypnutí prehliadača.
+Úložisko \texttt{localStorage} je tiež možné využiť na implementáciu offline
+funkcionality. Tým, že sa autentifikačný token ukladá do \texttt{localStorage} a
+nie do cookie, sme sa tiež vyhli útokom typu \acrfull{csrf}, keďže sa súčasťou
+dotazu na server na rozdiel od cookie nestáva automaticky.
+
+\subsubsection{Používateľské rozhranie}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{figures/client-timetables.png}
+  \caption{\label{fig:client_timetables} Používateľské rozhranie správy
+    rozvrhov}
+\end{figure}
+
+Pri implementácii používateľského rozhrania sme vychádzali z návrhu v
+podkapitole \ref{subsubsec:ui_design}. Je plne responzívne vďaka využitiu
+frameworku Bootstrap. Tiež sa mení podľa právomocí prihláseného používateľa.
+Pokiaľ používateľ nie je autorizovaný, má prístup len na čítanie. Na obrázkoch
+\ref{fig:client_timetables} a \ref{fig:client_grid} sú jeho ukážky. \\
+
+\begin{figure}[hb]
+  \centering
+  \includegraphics[width=\textwidth]{figures/client-grid.png}
+  \caption{\label{fig:client_grid} Používateľské rozhranie úpravy časovej
+    mriežky}
+\end{figure}

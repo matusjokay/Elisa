@@ -1,0 +1,74 @@
+{% load brutalform %}
+{% load tools %}
+{% load bootstrap3 %}
+
+{% if level == 1 %}
+    <fieldset id="form_{{ form.prefix }}" class="form-{{ layout }}">
+    {% bootstrap_form form layout=layout %}
+    </fieldset>
+{% else %}
+    {% if collapsible %}
+    <div class="panel panel-default dynamic-form">
+    <div class="panel-heading">
+    {% else %}
+    <div class="dynamic-form">
+    {% endif %}
+    
+    <div class="form-{{ layout }}">
+    {% bootstrap_form form layout=layout %}
+    </div>
+    
+    {% if collapsible %}
+    {#<a class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ form.prefix }}-{{ counter }}">#}
+    <a class="panel-title" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{ form.prefix }}">
+    Advanced <span class="caret"></span>
+    </a>
+    </div><!-- end panel-heading -->
+    {% else %}
+    </div><!-- end dynamic-form -->
+    {% endif %}
+{% endif %}
+
+{% if form.inlineformsets %}
+
+    {% if collapsible %}
+    {#<div id="collapse-{{ form.prefix }}-{{ counter }}" class="panel-collapse collapse">#}
+    <div id="collapse-{{ form.prefix }}" class="panel-collapse collapse">
+        <div class="panel-body">
+    {% endif %}
+    
+    {% for key, formset in form.inlineformsets.items %}
+
+    <fieldset id="formset_{{ formset.prefix }}" class="inline-formset form-group {% if not collapsible and form.layout == "horizontal" %} form-horizontal{% endif %}">
+        <label{% if not collapsible and form.layout == "horizontal" %} class="col-md-2 control-label"{% endif %}>{{ form.legends|key:key }}</label>
+        
+        {% if level >= 1 %}<div class="panel-group{% if not collapsible and form.layout == "horizontal" %} col-md-10{% endif %}">{% endif %}
+
+        {{ formset.management_form }}
+        {{ formset.non_form_errors }}
+
+        {% for form_instance in formset %}
+            
+            {#{ form_instance.id }#}
+            
+            {% brutalform form_instance level counter=forloop.counter0 %}
+            
+        {% endfor %}
+            
+        {% if level >= 1 %}</div>{% endif %}<!-- end .panel-group -->
+        
+    </fieldset><!-- end form-group -->
+        
+    {% endfor %}
+    
+    {% if collapsible %}
+        </div>
+    </div>
+    {% endif  %}
+    
+    
+{% endif %}
+
+{% if collapsible %}
+</div><!-- end panel panel-default -->
+{% endif %}

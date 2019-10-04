@@ -1,0 +1,148 @@
+[
+{
+    "pk": 1, 
+    "model": "requirements.requirementtype", 
+    "fields": {
+        "priority": 0.75, 
+        "enabled": true, 
+        "content_type": 36
+    }
+},
+{
+    "pk": 2, 
+    "model": "requirements.requirementtype", 
+    "fields": {
+        "priority": 0.75, 
+        "enabled": true, 
+        "content_type": 34
+    }
+},
+{
+    "pk": 3, 
+    "model": "requirements.requirementtype", 
+    "fields": {
+        "priority": 0.75, 
+        "enabled": true, 
+        "content_type": 35
+    }
+},
+{
+    "pk": 4, 
+    "model": "requirements.requirementtype", 
+    "fields": {
+        "priority": 0.75, 
+        "enabled": true, 
+        "content_type": 33
+    }
+},
+{
+    "pk": 1, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 1, 
+        "object_id": null, 
+        "content_type": 10
+    }
+},
+{
+    "pk": 2, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 2, 
+        "object_id": null, 
+        "content_type": 9
+    }
+},
+{
+    "pk": 3, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 2, 
+        "object_id": null, 
+        "content_type": 10
+    }
+},
+{
+    "pk": 4, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 2, 
+        "requirement_type": 3, 
+        "object_id": null, 
+        "content_type": 10
+    }
+},
+{
+    "pk": 5, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 4, 
+        "object_id": null, 
+        "content_type": 12
+    }
+},
+{
+    "pk": 6, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 4, 
+        "object_id": null, 
+        "content_type": 14
+    }
+},
+{
+    "pk": 7, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 4, 
+        "object_id": null, 
+        "content_type": 17
+    }
+},
+{
+    "pk": 8, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 4, 
+        "object_id": null, 
+        "content_type": 16
+    }
+},
+{
+    "pk": 9, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 4, 
+        "object_id": null, 
+        "content_type": 9
+    }
+},
+{
+    "pk": 10, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 4, 
+        "object_id": null, 
+        "content_type": 10
+    }
+},
+{
+    "pk": 11, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 4, 
+        "object_id": null, 
+        "content_type": 13
+    }
+}
+]

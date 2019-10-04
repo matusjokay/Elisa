@@ -1,0 +1,9 @@
+{% load bootstrap3 %} 
+{% for item in menu %}
+    <li class="{% if item.selected %}active{% endif %}{% if item.separator %} separator{% endif %}">
+        <a href="{{ item.url }}" title="{{ item.title }}">
+            {% if item.icon %}{% bootstrap_icon item.icon %} {% endif %}
+            {% if not item.icon_only %}{{ item.title }}{% endif %}
+        </a>
+    </li>
+{% endfor %}

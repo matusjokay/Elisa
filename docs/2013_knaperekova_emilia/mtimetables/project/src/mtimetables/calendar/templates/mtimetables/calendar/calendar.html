@@ -1,0 +1,73 @@
+{% load tools %}
+{% load brutalform %}
+{% load bootstrap3 %}
+
+
+{% if calendar %}
+
+	<table class="table table-bordered calendar-table calendar-{% if calendar.view_type == 1 %}day{% elif calendar.view_type == 2 %}week{% else %}month{% endif %}">
+		<thead>
+			<tr>
+				{% if calendar.row_labels %}<th>&nbsp;</th>{% endif %}
+				{% autoescape off %}
+				{% for label in calendar.column_labels %}
+				<th class="{% if forloop.counter0 > 4 %}cal-cell-weekend{% endif %}">{{ label }}</th>
+				{% endfor %}
+				{% endautoescape %}
+			</tr>
+		</thead>
+		<tbody>
+			{% for row in calendar.rows %}
+			{% with i=forloop.counter0 %}
+				<tr>
+					{% autoescape off %}{% if calendar.row_labels %}<th>{{ calendar.row_labels|key:i }}</th>{% endif %}{% endautoescape %}
+					{% for cell in row %}
+						<td data-date="{{ cell.date }}" data-time-from="{{ cell.time_from }}" data-time-to="{{ cell.time_to }}"
+							class="cal-cell{% if cell.is_holiday %} cal-cell-holiday{% endif %}{% if forloop.counter0 > 4 and cell.is_weekend %} cal-cell-weekend{% endif %}">
+							{% if cell.label %}
+								<span class="cal-cell-label">{{ cell.label }}</span>
+							{% endif %}
+							<span class="cal-cell-events">
+							{% for event in cell.events %}
+								<a style="{% if cell.grid_type == 1 %}background-color: {{ event.color }}; {% endif %}color: {{ event.color }}" 
+									class="cal-cell-event" 
+									event-id="{{ event.id }}" 
+									href="{% if event.model_type == 'semesterevent' %}{% url 'mtimetables:timetable:semesterevent_update' event.id %}{% else %}{% url 'mtimetables:timetable:onetimeevent_update' event.id %}{% endif %}" 
+									target="_blank"
+								>{{ event }}</a>
+							{% endfor %}
+							</span>
+						</td>
+					{% endfor %}
+				</tr>
+			{% endwith %}
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<script type="text/javascript">
+		$(function() {
+			var calendar_events_json = {{ calendar.json_events|safe|default:'[]' }};
+			var calendar_room = {% if view.room %}{id: {{ view.room.id }}, capacity: {{ view.room.capacity }}, name: "{{ view.room.name }}"}{% else %}undefined{% endif %};
+			var calendar_group = {% if view.group %}{id: {{ view.group.id }}, name: "{{ view.group.name }}"}{% else %}undefined{% endif %};
+			var calendar_user = {% if view.user %}{id: {{ view.user.id }}, name: "{{ view.user }}"}{% else %}undefined{% endif %};
+			var calendar_subject = {% if view.subject %}{id: {{ view.subject.id }}, name: "{{ view.subject.name }}"}{% else %}undefined{% endif %};
+			global_calendar_success_url = "{{ success_url|safe }}" || undefined;
+
+			{% if calendar.view_type == 3 %}
+				$('#id_month', $('#calendar-filter')).val('{{ calendar.date_from.toordinal }}');
+				$('.calendar-period').text($('#id_month :selected', $('#calendar-filter')).text() || '{{ calendar.date_from|date:"M Y" }}');
+			{% elif calendar.view_type == 2 %}
+				$('#id_week', $('#calendar-filter')).val('{{ calendar.date_from.toordinal }}');
+				$('.calendar-period').text($('#id_week :selected', $('#calendar-filter')).text() || '{{ calendar.date_from|date:"M d, Y" }} - {{ calendar.date_to|date:"M d, Y" }}');
+			{% elif calendar.view_type == 1 %}
+				$('#id_day', $('#calendar-filter')).val('{{ calendar.date_from|date:"Y-m-d" }}');
+				$('.calendar-period').text('{{ calendar.date_from|date:"M d, Y" }}');
+			{% endif %}
+
+			// triggered event will be processed by Calendar class
+			$('#calendar-wrapper').trigger('calendar_json_events_loaded', [calendar_events_json, calendar_room, calendar_group, calendar_user, calendar_subject]);
+		});
+	</script>
+
+{% endif %}

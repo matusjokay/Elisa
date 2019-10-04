@@ -1,0 +1,18 @@
+Na vývoj systému by malo vyhovovať akékoľvek prostredie, ktoré podporuje Python
+3, PostgreSQL a Node.js. Pre produkčné prostredie postačuje Python 3 a
+PostgreSQL. Postup ako nastaviť vývojové prostredie sme popísali v súboroch
+\texttt{README.md}, ktoré sa nachádzajú v priečinku so zdrojovými súbormi
+servera, resp. klienta na priloženom nosiči. Prostredie, ktoré sme používali na
+vývoj my, je popísane v podkapitole \ref{subsec:develop_env}.
+
+Webovú službu aj klienta je možné spúšťať lokálne s použitím vývojových webových
+serverov, ktoré sú súčasťou ich závislostí. Ale na nasadenie systému je potrebné
+použiť plnohodnotný webový server ako napr. Apache HTTP Server alebo Nginx. Kód
+klienta stačí zostaviť vo vývojovom prostredí a na server iba nahrať výsledné
+statické súbory (\acrshort{html}, \acrshort{css}, \acrshort{js} atď.), ktoré
+môže servírovať ten istý server ako webovú službu. Nasadenie služby odporúčame
+konzultovať s Django
+dokumentáciou\footnote{\url{https://docs.djangoproject.com/en/1.11/howto/deployment/}}.
+Je potrebné zabezpečiť, aby všetka komunikácia so serverom prebiehala cez
+\acrshort{https}, na čo navrhujeme využiť Let's
+Encrypt\footnote{\url{https://letsencrypt.org/}}.

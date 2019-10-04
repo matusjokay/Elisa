@@ -1,0 +1,46 @@
+{% extends 'site-base.html' %}
+{% load brutalform %}
+{% load bootstrap3 %}
+
+{% block content_form_start %}
+    <form id="{{ form_id }}" method="{{ form_method|default:'post' }}" action="{{ form_action }}" role="form" class="center-block"{% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+{% endblock content_form_start %}
+
+
+{% block ribbon_form_buttons %}
+    <button class="btn btn-sm btn-primary" title="Save {{ view.model_verbose_name }}" type="submit">{% bootstrap_icon "ok" %}</button>
+{% endblock ribbon_form_buttons %}
+
+
+{% block content %}
+    
+    {% block form_csrf %}
+        {% csrf_token %}
+    {% endblock form_csrf %}
+
+    {% block form_text %}
+    {% if form_text %}
+        <div class="well well-lg">{{ form_text }}</div>
+    {% elif form.text %}
+        <div class="well well-lg">{{ form.text }}</div>
+    {% endif %}
+    {% endblock form_text %}
+    
+    {% block main_form %}
+        {% brutalform form 0 collapsible=False layout="horizontal" counter=0 %}
+    {% endblock main_form %}
+    
+    <div class="form-group{% if form.layout == "horizontal" or not form.layout %} col-md-offset-2 col-md-10{% endif %}">
+    {% block form_buttons %}
+        <button class="btn btn-primary" type="submit">{% bootstrap_icon "ok" %} {% block form_submit_text %}{{ form_submit_text|default:"Save" }}{% endblock form_submit_text %}</button>
+    {% endblock form_buttons %}
+    </div>
+
+    <div class="clearfix"></div>
+    
+{% endblock content %}
+
+
+{% block content_form_end %}
+    </form>
+{% endblock content_form_end %}

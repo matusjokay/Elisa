@@ -1,0 +1,8 @@
+{% extends 'site-simple.html' %}
+{% load bootstrap3 %}
+
+{% block content_class %}{{ block.super }} center-vertical error-page{% endblock content_class %}
+
+{% block heading %}<h1>{% bootstrap_icon "ban-circle" %} Error 403</h1>{% endblock %}
+
+{% block content %}<p class="lead">Permission denied.</p>{% endblock %}

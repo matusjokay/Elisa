@@ -1,0 +1,100 @@
+{% extends 'mtimetables/form.html' %}
+{% load bootstrap3 %}
+
+{% block modal_size_cls %}modal-lg{% endblock modal_size_cls %}
+
+{% block content %}
+
+<div class="panel panel-default">
+	<div class="panel-body">
+		{{ block.super }}
+	</div>
+</div>
+
+<div class="row">
+
+	<div class="col-md-4">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				Custom requirements
+			</div>
+			<div class="panel-body">
+				<div id="custom-requirements">
+					{% for requirement in personal_requirement_package.requirements.all %}
+					<div><a href="{% url 'mtimetables:requirements:requirement_update' requirement.id %}">{{ requirement|capfirst }}</a></div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% if rt_info %}
+	<div class="col-md-8">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				Available requirement types
+			</div>
+			<div class="panel-body">
+				<div id="available-requirement-types">
+				{% for info in rt_info %}
+				{% with info.requirement_type as requirement_type %}
+					<div class="col-md-6">
+						<a title="{{ requirement_type.name|capfirst }}" 
+						data-content="{{ requirement_type.description }}" 
+						href="{% url 'mtimetables:requirements:requirement_create' requirement_type.slug personal_requirement_package.id %}">
+							{% bootstrap_icon 'plus' %} {{ requirement_type | capfirst }} ({{ info.count }}/{{ info.allowed_count }})
+						</a>
+					</div>
+				{% endwith %}
+				{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
+</div>
+
+{% endblock content %}
+
+
+{% block scripts %}
+
+{{ block.super }}
+
+<script type="text/javascript">
+	
+	$(function() {
+
+		// set onchange events to requirement package combo
+		// TODO: make it dynamic (also for newly created elements)
+		$('#formset_user_requirement_packages .dynamic-form select[name$="requirement_package"]').change(function() {
+			if ($(this).val()) {
+				index = $(this).closest('.dynamic-form').index('.dynamic-form');
+				$(this).parent().parent().find('input[name$="ORDER"]').attr('value', index+1);
+			}
+		});
+
+
+		var modal_form = $.formTools_ModalForm({
+			success_callback: function(responseText, statusText, xhr, form) {
+				var text = responseText.object_str.charAt(0).toUpperCase() + responseText.object_str.substring(1);
+				var new_element = '<div><a href="/requirements/requirement/'+responseText.id+'/update/">'+text+'</a></div>';
+				$('#custom-requirements').append(new_element);
+			},
+			destroy_on_hide: true,
+		});
+		$('#available-requirement-types a').click(function() {
+			modal_form.settings.url = $(this).attr('href')+'?ajax=modal';
+			modal_form.show();
+			return false;
+		}).popover({
+			trigger: 'hover',
+			placement: 'top',
+		});
+
+	});
+
+</script>
+
+{% endblock scripts %}

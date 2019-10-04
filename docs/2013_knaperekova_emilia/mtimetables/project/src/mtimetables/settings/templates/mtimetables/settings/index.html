@@ -1,0 +1,15 @@
+{% extends 'site-base.html' %}
+{% load mtimetables %}
+
+{% block heading %}<h1>General settings</h1>{% endblock heading %}
+
+{% block content %}
+
+	<p>Still in development.</p>
+
+	<p>Semester start: {% mtimetables_option 'SEMESTER_START_DATE' %}</p>
+	<p>Semester end: {% mtimetables_option 'SEMESTER_END_DATE' %}</p>
+	<p>Examination period start: {% mtimetables_option 'EXAMINATION_PERIOD_START_DATE' %}</p>
+	<p>Examination period end: {% mtimetables_option 'EXAMINATION_PERIOD_END_DATE' %}</p>
+
+{% endblock content %}

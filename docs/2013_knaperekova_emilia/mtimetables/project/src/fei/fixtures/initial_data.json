@@ -1,0 +1,320 @@
+[
+{
+    "pk": 1, 
+    "model": "data.activitytype", 
+    "fields": {
+        "prototype": 3, 
+        "mandatory": false, 
+        "name": "sk\u00fa\u0161ka 1. term\u00edn"
+    }
+},
+{
+    "pk": 2, 
+    "model": "data.activitytype", 
+    "fields": {
+        "prototype": 3, 
+        "mandatory": false, 
+        "name": "sk\u00fa\u0161ka 2. term\u00edn"
+    }
+},
+{
+    "pk": 3, 
+    "model": "data.activitytype", 
+    "fields": {
+        "prototype": 1, 
+        "mandatory": false, 
+        "name": "semin\u00e1r"
+    }
+},
+{
+    "pk": 4, 
+    "model": "data.activitytype", 
+    "fields": {
+        "prototype": 2, 
+        "mandatory": true, 
+        "name": "cvi\u010denie"
+    }
+},
+{
+    "pk": 5, 
+    "model": "data.activitytype", 
+    "fields": {
+        "prototype": 2, 
+        "mandatory": true, 
+        "name": "laborat\u00f3rne cvi\u010denie"
+    }
+},
+{
+    "pk": 6, 
+    "model": "data.activitytype", 
+    "fields": {
+        "prototype": null, 
+        "mandatory": false, 
+        "name": "konzult\u00e1cia"
+    }
+},
+{
+    "pk": 7, 
+    "model": "data.activitytype", 
+    "fields": {
+        "prototype": 1, 
+        "mandatory": false, 
+        "name": "predn\u00e1\u0161ka"
+    }
+},
+{
+    "pk": 1, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 2, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 3, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 4, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 5, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 6, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 7, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 1, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "1.", 
+        "to_time": "08:00:00", 
+        "from_time": "07:00:00"
+    }
+},
+{
+    "pk": 2, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "2.", 
+        "to_time": "09:00:00", 
+        "from_time": "08:00:00"
+    }
+},
+{
+    "pk": 3, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "3.", 
+        "to_time": "10:00:00", 
+        "from_time": "09:00:00"
+    }
+},
+{
+    "pk": 4, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "4.", 
+        "to_time": "11:00:00", 
+        "from_time": "10:00:00"
+    }
+},
+{
+    "pk": 5, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "5.", 
+        "to_time": "12:00:00", 
+        "from_time": "11:00:00"
+    }
+},
+{
+    "pk": 6, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "6.", 
+        "to_time": "13:00:00", 
+        "from_time": "12:00:00"
+    }
+},
+{
+    "pk": 7, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "7.", 
+        "to_time": "14:00:00", 
+        "from_time": "13:00:00"
+    }
+},
+{
+    "pk": 8, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "8.", 
+        "to_time": "15:00:00", 
+        "from_time": "14:00:00"
+    }
+},
+{
+    "pk": 9, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "9.", 
+        "to_time": "16:00:00", 
+        "from_time": "15:00:00"
+    }
+},
+{
+    "pk": 10, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "10.", 
+        "to_time": "17:00:00", 
+        "from_time": "16:00:00"
+    }
+},
+{
+    "pk": 11, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "11.", 
+        "to_time": "18:00:00", 
+        "from_time": "17:00:00"
+    }
+},
+{
+    "pk": 12, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "12.", 
+        "to_time": "19:00:00", 
+        "from_time": "18:00:00"
+    }
+},
+{
+    "pk": 13, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "13.", 
+        "to_time": "20:00:00", 
+        "from_time": "19:00:00"
+    }
+},
+{
+    "pk": 14, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "14.", 
+        "to_time": "21:00:00", 
+        "from_time": "20:00:00"
+    }
+},
+{
+    "pk": 15, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "15.", 
+        "to_time": "22:00:00", 
+        "from_time": "21:00:00"
+    }
+},
+{
+    "pk": 16, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 2, 
+        "name": "1. beh", 
+        "to_time": "10:00:00", 
+        "from_time": "07:30:00"
+    }
+},
+{
+    "pk": 17, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 2, 
+        "name": "2. beh", 
+        "to_time": "13:00:00", 
+        "from_time": "10:30:00"
+    }
+},
+{
+    "pk": 18, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 2, 
+        "name": "3. beh", 
+        "to_time": "16:00:00", 
+        "from_time": "13:30:00"
+    }
+},
+{
+    "pk": 19, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 2, 
+        "name": "4. beh", 
+        "to_time": "19:00:00", 
+        "from_time": "16:30:00"
+    }
+},
+{
+    "pk": 1, 
+    "model": "calendar.timetablegrid", 
+    "fields": {
+        "name": "semester",
+        "period_prototype": 1
+    }
+},
+{
+    "pk": 2, 
+    "model": "calendar.timetablegrid", 
+    "fields": {
+        "name": "sk\u00fa\u0161kov\u00e9",
+        "period_prototype": 2
+    }
+}
+]
