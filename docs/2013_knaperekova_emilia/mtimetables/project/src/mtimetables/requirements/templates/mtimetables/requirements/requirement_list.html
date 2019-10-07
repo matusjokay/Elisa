@@ -1,0 +1,24 @@
+{% extends 'mtimetables/list.html' %}
+{% load bootstrap3 %}
+
+{% block buttons %}
+{% if requirement_types %}
+{% for requirement_type in requirement_types %}
+	<a class="btn btn-primary" href="{% url 'mtimetables:requirements:requirement_create' requirement_type.slug %}">{% bootstrap_icon 'plus' %} {{ requirement_type | capfirst }}</a>
+{% endfor %}
+{% endif %}
+{% endblock buttons %}
+
+{% block ribbon_left %}
+	<div class="btn-group">
+		<button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+			{% bootstrap_icon 'plus' %} New requirement <span class="caret"></span>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			{% for requirement_type in requirement_types %}
+				<li><a href="{% url 'mtimetables:requirements:requirement_create' requirement_type.slug %}">{{ requirement_type | capfirst }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+	{{ block.super }}
+{% endblock ribbon_left %}

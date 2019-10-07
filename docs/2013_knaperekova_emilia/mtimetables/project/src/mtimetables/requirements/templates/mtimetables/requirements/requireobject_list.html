@@ -1,0 +1,42 @@
+{% extends "mtimetables/list.html" %}
+{% load bootstrap3 %}
+{% load tools %}
+
+{% block content %}
+
+
+	{% if object_list %}
+		<table class="table">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Require object</th>
+				</tr>
+			</thead>
+			<tbody>
+
+				{% for object in object_list.all %}
+				<tr>
+					<td>{{ object.id }}</td>
+					<td>
+						<a href="{% url 'mtimetables:requirements:object_requirements' view.model_name object.id %}" title="Requirements">
+							{{ object|attr:view.list_display.0 }}
+						</a>
+					</td>
+				</tr>
+				{% endfor %}
+
+			</tbody>
+		</table>
+	{% else %}
+		<p>No {{ view.model_verbose_name_plural }} available.</p>
+	{% endif %}
+
+
+
+
+	{% block pagination %}
+		{{ block.super }}
+	{% endblock pagination %}
+
+{% endblock content %}

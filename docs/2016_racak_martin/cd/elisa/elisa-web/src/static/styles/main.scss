@@ -1,0 +1,60 @@
+$icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss';
+@import '~bootstrap-sass/assets/stylesheets/_bootstrap.scss';
+
+.timetable {
+    position: relative;
+    user-select: none;
+    margin-bottom: 50px;
+
+    table {
+        width: 100%;
+        table-layout: fixed;
+    }
+}
+
+.timetable-grid {
+    position: relative;
+    z-index: 1;
+
+    th, td {
+        border: 1px solid #ddd;
+    }
+
+    th {
+        height: 30px;
+        padding: 4px;
+    }
+
+    td {
+        height: 50px;
+    }
+}
+
+.timetable-skeleton {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.time-col {
+    padding: 0 4px;
+    width: 100px;
+}
+
+.event-container {
+    position: relative;
+    margin: 0 1.5%;
+}
+
+.event {
+    position: absolute;
+    width: 100%;
+    color: #3c763d;
+    background-color: #dff0d8;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    padding: 4px;
+}

@@ -1,0 +1,26 @@
+\emph{Štruktúra a prehľad základných súborov a priečinkov.}
+
+\begin{verbatim}
+/
+|-- elisa                          # zdrojové súbory prototypu systému
+|   |-- elisa-server               # serverová časť
+|   |   |-- elisa                  # Django projekt, obsahuje nastavenia
+|   |   |-- fei                    # balíček na import a export
+|   |   |-- fei-data               # testovacie dáta určené na import
+|   |   |-- manage.py              # skript na správu Django projektu
+|   |   |-- README.md              # dokumentácia serverovej časti
+|   |   |-- requirements.txt       # Python pip závislosti
+|   |   |-- school                 # balíček na prácu so školskými dátami
+|   |   |-- timetables             # balíček na prácu s rozvrhmi
+|   |-- elisa-client-new           # klientská časť
+|   |   |-- package.json           # metadáta npm balíčku
+|   |   |-- tsconfig.json          # metadáta kompilátora
+|   |   |-- README.md              # dokumentácia klientskej časti
+|   |   |-- src                    # zdrojový kód klienta
+|   |   |   |-- @elisa             # doplnkové súbory a  štýly
+|   |   |   |-- app                # hlavné zdrojové súbory
+|   |   |   |-- assets             # obrázky, ikony, príklady
+|   |   |   |-- index.html         # inicializačný zdrojový súbor
+|-- thesis                         # súbory diplomovej práce
+
+\end{verbatim}

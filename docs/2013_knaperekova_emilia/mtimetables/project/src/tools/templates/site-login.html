@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load staticfiles %}
+
+{% block body %}
+
+<div class="container">
+
+
+	<form class="form-signin" method="POST" role="form">
+		{% csrf_token %}
+		<h2 class="form-signin-heading">
+			<img class="logo" src="{% static "images/logo-inverted.png" %}" height="50" />
+		</h2>
+		{% bootstrap_messages %}
+		<input type="text" class="form-control" name="username" placeholder="Username" required autofocus>
+		<input type="password" class="form-control" name="password" placeholder="Password" required>
+		<label class="checkbox">
+			<input type="checkbox" value="remember-me"> Remember me
+		</label>
+		<button class="btn btn-lg btn-primary btn-block" type="submit">{% bootstrap_icon 'log-in' %} Sign in</button>
+		<input type="hidden" name="next" value="{{ next }}" />
+	</form>
+
+</div> <!-- /container -->
+
+{% endblock body %}
+
+{% block scripts %}
+
+	{{ block.super }}
+	<link href="{% static 'css/login.css' %}" rel="stylesheet" />
+	
+{% endblock scripts %}

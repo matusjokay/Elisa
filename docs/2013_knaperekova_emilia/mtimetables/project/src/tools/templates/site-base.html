@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load bootstrap3 %}
+{% load tools %}
+
+{% block content_class %}{% endblock %}
+
+{% block ribbon %}
+    <div class="pull-left">
+    	{% block ribbon_left %}
+	        {% for key, action in view.model_actions.items %}
+	            {% if key != view.current_action_type %}
+	                <a class="btn btn-sm btn-{{ action.button }}" href="{% action_url action %}" title="{{ action.title|capfirst }}">{% bootstrap_icon action.icon %}</a>
+	            {% endif %}
+	        {% endfor %}
+    	{% endblock ribbon_left %}
+    </div>
+    <div class="pull-right">
+    	{% block ribbon_right %}
+    		{% if object.id %}
+		        {% for key, action in view.object_actions.items %}
+		            {% if key != view.current_action_type %}
+		                <a class="btn btn-sm btn-{{ action.button }}" href="{% action_url action object %}" title="{{ action.title|capfirst }}">{% bootstrap_icon action.icon %}</a>
+		            {% endif %}
+		        {% endfor %}
+	        {% endif %}
+	        {% block ribbon_form_buttons %}{% endblock ribbon_form_buttons %}
+    	{% endblock ribbon_right %}
+    </div>
+{% endblock ribbon %}

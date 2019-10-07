@@ -1,0 +1,1200 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="11.5">
+  <zoom_level>8</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>152</x>
+      <y>336</y>
+      <w>168</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>*Room*
+--
+name
+capacity
+bg=blue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>0</x>
+      <y>832</y>
+      <w>112</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>*Department*
+--
+abbreviation
+name
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>24</x>
+      <y>360</y>
+      <w>224</w>
+      <h>488</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=0..m
+m2=0..n
+belong to&gt;</panel_attributes>
+    <additional_attributes>24;472;208;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>16</x>
+      <y>488</y>
+      <w>96</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>*Equipment*
+--
+name
+bg=blue</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>64</x>
+      <y>360</y>
+      <w>154</w>
+      <h>144</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=0..m
+m2=0..n
+&lt;are equipped with</panel_attributes>
+    <additional_attributes>120;24;40;128</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>344</x>
+      <y>688</y>
+      <w>144</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>*Subject*
+--
+abbreviation
+name
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>88</x>
+      <y>720</y>
+      <w>320</w>
+      <h>152</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+taught at&gt;</panel_attributes>
+    <additional_attributes>24;136;304;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>112</x>
+      <y>704</y>
+      <w>120</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>*StudyType*
+--
+name
+bg=red</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>208</x>
+      <y>680</y>
+      <w>152</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=0..n
+m2=0..m
+&lt;belongs to</panel_attributes>
+    <additional_attributes>24;40;136;40</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>288</x>
+      <y>520</y>
+      <w>200</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>*CustomizedLessonType*
+--
+name
+&lt;&lt; skupina studentov eligible TODO
+terminLength
+compulsoryInstancesCount
+weeks
+bg=red
+
+// Ide v podstate o prisposobene a
+// pomenovane Generic Typy, pre 
+// ucely kazdeho predmetu zvlast.
+// 
+// Ked ma student zapisany predmet,
+// to este neznamena, ze moze
+// chodit na vsetky typy
+// vyucovacich hodin.
+// Priklad: &lt;pri predmete vyucovanom
+// pre viacero odborov&gt;: Mail:
+// Studenti z Aplikovanej informatiky,
+// nezapisujte si cvicenia v PO a UT,
+// lebo su urcene pre kybernetiku.
+// ==&gt; Urobia sa 2 druhy cvik.
+//
+// compulsoryInstancesCount:
+// Pocet povinnych LessonInstance,
+// ktore student musi navstevovat.
+// 0 znamena nepovinne; dat moznost
+// aj specialnej hodnote - vsetky.
+//
+// weeks - bitova maska
+
+//Synonyma:
+// adapted
+// adjusted
+// personalized
+// effectual
+// named
+// specific
+// (subtype)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>408</x>
+      <y>616</y>
+      <w>40</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=1..n
+</panel_attributes>
+    <additional_attributes>24;72;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>608</x>
+      <y>616</y>
+      <w>152</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>*User*
+--
+active
+rating
+bg=green
+
+//
+//
+// TODO: rating-y mozu mat aj kategorie
+//
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>464</x>
+      <y>656</y>
+      <w>160</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+&lt;guarantees</panel_attributes>
+    <additional_attributes>144;40;24;40</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>464</x>
+      <y>704</y>
+      <w>160</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=0..n
+m2=0..n
+&lt;have registred</panel_attributes>
+    <additional_attributes>144;40;24;40</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>280</x>
+      <y>416</y>
+      <w>144</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>*GenericLessonType*
+--
+name
+bg=red
+// lessonBaseType
+// Spolocne pre vsetky predmety,
+// tento typ sluzi na kategorizaciu
+// poloziek "lesson type". Ma vplyv
+// na dalsiu funkcionalitu v systeme
+//</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>296</x>
+      <y>432</y>
+      <w>160</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>m1=0..n
+m2=1
+are defined by&gt;</panel_attributes>
+    <additional_attributes>144;88;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>88</x>
+      <y>744</y>
+      <w>536</w>
+      <h>144</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+belong at&gt;</panel_attributes>
+    <additional_attributes>24;128;520;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>608</x>
+      <y>408</y>
+      <w>168</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>*LessonInstance*
+--
+lastEdited
+note
+bg=yellow
+// 
+// Note: Zaznamy do tejto tabulky
+// budu pridavane "manualne", t.j.
+// este pred spustenim vypoctoveho
+// algoritmu, resp. zacatim manualnej
+// (drag&amp;drop) tvorby rozvrhu.
+// Automaticke vytvaranie zaznamov
+// podla poctu studentov zapisanych
+// na predmet bude zabezpecene 
+// nastrojom/funkciou UI (hromadne 
+// generovanie zaznamov...)
+//
+// note - lubovolna (nepovinna)
+// poznamka autora rozvrhu (prepojenia)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>704</x>
+      <y>432</y>
+      <w>82</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=0..m
+m2=0..n
+attend
+// DB atributy:
+// attend atribut: students
+// teach atribut: teachers
+fg=red</panel_attributes>
+    <additional_attributes>48;184;48;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>464</x>
+      <y>432</y>
+      <w>160</w>
+      <h>128</h>
+    </coordinates>
+    <panel_attributes>m1=0..n
+m2=1
+</panel_attributes>
+    <additional_attributes>144;24;24;112</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>296</x>
+      <y>344</y>
+      <w>328</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>m1=1
+m2=0..n
+&lt;takes place in
+fg=red</panel_attributes>
+    <additional_attributes>24;24;312;72</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1048</x>
+      <y>336</y>
+      <w>128</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>*ScheduleHour*
+--
+name
+from
+to
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>896</x>
+      <y>336</y>
+      <w>128</w>
+      <h>32</h>
+    </coordinates>
+    <panel_attributes>*Weekday*
+--
+name
+bg=yellow
+fg=black</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>752</x>
+      <y>344</y>
+      <w>312</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+takes place at&gt;
+fg=red</panel_attributes>
+    <additional_attributes>296;24;24;96</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>752</x>
+      <y>320</y>
+      <w>160</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+takes place at&gt;
+fg=red</panel_attributes>
+    <additional_attributes>144;24;24;104</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>528</x>
+      <y>872</y>
+      <w>168</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>*UserRoles*
+--
+name
+bg=magenta</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>592</x>
+      <y>760</y>
+      <w>82</w>
+      <h>128</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1..m
+m2=0..n
+have&gt;</panel_attributes>
+    <additional_attributes>48;112;48;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>528</x>
+      <y>992</y>
+      <w>168</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>*UserRoles_permissions*
+--
+idSpecificObject
+bg=magenta
+
+// Ak PermissionObject reprezentuje triedu,
+// tak toto je ID objektu v tej triede</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>576</x>
+      <y>896</y>
+      <w>82</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+&lt;have</panel_attributes>
+    <additional_attributes>48;24;48;96</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>848</x>
+      <y>992</y>
+      <w>168</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>*Permissions*
+--
+bg=magenta</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>736</x>
+      <y>848</y>
+      <w>216</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>*PermissionObjects*
+--
+keyword
+name
+description
+is_class ? (content_type (null=True))
+bg=magenta
+
+// predmet
+// poziadavka
+// pouzivatel</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>968</x>
+      <y>872</y>
+      <w>168</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>*PermissionTypes*
+--
+keyword
+name
+bg=magenta
+
+// Tato tabulka reprezentuje enum
+
+// read
+// write
+// execute
+// edit
+// delete
+
+
+// vytovrit
+// citat
+// upravit
+// vymazat
+// spustit</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>672</x>
+      <y>976</y>
+      <w>192</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+&lt;belong to</panel_attributes>
+    <additional_attributes>176;40;24;40</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>952</x>
+      <y>896</y>
+      <w>112</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+define&gt;</panel_attributes>
+    <additional_attributes>96;24;24;96</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>792</x>
+      <y>904</y>
+      <w>112</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+define&gt;</panel_attributes>
+    <additional_attributes>24;24;96;88</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1176</x>
+      <y>824</y>
+      <w>144</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>*Requirement*
+--
+parameters
+priority
+bool/fuzzy
+bg=light_gray
+
+// bool/fuzzy: ako bude poziadavka vyhodnocovana
+//   musi byt iba ta, ktora je umoznena typom
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1176</x>
+      <y>576</y>
+      <w>168</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>*RequirementPackage*
+--
+name
+password
+? evaluate_together
+bool/fuzzy
+// Dva use-case pouzitia balika:
+// 1.) jednoducho chceme viacerym
+// subjektom dat rovnake poziadavky,
+// ktore budu pozadovane nezavisle na
+// sebe.
+//
+// bool/fuzzy: Moze byt vybrane lubovolne
+// z tych dvoch, nezavisle na relevantnosti
+// bool/fuzzy pre jednotlive Requirementy
+// (Aj ked mame iba bool Requirementy,
+// vieme ich splnenost dohromady vyjadrit
+// vo fuzzy aj bool hodnote)
+//
+// Dva druhy Package-ov:
+// 1.) Take, ktore su vyhodnotitelne nezavisle pre vsetkych ziadatelov (napr. userov, miestnosti..)
+// 2.) Take, ktore su vyhodnotitelne iba spolocne pre ziadatelov, ktori maju package zapisany
+// Akeho typu Package je, asi zavisi od typov Requirementov, ktore v nom su.
+// Pricom (asi), ak je v nom aspon jeden Requirement, ktory nie je mozne
+// vyhodnotit nezavisle pre kazdeho ziadatela, tak potom cely Package nemozno vyhodnotit nezavisle pre kazdeho ziadatela.
+
+
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1200</x>
+      <y>632</y>
+      <w>108</w>
+      <h>208</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+&lt;consist of</panel_attributes>
+    <additional_attributes>56;24;56;192</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1424</x>
+      <y>600</y>
+      <w>184</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>*RequirementPackageType*
+--
+name
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>888</x>
+      <y>632</y>
+      <w>184</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>*User_RequirementPackage*
+--
+priority
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1320</x>
+      <y>584</y>
+      <w>120</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+have&gt;</panel_attributes>
+    <additional_attributes>104;40;24;40</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1440</x>
+      <y>824</y>
+      <w>160</w>
+      <h>128</h>
+    </coordinates>
+    <panel_attributes>*RequirementTypes*
+--
+keyword
+text
+parameters
+
+bool
+fuzzy
+(default: bool/fuzzy)
+
+ 
+enabled
+bg=light_gray
+
+// bool: moze byt vyhodnocovane boolovsky?
+// fuzzy: moze byt vyhodnocovane fuzzy?
+
+
+// enabled: sluzi na zapnutie/vypnutie
+// moznosti pouzit pravidlo
+
+// Ku kazdemu objektu z tejto triedy
+// musi byt definovana rutina, 
+// ktora bude vyhodnocovat splnenost
+// poziadavky.
+// Tato dostane do vstupu konkretne
+// hodnoty parametrov z tabulky
+// Requirement, prip. aj zoznam
+// subjektov, ktore maju prislusny
+// RequirementPackage zapisany (priradeny)
+//
+// Kazdy RequirementType bude zrejme
+// implementovany v samostatnom module,
+// pricom tento modul bude smerom
+// nahor poskytovat vsetky potrebne
+// paramentre, ako napr. pattern parametrov,
+// zoznam moznych RequirementPackageType-ov,
+// s ktorymi moze byt pouzity, ...</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1456</x>
+      <y>616</y>
+      <w>168</w>
+      <h>224</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=0..m
+m2=0..n
+relevant combinations</panel_attributes>
+    <additional_attributes>88;24;88;208</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1048</x>
+      <y>592</y>
+      <w>144</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+are owned by&gt;
+fg=#22ab22</panel_attributes>
+    <additional_attributes>128;24;24;64</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1296</x>
+      <y>832</y>
+      <w>160</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=0..n
+m2=1
+is instance of&gt;</panel_attributes>
+    <additional_attributes>24;40;144;40</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>464</x>
+      <y>544</y>
+      <w>728</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=0..n
+m2=0..n
+have&gt;
+fg=#22ab22</panel_attributes>
+    <additional_attributes>24;40;712;40</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>416</x>
+      <y>632</y>
+      <w>816</w>
+      <h>192</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=0..n
+m2=0..n
+have&gt;
+fg=#22ab22</panel_attributes>
+    <additional_attributes>24;112;24;176;800;176;800;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>736</x>
+      <y>632</y>
+      <w>168</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=0..n
+m2=1
+&lt;have
+fg=#22ab22</panel_attributes>
+    <additional_attributes>152;24;24;80</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>200</x>
+      <y>248</y>
+      <w>424</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>m1=1
+m2=0..n
+&lt;should take place in
+fg=orange</panel_attributes>
+    <additional_attributes>88;88;88;40;408;40</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>768</x>
+      <y>232</y>
+      <w>406</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+should take place at
+fg=orange</panel_attributes>
+    <additional_attributes>328;104;328;40;24;40</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>768</x>
+      <y>248</y>
+      <w>230</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+should take place at
+fg=orange</panel_attributes>
+    <additional_attributes>152;88;152;40;24;40</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>488</x>
+      <y>96</y>
+      <w>216</w>
+      <h>536</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+&lt;proposed by
+fg=orange</panel_attributes>
+    <additional_attributes>200;520;64;440;64;64;120;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>632</x>
+      <y>272</y>
+      <w>40</w>
+      <h>152</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+fg=orange</panel_attributes>
+    <additional_attributes>24;136;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>600</x>
+      <y>1280</y>
+      <w>168</w>
+      <h>184</h>
+    </coordinates>
+    <panel_attributes>*users (komplet)*
+--
+login
+password
+name
+surname
+middleName
+no
+titlesBeforeName
+titlesAfterName
+email
+telephone
+active
+rating
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>336</x>
+      <y>896</y>
+      <w>96</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>Group
+--
+name
+rating (?)
+bg=green
+// moze byt napr. rocnik,
+// odbor...
+// TODO...</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>408</x>
+      <y>760</y>
+      <w>216</w>
+      <h>152</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=0..m
+m2=0..n
+is memeber of&gt;</panel_attributes>
+    <additional_attributes>24;136;200;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>664</x>
+      <y>432</y>
+      <w>76</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=0..m
+m2=0..n
+teach
+fg=red</panel_attributes>
+    <additional_attributes>40;184;40;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>608</x>
+      <y>232</y>
+      <w>184</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>*LessonInstanceAmendment*
+--
+bg=yellow
+
+// Stary nazov: LessonInstanceProposal
+
+// status choices:
+// Pending (default)
+// Accepted
+// Denied
+
+// vazba proposed by:
+// FK field name: proposer
+//
+// Zvazit pouzitie polozky
+// "Osoba, ktora zmenila status".
+// Toto sa bude dat v podstate vycitat
+// aj z historie...
+// </panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>728</x>
+      <y>272</y>
+      <w>186</w>
+      <h>360</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+&lt;should attend
+fg=orange</panel_attributes>
+    <additional_attributes>24;344;128;288;128;48;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>680</x>
+      <y>272</y>
+      <w>196</w>
+      <h>360</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=1
+m2=0..n
+&lt;should teach
+fg=orange</panel_attributes>
+    <additional_attributes>32;344;136;288;136;80;24;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>608</x>
+      <y>64</y>
+      <w>152</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>*AmendmentProposal*
+--
+creationDatetime
+creationComment
+status
+statusChangeDatetime
+statusChangeComment
+fg=black
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>648</x>
+      <y>136</y>
+      <w>100</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>m1=0..n
+m2=1
+includes&gt;
+fg=orange</panel_attributes>
+    <additional_attributes>56;96;56;24</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>312</x>
+      <y>1032</y>
+      <w>168</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>*UserRoles_permissions*
+--
+idSpecificObject
+bg=magenta
+
+// Ak PermissionObject reprezentuje triedu,
+// tak toto je ID objektu v tej triede</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>248</x>
+      <y>984</y>
+      <w>144</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>64;72;24;72;24;24;128;24;128;48</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>384</x>
+      <y>912</y>
+      <w>216</w>
+      <h>136</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+???</panel_attributes>
+    <additional_attributes>200;40;96;40;24;120</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1440</x>
+      <y>984</y>
+      <w>160</w>
+      <h>64</h>
+    </coordinates>
+    <panel_attributes>*ParameterTypes*
+--
+
+bg=light_gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>176</x>
+      <y>0</y>
+      <w>1122</w>
+      <h>592</h>
+    </coordinates>
+    <panel_attributes>lt=-
+m1=0..n
+m2=0..m
+have&gt;
+fg=#22ab22</panel_attributes>
+    <additional_attributes>24;336;24;40;1104;40;1104;576</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>96</x>
+      <y>944</y>
+      <w>120</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>*Session ??*
+--
+name
+bg=red
+
+// Akcia v case a priestore,
+// ktora nie je predmet.
+// e.g. tancovanie, konferencia,
+// film, timak, rozbijacka
+//
+// Hlavny rozdiel oproti Subject:
+// Moznost pridavat veci Ad-Hoc
+// (pocas semestra)
+//
+// TODO: zvazit pouzitie tejto triedy</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>1368</x>
+      <y>248</y>
+      <w>432</w>
+      <h>224</h>
+    </coordinates>
+    <panel_attributes>Note..
+Sposoby vypoctu fitness funkcie celeho rozvrhu:
+ 
+Zrejme sa bude postupovat tak, ze sa najskor vypocitaju
+ciastkove "sub-fitness" funkcie, z ktorych sa nasledne
+podla priorit (ratingov) k nim priradenych vypocita hodnota
+hlavnej fitness funkcie pre cely rozvrh.
+Vypocet "sub-fitness" funkcii sa moze robit z roznych pohladov:
+1.) "Ziadatel-centricky":
+Vypocita sa kvalita rozvrhu z pohladu kazdeho ziadatela;
+pricom kazdy ziadatel ma priradeny svoj rating (na urcenie vahy)
+(Ziadatel moze byt User, miestnost, predmet, alebo "cviko/prednaska...")
+2.) "Poziadavka-centricky":
+Vypocita sa splnenost kazdej poziadavky, atd...
+Zatial si viem najlepsie predstavit ten prvy sposob...
+bg=cyan</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

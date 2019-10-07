@@ -1,0 +1,67 @@
+{% extends "site-form.html" %}
+{% load brutalform %}
+{% load bootstrap3 %}
+
+{% block content %}
+
+	{% csrf_token %}
+
+	<div class="panel-group">
+
+		{{ formset.management_form }}
+	    {{ formset.non_form_errors }}
+
+		{% for form in formset %}
+			<div class="panel panel-default dynamic-form">
+
+				<div class="panel-heading">
+					<a data-toggle="collapse" href="#collapse-{{ forloop.counter0 }}">
+						{% if form.name.value %}
+							{{ form.name.value }}
+						{% elif forloop.counter > formset.initial_forms|length %}
+								NEW
+						{% else %}
+							(empty name)
+						{% endif %}
+					</a>
+					{# {{ form.DELETE }} #}
+				</div>
+
+				<div id="collapse-{{ forloop.counter0 }}" class="panel-collapse collapse {% if forloop.counter > formset.initial_forms|length %}in{% endif %}">
+					<div class="panel-body">
+						{% brutalform form 0 collapsible=False layout="horizontal" counter=0 %}
+					</div>
+				</div>
+				
+			</div>
+		{% endfor %}
+	
+	</div>
+
+	<div class="form-group">
+        <button class="btn btn-primary" type="submit">{% bootstrap_icon "ok" %} {% block form_submit_text %}{{ form_submit_text|default:"Save" }}{% endblock form_submit_text %}</button>
+    </div>
+
+{% endblock content %}
+
+{% block scripts %}
+
+	{{ block.super }}
+
+	<script type="text/javascript">
+
+		$(function() {
+
+			var panels = $('.panel-group:first').children('.panel');
+			for (var i=0; i<=panels.length-1; i++) {
+				$('[name="form-'+i+'-DELETE"]').each(function() {
+					$(this).closest('.checkbox').clone(true).appendTo($(this).closest('.panel').find('.panel-heading'));
+					$(this).closest('.form-group').remove();
+				});
+			};
+
+		});
+
+	</script>
+
+{% endblock scripts %}

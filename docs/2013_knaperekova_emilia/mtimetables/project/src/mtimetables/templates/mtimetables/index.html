@@ -1,0 +1,45 @@
+{% extends 'site-base.html' %}
+{% load mtimetables %}
+
+{% block heading %}
+	<h1>Wellcome to modern timetables</h1>
+{% endblock heading %}
+
+{% block content %}
+
+<table class="table table-responsive">
+	<thead>
+		<tr>
+			<th>Option</th>
+			<th>Value</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Semester start</td>
+			<td>{% mtimetables_option 'SEMESTER_START_DATE' %}</td>
+		</tr>
+		<tr>
+			<td>Semester end</td>
+			<td>{% mtimetables_option 'SEMESTER_END_DATE' %}</td>
+		</tr>
+		<tr>
+			<td>Examination period start</td>
+			<td>{% mtimetables_option 'EXAMINATION_PERIOD_START_DATE' %}</td>
+		</tr>
+		<tr>
+			<td>Examination period end</td>
+			<td>{% mtimetables_option 'EXAMINATION_PERIOD_END_DATE' %}</td>
+		</tr>
+		<tr>
+			<td>Bachelor group ID</td>
+			<td>{% mtimetables_option 'BACHELOR_ROOT_GROUP_ID' %}</td>
+		</tr>
+		<tr>
+			<td>Engineer group ID</td>
+			<td>{% mtimetables_option 'ENGINEER_ROOT_GROUP_ID' %}</td>
+		</tr>
+	</tbody>
+</table>
+	
+{% endblock content %}

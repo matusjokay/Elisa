@@ -1,0 +1,24 @@
+{% extends "site-formset.html" %}
+
+{% block content %}
+
+	<p>Total students count: {{ object.students_count }}</p>
+
+	{{ block.super }}
+	
+{% endblock content %}
+
+{% block scripts %}
+
+	{{ block.super }}
+
+	<script type="text/javascript">
+		$(function() {
+			$('fieldset.inline-formset').each(function() {
+				$(this).dynamicFormSet('user');
+			});
+			// $('#content').dynamicFormSet('event'); TODO
+		});
+	</script>
+	
+{% endblock scripts %}

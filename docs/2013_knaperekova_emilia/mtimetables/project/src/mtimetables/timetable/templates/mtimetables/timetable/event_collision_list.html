@@ -1,0 +1,14 @@
+{% extends "site-base.html" %}
+
+{% block ribbon_left %}{% endblock ribbon_left %}
+{% block ribbon_right %}{% endblock ribbon_right %}
+
+{% block content %}
+
+<ul>
+	{% for conflict_event in event_collisions %}
+		<li><a href="{% url 'mtimetables:timetable:'|add:conflict_event.model_type|add:'_update' conflict_event.id %}">{{ conflict_event }}</a></li>
+	{% endfor %}
+</ul>
+	
+{% endblock content %}

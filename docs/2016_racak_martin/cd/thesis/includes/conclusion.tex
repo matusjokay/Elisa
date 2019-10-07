@@ -1,0 +1,40 @@
+Autorka práce Rozvrhový systém pre vysoké školy navrhla a implementovala
+prototyp rozvrhového systému, ktorý by mal v konečnom dôsledku úspešne
+konkurovať iným systémom tohto typu. \cite{knap} Cieľom našej práce bolo
+aktualizovať v ňom použité technológie a pokračovať v jeho vývoji.
+
+Najskôr sme sa informovali o probléme tvorby školských rozvrhov a niekoľkých
+jeho riešeniach v podobe už existujúcich systémov. Oboznámili sme sa so súčasným
+procesom tvorby rozvrhov na \acrshort{fei} a požiadavkami, ktoré sa na tieto
+rozvrhy kladú. Naštudovali sme si prácu Rozvrhový systém pre vysoké školy
+vrátane zdrojových kódov prototypu systému, ktorý v rámci nej vznikol a
+vyskúšali si jeho používanie.
+
+Okrem aktualizácie v ňom použitých technológií sme navrhli niekoľko možností ako
+tento systém zlepšiť. Rozhodli sme sa pozmeniť architektúru systému a
+pretransformovať ho na webovú službu s \acrshort{rest} \acrshort{api} a webového
+klienta vo forme \acrshort{spa} s cieľom zvýšiť jeho interoperabilitu s inými
+systémami a umožniť vytvorenie viacerých klientov napr. vo forme natívnych
+(mobilných) aplikácií. Dôsledkom toho je ešte o čosi vyššia modularita celého
+systému, ktorá už pri jeho pôvodnom návrhu zohrávala dôležitú rolu. Takéto
+oddelenie tiež uľahčuje interaktívnu manipuláciu s dátami na strane klienta a
+znižuje odozvu používateľského rozhrania. Dátový model na strane servera sme z
+väčšej časti, ponechali pôvodný. Popísali sme technológie, ktoré sme použili na
+realizáciu nášho návrhu a odôvodnili ich výber. Priblížili sme si postup pri
+aktualizácii a ďalšom vývoji prototypu. Detailnejšie sme opísali zaujímavé
+aspekty implementácie systému a jeho fungovania.
+
+Softvér zatiaľ stále nie je vhodný na nasadenie, čo je spôsobené jednak celkovou
+komplexnosťou problému a tiež tým, že s veľkou časťou použitých technológií sme
+sa stretli prvý krát. Existuje značný priestor na jeho ďalšie vylepšenie a jeho
+kompletizácia a prípadné nasadenie na \acrshort{fei} si zrejme bude vyžadovať
+dlhodobé úsilie a úzku spoluprácu s personálom fakulty. Zmena architektúry
+systému však otvára mnohé nové možnosti pre jeho ďalší vývoj, napr.:
+
+\begin{itemize}
+\item vývoj servera a klienta môže prebiehať oddelene,
+\item vývoj viacerých nezávislých klientov pre rôzne platformy,
+\item klient môže poskytovať offline funkcionalitu,
+\item integrácia servera s inými službami, napr. \acrshort{ais} alebo službami
+  tretích strán.
+\end{itemize}

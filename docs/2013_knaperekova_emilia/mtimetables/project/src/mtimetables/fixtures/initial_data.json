@@ -1,0 +1,344 @@
+[
+{
+    "pk": 1, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "logentry", 
+        "name": "log entry", 
+        "app_label": "admin"
+    }
+},
+{
+    "pk": 2, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "permission", 
+        "name": "permission", 
+        "app_label": "auth"
+    }
+},
+{
+    "pk": 3, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "group", 
+        "name": "group", 
+        "app_label": "auth"
+    }
+},
+{
+    "pk": 4, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "user", 
+        "name": "user", 
+        "app_label": "auth"
+    }
+},
+{
+    "pk": 5, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "contenttype", 
+        "name": "content type", 
+        "app_label": "contenttypes"
+    }
+},
+{
+    "pk": 6, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "session", 
+        "name": "session", 
+        "app_label": "sessions"
+    }
+},
+{
+    "pk": 7, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "requireobject", 
+        "name": "require object", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 8, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "department", 
+        "name": "department", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 9, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "group", 
+        "name": "group", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 10, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "user", 
+        "name": "user", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 11, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "studytype", 
+        "name": "study type", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 12, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "subject", 
+        "name": "subject", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 13, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "activitytype", 
+        "name": "activity type", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 14, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "activitydefinition", 
+        "name": "activity definition", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 15, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "equipment", 
+        "name": "equipment", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 16, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "roomtype", 
+        "name": "room type", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 17, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "room", 
+        "name": "room", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 18, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "usergroupconnection", 
+        "name": "user group connection", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 19, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "usereventconnection", 
+        "name": "user event connection", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 20, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "usersubjectconnection", 
+        "name": "user subject connection", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 21, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "userdepartmentconnection", 
+        "name": "user department connection", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 22, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "roomequipmentconnection", 
+        "name": "room equipment connection", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 23, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "subjectstudytypeconnection", 
+        "name": "subject study type connection", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 24, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "event", 
+        "name": "event", 
+        "app_label": "timetable"
+    }
+},
+{
+    "pk": 25, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "onetimeevent", 
+        "name": "one time event", 
+        "app_label": "timetable"
+    }
+},
+{
+    "pk": 26, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "semesterevent", 
+        "name": "semester event", 
+        "app_label": "timetable"
+    }
+},
+{
+    "pk": 27, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "objectrequirementconnection", 
+        "name": "object requirement connection", 
+        "app_label": "requirements"
+    }
+},
+{
+    "pk": 28, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "requirementpackage", 
+        "name": "requirement package", 
+        "app_label": "requirements"
+    }
+},
+{
+    "pk": 29, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "requirementtype", 
+        "name": "requirement type", 
+        "app_label": "requirements"
+    }
+},
+{
+    "pk": 30, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "requirement", 
+        "name": "requirement", 
+        "app_label": "requirements"
+    }
+},
+{
+    "pk": 31, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "objectrequirementtypeconnection", 
+        "name": "object requirement type connection", 
+        "app_label": "requirements"
+    }
+},
+{
+    "pk": 32, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "requirementmodulebase", 
+        "name": "requirement module base", 
+        "app_label": "requirements"
+    }
+},
+{
+    "pk": 33, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "semestercalendar", 
+        "name": "semester calendar", 
+        "app_label": "requirementmodules"
+    }
+},
+{
+    "pk": 34, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "lunchbreak", 
+        "name": "lunch break", 
+        "app_label": "requirementmodules"
+    }
+},
+{
+    "pk": 35, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "maxtransfersbetweenbulildings", 
+        "name": "max transfers between buildings", 
+        "app_label": "requirementmodules"
+    }
+},
+{
+    "pk": 36, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "examinationperiodcalendar", 
+        "name": "examination period calendar", 
+        "app_label": "requirementmodules"
+    }
+},
+{
+    "pk": 37, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "timetablegrid", 
+        "name": "timetable grid", 
+        "app_label": "calendar"
+    }
+},
+{
+    "pk": 38, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "hour", 
+        "name": "hour", 
+        "app_label": "calendar"
+    }
+}
+]

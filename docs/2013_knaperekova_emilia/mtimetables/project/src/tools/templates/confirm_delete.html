@@ -1,0 +1,20 @@
+{% extends 'site-form.html' %}
+{% load bootstrap3 %}
+
+
+{% block ribbon_form_buttons %}
+	<button class="btn btn-sm btn-primary" type="submit" title="Confirm deletion">{% bootstrap_icon 'trash' %}</button>
+{% endblock ribbon_form_buttons %}
+
+
+{% block content %}
+
+    {% csrf_token %}
+    
+    <p class="lead">Are you sure you want to delete {{ object.verbose_name }} {{ object }}?</p>
+    
+    <div class="form-group">
+        <button class="btn btn-primary" type="submit">{% bootstrap_icon 'ok' %} Confirm deletion</button>
+    </div>
+
+{% endblock content %}

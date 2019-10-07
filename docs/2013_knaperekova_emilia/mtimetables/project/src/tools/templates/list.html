@@ -1,0 +1,118 @@
+{% extends 'site-base.html' %}
+{% load mptt_tags %}
+{% load bootstrap3 %}
+{% load tools %}
+
+
+{% block content_class %}{{ block.super }}{% if filters_available %} col-md-8{% endif %}{% endblock content_class %}
+{% block content_aside_class %}{{ block.super }}{% if filters_available %} col-md-4{% endif %}{% endblock content_aside_class %}
+
+
+{% block ribbon_right %}
+	{{ block.super }}
+	{% if is_paginated %}
+	    {{ page_obj.start_index }} - {{ page_obj.end_index }} of {{ paginator.count }}&nbsp;&nbsp;
+	    <div class="btn-group">
+	    	<a title="Previous page" class="btn btn-sm btn-default{% if not page_obj.has_previous %} disabled"{% else %}" 
+	    		href="?{% if filters_active %}{{ filters_active }}&{% endif %}{{ view.page_kwarg }}={{ page_obj.previous_page_number }}"{% endif %}>{% bootstrap_icon 'chevron-left' %}</a>
+	    	<a title="Next page" class="btn btn-sm btn-default{% if not page_obj.has_next %} disabled"{% else %}" 
+	    		href="?{% if filters_active %}{{ filters_active }}&{% endif %}{{ view.page_kwarg }}={{ page_obj.next_page_number }}"{% endif %}>{% bootstrap_icon 'chevron-right' %}</a>
+	    </div>
+	{% endif %}
+{% endblock ribbon_right %}
+
+
+{% block content %}
+
+
+	{% if object_list %}
+		<table class="table">
+			<thead>
+				<tr>
+					<th>#</th>
+					{% for property in view.list_display %}
+						<th>{{ view.list_display_labels|key:forloop.counter0|default:property|capfirst }}</th>
+					{% endfor %}
+					{% if view.object_actions %}
+						<th class="actions">Actions</th>
+					{% endif %}
+				</tr>
+			</thead>
+			<tbody>
+
+				{% for object in object_list.all %}
+				<tr>
+					<td>{{ object.id }}</td>
+					{% for property in view.list_display %}
+						<td>{{ object|attr:property }}</td>
+					{% endfor %}
+					<td class="actions">
+						{% for key, action in view.object_actions.items %}
+							<a href="{% action_url action object %}" title="{{ action.title|capfirst }}">{% bootstrap_icon action.icon %}</a>
+						{% endfor %}
+					</td>
+				</tr>
+				{% endfor %}
+
+			</tbody>
+		</table>
+	{% else %}
+		<p>No {{ view.model_verbose_name_plural }} available.</p>
+	{% endif %}
+
+
+
+
+	{% block pagination %}
+		{% if is_paginated %}
+
+		<ul class="pagination">
+			<li class="fast-navigation{% if not page_obj.has_previous %} disabled">
+				<a{% else %}"><a href="?{% if filters_active %}{{ filters_active }}&{% endif %}{{ view.page_kwarg }}=1"{% endif %} title="First page">{% bootstrap_icon 'chevron-left' %}{% bootstrap_icon 'chevron-left' %}</a>
+			</li>
+			<li class="fast-navigation{% if not page_obj.has_previous %} disabled">
+				<a{% else %}"><a href="?{% if filters_active %}{{ filters_active }}&{% endif %}{{ view.page_kwarg }}={{ page_obj.previous_page_number }}"{% endif %} title="Previous page">{% bootstrap_icon 'chevron-left' %}</a>
+			</li>
+
+
+			{% if paginator.page_range|first != paginator_range|first %}
+				<li><div class="pagination-space">...</div></li>
+			{% endif %}
+
+			{% for number in paginator_range %}
+			<li class="{% if number == page_obj.number %}active{% endif %}"><a href="?{% if filters_active %}{{ filters_active }}&{% endif %}{{ view.page_kwarg }}={{ number }}">{{ number }}</a></li>
+			{% endfor %}
+
+			{% if paginator.page_range|last != paginator_range|last %}
+				<li><div class="pagination-space">...</div></li>
+			{% endif %}
+
+			<li class="fast-navigation{% if not page_obj.has_next %} disabled">
+				<a{% else %}"><a href="?{% if filters_active %}{{ filters_active }}&{% endif %}{{ view.page_kwarg }}={{ page_obj.next_page_number }}"{% endif %} title="Next page">{% bootstrap_icon 'chevron-right' %}</a>
+			</li>
+			<li class="fast-navigation{% if not page_obj.has_next %} disabled">
+				<a{% else %}"><a href="?{% if filters_active %}{{ filters_active }}&{% endif %}{{ view.page_kwarg }}={{ paginator.num_pages }}"{% endif %} title="Last page">{% bootstrap_icon 'chevron-right' %}{% bootstrap_icon 'chevron-right' %}</a>
+			</li>
+		</ul>
+
+		<div class="clearfix"></div>
+
+		{% endif %}
+	{% endblock pagination %}
+
+{% endblock content %}
+
+{% block content_aside %}
+
+	{% if filters_available %}
+		{% block filters %}
+		<div class="panel panel-default">
+			<div class="panel-heading">Filter</div>
+			<div class="panel-body">
+				{% include "site_parts/form.html" with form=filters_available form_method='GET' no_csrf='True' form_submit_text='Apply filter' %}
+			</div>
+		</div>
+		{% endblock filters %}
+	{% endif %}
+
+{% endblock content_aside %}

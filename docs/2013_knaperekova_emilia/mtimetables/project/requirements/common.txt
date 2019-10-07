@@ -1,0 +1,9 @@
+Django>=1.6.2,<1.7
+unicodecsv>=0.9.4
+isoweek>=1.3
+psycopg2>=2.5.2
+django-smtp-ssl>=1.0
+django-mptt>=0.6
+django-simple-menu>=1.0.9
+django-bootstrap3>=4.2.0
+-e git+https://github.com/disqus/django-bitfield.git#egg=django-bitfield

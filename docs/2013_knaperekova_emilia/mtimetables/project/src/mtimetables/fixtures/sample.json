@@ -1,0 +1,1488 @@
+[
+{
+    "pk": 1, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 2, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 3, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 4, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 5, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 6, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 7, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 8, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 9, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 10, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 11, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 12, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 13, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 14, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 15, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 16, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 17, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 18, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 19, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 20, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 21, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 22, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 23, 
+    "model": "data.requireobject", 
+    "fields": {
+        "priority": 0.75
+    }
+},
+{
+    "pk": 1, 
+    "model": "data.department", 
+    "fields": {
+        "rght": 4, 
+        "uis_id": null, 
+        "parent": null, 
+        "level": 0, 
+        "abbreviation": "FEI", 
+        "lft": 1, 
+        "tree_id": 1, 
+        "name": "Fakulta elektrotechniky a informatikty"
+    }
+},
+{
+    "pk": 2, 
+    "model": "data.department", 
+    "fields": {
+        "rght": 3, 
+        "uis_id": null, 
+        "parent": 1, 
+        "level": 1, 
+        "abbreviation": "\u00daIM", 
+        "lft": 2, 
+        "tree_id": 1, 
+        "name": "\u00dastav informatiky a matematiky"
+    }
+},
+{
+    "pk": 8, 
+    "model": "data.group", 
+    "fields": {
+        "rght": 14, 
+        "uis_id": null, 
+        "parent": null, 
+        "level": 0, 
+        "abbreviation": "s", 
+        "lft": 1, 
+        "tree_id": 1, 
+        "name": "\u0161tudenti"
+    }
+},
+{
+    "pk": 9, 
+    "model": "data.group", 
+    "fields": {
+        "rght": 2, 
+        "uis_id": null, 
+        "parent": null, 
+        "level": 0, 
+        "abbreviation": "u", 
+        "lft": 1, 
+        "tree_id": 2, 
+        "name": "u\u010ditelia"
+    }
+},
+{
+    "pk": 10, 
+    "model": "data.group", 
+    "fields": {
+        "rght": 11, 
+        "uis_id": null, 
+        "parent": 8, 
+        "level": 1, 
+        "abbreviation": "B", 
+        "lft": 2, 
+        "tree_id": 1, 
+        "name": "Bakal\u00e1rsky"
+    }
+},
+{
+    "pk": 11, 
+    "model": "data.group", 
+    "fields": {
+        "rght": 13, 
+        "uis_id": null, 
+        "parent": 8, 
+        "level": 1, 
+        "abbreviation": "I", 
+        "lft": 12, 
+        "tree_id": 1, 
+        "name": "In\u017einiersky"
+    }
+},
+{
+    "pk": 12, 
+    "model": "data.group", 
+    "fields": {
+        "rght": 10, 
+        "uis_id": null, 
+        "parent": 10, 
+        "level": 2, 
+        "abbreviation": "B-API", 
+        "lft": 3, 
+        "tree_id": 1, 
+        "name": "Aplikovan\u00e1 informatika"
+    }
+},
+{
+    "pk": 13, 
+    "model": "data.group", 
+    "fields": {
+        "rght": 5, 
+        "uis_id": null, 
+        "parent": 12, 
+        "level": 3, 
+        "abbreviation": "B-API-1", 
+        "lft": 4, 
+        "tree_id": 1, 
+        "name": "1"
+    }
+},
+{
+    "pk": 14, 
+    "model": "data.group", 
+    "fields": {
+        "rght": 7, 
+        "uis_id": null, 
+        "parent": 12, 
+        "level": 3, 
+        "abbreviation": "B-API-2", 
+        "lft": 6, 
+        "tree_id": 1, 
+        "name": "2"
+    }
+},
+{
+    "pk": 15, 
+    "model": "data.group", 
+    "fields": {
+        "rght": 9, 
+        "uis_id": null, 
+        "parent": 12, 
+        "level": 3, 
+        "abbreviation": "B-API-3", 
+        "lft": 8, 
+        "tree_id": 1, 
+        "name": "3"
+    }
+},
+{
+    "pk": 17, 
+    "model": "data.user", 
+    "fields": {
+        "surname": "Novotn\u00fd", 
+        "titles_after_name": "PhD.", 
+        "name": "\u013dubom\u00edr", 
+        "titles_before_name": "Ing.", 
+        "active": true, 
+        "login": "xucitel", 
+        "uis_id": null
+    }
+},
+{
+    "pk": 21, 
+    "model": "data.user", 
+    "fields": {
+        "surname": "Hra\u0161ko", 
+        "titles_after_name": "", 
+        "name": "Janko", 
+        "titles_before_name": "Bc. ", 
+        "active": true, 
+        "login": "xhrasko", 
+        "uis_id": null
+    }
+},
+{
+    "pk": 1, 
+    "model": "data.studytype", 
+    "fields": {
+        "abbreviation": "", 
+        "uis_id": null, 
+        "name": "prezen\u010dne"
+    }
+},
+{
+    "pk": 2, 
+    "model": "data.studytype", 
+    "fields": {
+        "abbreviation": "", 
+        "uis_id": null, 
+        "name": "di\u0161tan\u010dne"
+    }
+},
+{
+    "pk": 16, 
+    "model": "data.subject", 
+    "fields": {
+        "rght": 2, 
+        "code": null, 
+        "uis_id": null, 
+        "parent": null, 
+        "level": 0, 
+        "completion_mode": "s", 
+        "abbreviation": "", 
+        "lft": 1, 
+        "tree_id": 1, 
+        "department": 2, 
+        "name": "Matematika 1"
+    }
+},
+{
+    "pk": 1, 
+    "model": "data.activitytype", 
+    "fields": {
+        "prototype": 3, 
+        "mandatory": false, 
+        "name": "sk\u00fa\u0161ka 1. term\u00edn", 
+        "custom_color": ""
+    }
+},
+{
+    "pk": 2, 
+    "model": "data.activitytype", 
+    "fields": {
+        "prototype": 3, 
+        "mandatory": false, 
+        "name": "sk\u00fa\u0161ka 2. term\u00edn", 
+        "custom_color": ""
+    }
+},
+{
+    "pk": 3, 
+    "model": "data.activitytype", 
+    "fields": {
+        "prototype": 1, 
+        "mandatory": false, 
+        "name": "semin\u00e1r", 
+        "custom_color": ""
+    }
+},
+{
+    "pk": 4, 
+    "model": "data.activitytype", 
+    "fields": {
+        "prototype": 2, 
+        "mandatory": true, 
+        "name": "cvi\u010denie", 
+        "custom_color": ""
+    }
+},
+{
+    "pk": 5, 
+    "model": "data.activitytype", 
+    "fields": {
+        "prototype": 2, 
+        "mandatory": true, 
+        "name": "laborat\u00f3rne cvi\u010denie", 
+        "custom_color": ""
+    }
+},
+{
+    "pk": 6, 
+    "model": "data.activitytype", 
+    "fields": {
+        "prototype": null, 
+        "mandatory": false, 
+        "name": "konzult\u00e1cia", 
+        "custom_color": ""
+    }
+},
+{
+    "pk": 7, 
+    "model": "data.activitytype", 
+    "fields": {
+        "prototype": 1, 
+        "mandatory": false, 
+        "name": "predn\u00e1\u0161ka", 
+        "custom_color": ""
+    }
+},
+{
+    "pk": 22, 
+    "model": "data.activitydefinition", 
+    "fields": {
+        "name": "Matematika 1 - predn\u00e1\u0161ka", 
+        "custom_color": "", 
+        "hours_count": 2, 
+        "mandatory_instances_count": 1, 
+        "subjects": [
+            16
+        ], 
+        "groups": [], 
+        "room_capacity_rate": 1.0, 
+        "weeks": "4095", 
+        "activity_type": 7
+    }
+},
+{
+    "pk": 23, 
+    "model": "data.activitydefinition", 
+    "fields": {
+        "name": "Matematika 1 - cvi\u010denie", 
+        "custom_color": "", 
+        "hours_count": 2, 
+        "mandatory_instances_count": 1, 
+        "subjects": [
+            16
+        ], 
+        "groups": [], 
+        "room_capacity_rate": 1.0, 
+        "weeks": "4095", 
+        "activity_type": 4
+    }
+},
+{
+    "pk": 1, 
+    "model": "data.equipment", 
+    "fields": {
+        "uis_id": null, 
+        "name": "projektor"
+    }
+},
+{
+    "pk": 18, 
+    "model": "data.roomtype", 
+    "fields": {
+        "uis_id": null, 
+        "name": "posluch\u00e1re\u0148"
+    }
+},
+{
+    "pk": 19, 
+    "model": "data.roomtype", 
+    "fields": {
+        "uis_id": null, 
+        "name": "laborat\u00f3rium"
+    }
+},
+{
+    "pk": 20, 
+    "model": "data.room", 
+    "fields": {
+        "rght": 2, 
+        "capacity": 300, 
+        "uis_id": null, 
+        "parent": null, 
+        "level": 0, 
+        "lft": 1, 
+        "tree_id": 1, 
+        "department": null, 
+        "room_type": 18, 
+        "name": "bc300"
+    }
+},
+{
+    "pk": 1, 
+    "model": "data.usergroupconnection", 
+    "fields": {
+        "study_group": null, 
+        "group": 15, 
+        "user": 21, 
+        "study_method": 1
+    }
+},
+{
+    "pk": 1, 
+    "model": "data.usereventconnection", 
+    "fields": {
+        "user": 17, 
+        "relation_type": 3, 
+        "event": 2
+    }
+},
+{
+    "pk": 2, 
+    "model": "data.usereventconnection", 
+    "fields": {
+        "user": 17, 
+        "relation_type": 3, 
+        "event": 3
+    }
+},
+{
+    "pk": 3, 
+    "model": "data.usereventconnection", 
+    "fields": {
+        "user": 21, 
+        "relation_type": 1, 
+        "event": 3
+    }
+},
+{
+    "pk": 1, 
+    "model": "data.usersubjectconnection", 
+    "fields": {
+        "relation_rate": 1.0, 
+        "user": 17, 
+        "relation_type": 3, 
+        "subject": 16
+    }
+},
+{
+    "pk": 2, 
+    "model": "data.usersubjectconnection", 
+    "fields": {
+        "relation_rate": 1.0, 
+        "user": 21, 
+        "relation_type": 1, 
+        "subject": 16
+    }
+},
+{
+    "pk": 1, 
+    "model": "data.userdepartmentconnection", 
+    "fields": {
+        "department": 2, 
+        "user": 17, 
+        "relation_type": 1
+    }
+},
+{
+    "pk": 1, 
+    "model": "data.roomequipmentconnection", 
+    "fields": {
+        "count": 1, 
+        "equipment": 1, 
+        "room": 20
+    }
+},
+{
+    "pk": 1, 
+    "model": "data.subjectstudytypeconnection", 
+    "fields": {
+        "study_type": 1, 
+        "learning_plan": "2/2", 
+        "subject": 16
+    }
+},
+{
+    "pk": 1, 
+    "model": "calendar.timetablegrid", 
+    "fields": {
+        "period_prototype": 1, 
+        "name": "semester"
+    }
+},
+{
+    "pk": 2, 
+    "model": "calendar.timetablegrid", 
+    "fields": {
+        "period_prototype": 2, 
+        "name": "sk\u00fa\u0161kov\u00e9"
+    }
+},
+{
+    "pk": 1, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "1.", 
+        "to_time": "08:00:00", 
+        "from_time": "07:00:00"
+    }
+},
+{
+    "pk": 2, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "2.", 
+        "to_time": "09:00:00", 
+        "from_time": "08:00:00"
+    }
+},
+{
+    "pk": 3, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "3.", 
+        "to_time": "10:00:00", 
+        "from_time": "09:00:00"
+    }
+},
+{
+    "pk": 4, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "4.", 
+        "to_time": "11:00:00", 
+        "from_time": "10:00:00"
+    }
+},
+{
+    "pk": 5, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "5.", 
+        "to_time": "12:00:00", 
+        "from_time": "11:00:00"
+    }
+},
+{
+    "pk": 6, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "6.", 
+        "to_time": "13:00:00", 
+        "from_time": "12:00:00"
+    }
+},
+{
+    "pk": 7, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "7.", 
+        "to_time": "14:00:00", 
+        "from_time": "13:00:00"
+    }
+},
+{
+    "pk": 8, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "8.", 
+        "to_time": "15:00:00", 
+        "from_time": "14:00:00"
+    }
+},
+{
+    "pk": 9, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "9.", 
+        "to_time": "16:00:00", 
+        "from_time": "15:00:00"
+    }
+},
+{
+    "pk": 10, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "10.", 
+        "to_time": "17:00:00", 
+        "from_time": "16:00:00"
+    }
+},
+{
+    "pk": 11, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "11.", 
+        "to_time": "18:00:00", 
+        "from_time": "17:00:00"
+    }
+},
+{
+    "pk": 12, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "12.", 
+        "to_time": "19:00:00", 
+        "from_time": "18:00:00"
+    }
+},
+{
+    "pk": 13, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "13.", 
+        "to_time": "20:00:00", 
+        "from_time": "19:00:00"
+    }
+},
+{
+    "pk": 14, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "14.", 
+        "to_time": "21:00:00", 
+        "from_time": "20:00:00"
+    }
+},
+{
+    "pk": 15, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 1, 
+        "name": "15.", 
+        "to_time": "22:00:00", 
+        "from_time": "21:00:00"
+    }
+},
+{
+    "pk": 16, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 2, 
+        "name": "1. beh", 
+        "to_time": "10:00:00", 
+        "from_time": "07:30:00"
+    }
+},
+{
+    "pk": 17, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 2, 
+        "name": "2. beh", 
+        "to_time": "13:00:00", 
+        "from_time": "10:30:00"
+    }
+},
+{
+    "pk": 18, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 2, 
+        "name": "3. beh", 
+        "to_time": "16:00:00", 
+        "from_time": "13:30:00"
+    }
+},
+{
+    "pk": 19, 
+    "model": "calendar.hour", 
+    "fields": {
+        "timetable_grid": 2, 
+        "name": "4. beh", 
+        "to_time": "19:00:00", 
+        "from_time": "16:30:00"
+    }
+},
+{
+    "pk": 1, 
+    "model": "requirements.objectrequirementconnection", 
+    "fields": {
+        "require_object": 21, 
+        "order": 0, 
+        "requirement_package": 2
+    }
+},
+{
+    "pk": 2, 
+    "model": "requirements.objectrequirementconnection", 
+    "fields": {
+        "require_object": 17, 
+        "order": 0, 
+        "requirement_package": 3
+    }
+},
+{
+    "pk": 3, 
+    "model": "requirements.objectrequirementconnection", 
+    "fields": {
+        "require_object": 17, 
+        "order": 1, 
+        "requirement_package": 1
+    }
+},
+{
+    "pk": 4, 
+    "model": "requirements.objectrequirementconnection", 
+    "fields": {
+        "require_object": 16, 
+        "order": 0, 
+        "requirement_package": 4
+    }
+},
+{
+    "pk": 5, 
+    "model": "requirements.objectrequirementconnection", 
+    "fields": {
+        "require_object": 20, 
+        "order": 0, 
+        "requirement_package": 5
+    }
+},
+{
+    "pk": 1, 
+    "model": "requirements.requirementpackage", 
+    "fields": {
+        "evaluate_together": false, 
+        "evaluation_method": 1, 
+        "password": "", 
+        "requirement_package_type": 2, 
+        "name": "sen\u00e1t"
+    }
+},
+{
+    "pk": 2, 
+    "model": "requirements.requirementpackage", 
+    "fields": {
+        "evaluate_together": false, 
+        "evaluation_method": 1, 
+        "password": "", 
+        "requirement_package_type": 1, 
+        "name": "user Bc.  Janko Hra\u0161ko"
+    }
+},
+{
+    "pk": 3, 
+    "model": "requirements.requirementpackage", 
+    "fields": {
+        "evaluate_together": false, 
+        "evaluation_method": 1, 
+        "password": "", 
+        "requirement_package_type": 1, 
+        "name": "user Ing. \u013dubom\u00edr Novotn\u00fd, PhD."
+    }
+},
+{
+    "pk": 4, 
+    "model": "requirements.requirementpackage", 
+    "fields": {
+        "evaluate_together": false, 
+        "evaluation_method": 1, 
+        "password": "", 
+        "requirement_package_type": 1, 
+        "name": "subject Matematika 1"
+    }
+},
+{
+    "pk": 5, 
+    "model": "requirements.requirementpackage", 
+    "fields": {
+        "evaluate_together": false, 
+        "evaluation_method": 1, 
+        "password": "", 
+        "requirement_package_type": 1, 
+        "name": "room bc300"
+    }
+},
+{
+    "pk": 1, 
+    "model": "requirementmodules.semestercalendar", 
+    "fields": {
+        "description": "", 
+        "evaluation_method": 1, 
+        "requirement_package": 1, 
+        "priority": 0.75, 
+        "values": "1.0,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None", 
+        "min_compliance_rate": 0.0, 
+        "actual_compliance_rate": 0.0, 
+        "requirement_type": 4
+    }
+},
+{
+    "pk": 2, 
+    "model": "requirementmodules.lunchbreak", 
+    "fields": {
+        "description": "", 
+        "evaluation_method": 1, 
+        "requirement_package": 2, 
+        "priority": 0.75, 
+        "values": "50,12:00,14:00", 
+        "min_compliance_rate": 0.0, 
+        "actual_compliance_rate": 0.0, 
+        "requirement_type": 2
+    }
+},
+{
+    "pk": 3, 
+    "model": "requirementmodules.semestercalendar", 
+    "fields": {
+        "description": "", 
+        "evaluation_method": 1, 
+        "requirement_package": 5, 
+        "priority": 0.75, 
+        "values": "None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,0.5,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None", 
+        "min_compliance_rate": 0.0, 
+        "actual_compliance_rate": 0.0, 
+        "requirement_type": 4
+    }
+},
+{
+    "pk": 1, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "logentry", 
+        "name": "log entry", 
+        "app_label": "admin"
+    }
+},
+{
+    "pk": 2, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "permission", 
+        "name": "permission", 
+        "app_label": "auth"
+    }
+},
+{
+    "pk": 3, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "group", 
+        "name": "group", 
+        "app_label": "auth"
+    }
+},
+{
+    "pk": 4, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "user", 
+        "name": "user", 
+        "app_label": "auth"
+    }
+},
+{
+    "pk": 5, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "contenttype", 
+        "name": "content type", 
+        "app_label": "contenttypes"
+    }
+},
+{
+    "pk": 6, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "session", 
+        "name": "session", 
+        "app_label": "sessions"
+    }
+},
+{
+    "pk": 7, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "requireobject", 
+        "name": "require object", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 8, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "department", 
+        "name": "department", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 9, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "group", 
+        "name": "group", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 10, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "user", 
+        "name": "user", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 11, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "studytype", 
+        "name": "study type", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 12, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "subject", 
+        "name": "subject", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 13, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "activitytype", 
+        "name": "activity type", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 14, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "activitydefinition", 
+        "name": "activity definition", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 15, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "equipment", 
+        "name": "equipment", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 16, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "roomtype", 
+        "name": "room type", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 17, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "room", 
+        "name": "room", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 18, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "usergroupconnection", 
+        "name": "user group connection", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 19, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "usereventconnection", 
+        "name": "user event connection", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 20, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "usersubjectconnection", 
+        "name": "user subject connection", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 21, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "userdepartmentconnection", 
+        "name": "user department connection", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 22, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "roomequipmentconnection", 
+        "name": "room equipment connection", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 23, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "subjectstudytypeconnection", 
+        "name": "subject study type connection", 
+        "app_label": "data"
+    }
+},
+{
+    "pk": 24, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "event", 
+        "name": "event", 
+        "app_label": "timetable"
+    }
+},
+{
+    "pk": 25, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "onetimeevent", 
+        "name": "one time event", 
+        "app_label": "timetable"
+    }
+},
+{
+    "pk": 26, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "semesterevent", 
+        "name": "semester event", 
+        "app_label": "timetable"
+    }
+},
+{
+    "pk": 27, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "objectrequirementconnection", 
+        "name": "object requirement connection", 
+        "app_label": "requirements"
+    }
+},
+{
+    "pk": 28, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "requirementpackage", 
+        "name": "requirement package", 
+        "app_label": "requirements"
+    }
+},
+{
+    "pk": 29, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "requirementtype", 
+        "name": "requirement type", 
+        "app_label": "requirements"
+    }
+},
+{
+    "pk": 30, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "requirement", 
+        "name": "requirement", 
+        "app_label": "requirements"
+    }
+},
+{
+    "pk": 31, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "objectrequirementtypeconnection", 
+        "name": "object requirement type connection", 
+        "app_label": "requirements"
+    }
+},
+{
+    "pk": 32, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "requirementmodulebase", 
+        "name": "requirement module base", 
+        "app_label": "requirements"
+    }
+},
+{
+    "pk": 33, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "semestercalendar", 
+        "name": "semester calendar", 
+        "app_label": "requirementmodules"
+    }
+},
+{
+    "pk": 34, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "lunchbreak", 
+        "name": "lunch break", 
+        "app_label": "requirementmodules"
+    }
+},
+{
+    "pk": 35, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "maxtransfersbetweenbulildings", 
+        "name": "max transfers between buildings", 
+        "app_label": "requirementmodules"
+    }
+},
+{
+    "pk": 36, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "examinationperiodcalendar", 
+        "name": "examination period calendar", 
+        "app_label": "requirementmodules"
+    }
+},
+{
+    "pk": 37, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "timetablegrid", 
+        "name": "timetable grid", 
+        "app_label": "calendar"
+    }
+},
+{
+    "pk": 38, 
+    "model": "contenttypes.contenttype", 
+    "fields": {
+        "model": "hour", 
+        "name": "hour", 
+        "app_label": "calendar"
+    }
+},
+{
+    "pk": 1, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 1, 
+        "object_id": null, 
+        "content_type": 10
+    }
+},
+{
+    "pk": 2, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 1, 
+        "object_id": null, 
+        "content_type": 9
+    }
+},
+{
+    "pk": 3, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 1, 
+        "object_id": null, 
+        "content_type": 17
+    }
+},
+{
+    "pk": 4, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 2, 
+        "object_id": null, 
+        "content_type": 10
+    }
+},
+{
+    "pk": 5, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 4, 
+        "object_id": null, 
+        "content_type": 9
+    }
+},
+{
+    "pk": 6, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 4, 
+        "object_id": null, 
+        "content_type": 10
+    }
+},
+{
+    "pk": 7, 
+    "model": "requirements.objectrequirementtypeconnection", 
+    "fields": {
+        "allowed_count": 1, 
+        "requirement_type": 4, 
+        "object_id": null, 
+        "content_type": 17
+    }
+},
+{
+    "pk": 1, 
+    "model": "requirements.requirementtype", 
+    "fields": {
+        "priority": 0.75, 
+        "enabled": true, 
+        "content_type": 36
+    }
+},
+{
+    "pk": 2, 
+    "model": "requirements.requirementtype", 
+    "fields": {
+        "priority": 0.75, 
+        "enabled": true, 
+        "content_type": 34
+    }
+},
+{
+    "pk": 3, 
+    "model": "requirements.requirementtype", 
+    "fields": {
+        "priority": 0.75, 
+        "enabled": true, 
+        "content_type": 35
+    }
+},
+{
+    "pk": 4, 
+    "model": "requirements.requirementtype", 
+    "fields": {
+        "priority": 0.75, 
+        "enabled": true, 
+        "content_type": 33
+    }
+},
+{
+    "pk": 2, 
+    "model": "timetable.semesterevent", 
+    "fields": {
+        "activities": [
+            22
+        ], 
+        "end": "10:00:00", 
+        "days": "1", 
+        "start": "07:00:00", 
+        "rooms": [
+            20
+        ], 
+        "groups": [], 
+        "weeks": "4095"
+    }
+},
+{
+    "pk": 3, 
+    "model": "timetable.semesterevent", 
+    "fields": {
+        "activities": [
+            23
+        ], 
+        "end": "12:00:00", 
+        "days": "2", 
+        "start": "10:00:00", 
+        "rooms": [
+            20
+        ], 
+        "groups": [], 
+        "weeks": "4095"
+    }
+},
+{
+    "pk": 1, 
+    "model": "timetable.onetimeevent", 
+    "fields": {
+        "activities": [], 
+        "end": "2014-05-06T16:00:00", 
+        "start": "2014-05-06T08:00:00", 
+        "rooms": [
+            20
+        ], 
+        "groups": [], 
+        "holiday": false
+    }
+},
+{
+    "pk": 1, 
+    "model": "timetable.event", 
+    "fields": {
+        "groups": [], 
+        "activities": [], 
+        "name": "konferencia", 
+        "custom_color": "", 
+        "rooms": [
+            20
+        ], 
+        "content_type": 25, 
+        "fixed": false, 
+        "description": ""
+    }
+},
+{
+    "pk": 2, 
+    "model": "timetable.event", 
+    "fields": {
+        "groups": [], 
+        "activities": [
+            22
+        ], 
+        "name": "", 
+        "custom_color": "", 
+        "rooms": [
+            20
+        ], 
+        "content_type": 26, 
+        "fixed": false, 
+        "description": ""
+    }
+},
+{
+    "pk": 3, 
+    "model": "timetable.event", 
+    "fields": {
+        "groups": [], 
+        "activities": [
+            23
+        ], 
+        "name": "", 
+        "custom_color": "", 
+        "rooms": [
+            20
+        ], 
+        "content_type": 26, 
+        "fixed": false, 
+        "description": ""
+    }
+}
+]
