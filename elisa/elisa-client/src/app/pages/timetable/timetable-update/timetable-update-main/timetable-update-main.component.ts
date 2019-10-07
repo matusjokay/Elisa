@@ -144,6 +144,7 @@ export class TimetableUpdateMainComponent implements OnInit {
   }
   loadEvents(){
       this.timetableService.getAllEvents(this.activeVersion).subscribe(result=>{
+        console.log(result);
         this.events = result.map(event=>{
           let rooms: Room[] = [];
           event.rooms.forEach(room=>{
@@ -168,6 +169,7 @@ export class TimetableUpdateMainComponent implements OnInit {
             );
           return parsedEvent;
         });
+        console.log(this.events);
         this.loadCollisions();
       });
 
@@ -283,27 +285,27 @@ export class TimetableUpdateMainComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if(result){
-        this.events[arg.event.id] = result;
-      }
-      else{
-        // this.teachers[arg.event.teacher.id].events.splice(this.teachers[arg.event.teacher.id].event.indexOf(result),1)
-        event.teacher.events.splice(event.teacher.events.indexOf(event),1);
-        event.rooms.forEach((room:Room) =>{
-          room.events.splice(room.events.indexOf(event),1);
-        });
-
-        event.groups.forEach((group:Group) =>{
-          group.events.splice(group.events.indexOf(event),1);
-        });
-        if(event.status !== 'new'){
-          this.deleteEvents.push(event.id);
+        if(result){
+          this.events[arg.event.id] = result;
         }
-        delete this.events[arg.event.id];
-        this.reloadCourse();
-        this.reloadRoom();
-        this.groupsChange();
-      }
+        else{
+          // this.teachers[arg.event.teacher.id].events.splice(this.teachers[arg.event.teacher.id].event.indexOf(result),1)
+          event.teacher.events.splice(event.teacher.events.indexOf(event),1);
+          event.rooms.forEach((room:Room) =>{
+            room.events.splice(room.events.indexOf(event),1);
+          });
+
+          event.groups.forEach((group:Group) =>{
+            group.events.splice(group.events.indexOf(event),1);
+          });
+          if(event.status !== 'new'){
+            this.deleteEvents.push(event.id);
+          }
+          delete this.events[arg.event.id];
+          this.reloadCourse();
+          this.reloadRoom();
+          this.groupsChange();
+        }
     });
 
   }
@@ -442,8 +444,12 @@ export class TimetableUpdateMainComponent implements OnInit {
     let events = [];
     this.activeGroups.forEach((group: Group)=> {
       group.events.forEach((event: Event) =>{
+        console.log(events);
         let calendarEvent = event.generateEventCalendar();
-        if(events.indexOf(calendarEvent) === -1){
+        console.log(calendarEvent);
+        console.log("vysledok iffu");
+        console.log(events.indexOf(calendarEvent) === -1);
+        if(events.findIndex(x=> x.id == calendarEvent.id) === -1){
           events.push(calendarEvent);
         }
       });
@@ -454,7 +460,7 @@ export class TimetableUpdateMainComponent implements OnInit {
           parentGroup = this.groups[parentGroup.parent];
           parentGroup.events.forEach((event: Event) =>{
             let calendarEvent = event.generateEventCalendar();
-            if(events.indexOf(calendarEvent) === -1){
+            if(events.findIndex(x=> x.id == calendarEvent.id) === -1){
               events.push(calendarEvent);
             }
           });
@@ -468,7 +474,7 @@ export class TimetableUpdateMainComponent implements OnInit {
           })
         });
         childrenEvents.forEach(event =>{
-          if(events.indexOf(event) === -1){
+          if(events.findIndex(x=> x.id == event.id) === -1){
             events.push(event);
           }
         })

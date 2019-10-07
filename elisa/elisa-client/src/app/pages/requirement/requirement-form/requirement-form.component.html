@@ -1,4 +1,5 @@
 <div fxLayout="column" fxLayoutAlign="center center" class="requirement-form">
+  <h2 i18n="@@Requirement">Requirement</h2>
   <mat-card>
     <mat-card-header>
       <mat-card-title>Elisa</mat-card-title>
@@ -9,7 +10,6 @@
           <mat-form-field fxFlex="100">
             <mat-label>Teacher</mat-label>
             <mat-select formControlName="teacher_id" (selectionChange)="setCoursesForm($event)">
-              <mat-option [value]="">All</mat-option>
               <mat-option *ngFor="let option of optionsUsers | keyvalue" [value]="option.key">
                 {{option.value.fullname}}
               </mat-option>
@@ -17,15 +17,16 @@
           </mat-form-field>
 
           <mat-form-field fxFlex="100">
-            <mat-label>Subject</mat-label>
+            <mat-label>Course</mat-label>
             <mat-select formControlName="course_id">
+              <mat-option [value]="All">All</mat-option>
               <mat-option *ngFor="let option of optionsSubjects" [value]="option.id">
                 {{option.name}}
               </mat-option>
             </mat-select>
           </mat-form-field>
           <mat-button-toggle-group #group="matButtonToggleGroup" [value]="1">
-            <mat-button-toggle *ngFor="let type of types" (change)="selectType(type.id)" [value]="type.id">{{type.name}}</mat-button-toggle>
+            <mat-button-toggle *ngFor="let type of types" [ngClass]="type.name" (change)="selectType(type.id)" [value]="type.id">{{type.name}}</mat-button-toggle>
           </mat-button-toggle-group>
           <div fxFlex="100" class='app-calendar'>
             <full-calendar
