@@ -1,0 +1,15 @@
+oprava chyb:
+	- nekonzistentnost medzi prednasajucimi a poziadavkami - bral som do uvahy ze iba jeden prednasajuci vyplna poziadavky, v case ked som to vypracovaval som nevedel
+	ze system mi vracia viacero ucitelov na jeden predmet
+	- zlepsenie vykonu - uvolnenie pamate po opusteny stranky
+	
+dalsie kroky:
+	1. pridavanie novych dat - tabulky s datami sa zobrazuju, pridavanie dat je ale nefunkcne, je potrebne upravit modalne okna, aby pasovali na stlpce tabuliek
+	2. mergovanie viacerych rozvrhov - tu som predpokladal ze zo servera nacitam iba rozvrhove akcie a postupne ich budem pridavat do rozvrhu a takto sa budu aj detekovat
+	kolizie
+	3. pozriet sa este raz na vytvaranie rozvrhov
+	4. z rychlit nacitavenie dat, server poskytuje vsetky data naraz co nie je efektivne, spomaluje to prvotne nacitanie
+	
+UI
+	- premysliet ako efektivne zobrazit zoznam kolizii a pod
+	- pridat loading na nacitavani dat a pod.
