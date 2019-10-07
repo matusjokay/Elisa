@@ -45,10 +45,10 @@ export class CourseListComponent implements OnInit {
   getSchemeData(){
     zip(
       this.courseService.getAll(),
-      this.departmentService.getAllMap(),
+      // this.departmentService.getAllMap(),
     ).subscribe(([coursesData,departmentsData]) =>{
       this.courses = coursesData;
-      this.departments = departmentsData;
+      // this.departments = departmentsData;
 
       this.courses.forEach(course =>{
         let index = course.department;

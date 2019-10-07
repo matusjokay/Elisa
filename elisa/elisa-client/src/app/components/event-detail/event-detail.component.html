@@ -1,22 +1,32 @@
 <h3 mat-dialog-title>Event</h3>
-<div mat-dialog-content fxLayout="column" fxLayoutAlign="space-between center">
-  <div fxLayout="row" fxLayoutAlign="start center">
-    <h4>Course:</h4>
-    <span>{{data.event.course.name}}</span>
+<div mat-dialog-content>
+  <div fxLayout="column" fxLayoutAlign="space-between start">
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+      <h4 class="row-title">Course:</h4>
+      <span>{{data.event.course.name}}</span>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+      <h4 class="row-title">Teacher:</h4>
+      <span>{{data.event.teacher.fullname}}</span>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+      <h4 class="row-title">Course:</h4>
+      <span>{{data.event.course.name}}</span>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+      <h4 class="row-title">Groups:</h4>
+      <span *ngFor="let group of data.event.groups">{{group.abbr}},&nbsp;</span>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+      <h4 class="row-title">Day:</h4>
+      <span>{{data.event.day}}</span>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+      <h4 class="row-title">Time:</h4>
+      <span>{{data.event.startTime}}<sup>00</sup>-{{data.event.endTime}}<sup>00</sup></span>
+    </div>
   </div>
-  <div fxLayout="row" fxLayoutAlign="start center">
-    <h4>Teacher:</h4>
-    <span>{{data.event.teacher.fullname}}</span>
-  </div>
-  <div fxLayout="row" fxLayoutAlign="start center">
-    <h4>Course:</h4>
-    <span>{{data.event.course.name}}</span>
-  </div>
-  <div fxLayout="row" fxLayoutAlign="start center">
-    <h4>Time:</h4>
-    <span>{{data.event.day}} {{data.event.startTime}}-{{data.event.endTime}}</span>
-  </div>
-  <div fxLayout="column" fxLayoutAlign="start start">
+  <div fxLayout="column" fxLayoutAlign="start center">
     <h4>Rooms</h4>
     <table mat-table fxFlexAlign="center" [dataSource]="dataSource">
       <ng-container matColumnDef="name">
@@ -53,6 +63,6 @@
     </div>
 </div>
 <div mat-dialog-actions>
-  <button mat-button [mat-dialog-close]="false" cdkFocusInitial>Remove</button>
-  <button mat-button [mat-dialog-close]="data.event" cdkFocusInitial>Save</button>
+  <button mat-raised-button class="mat-primary" [mat-dialog-close]="false" cdkFocusInitial>Remove</button>
+  <button mat-raised-button class="mat-primary" [mat-dialog-close]="data.event" cdkFocusInitial>Ok</button>
 </div>

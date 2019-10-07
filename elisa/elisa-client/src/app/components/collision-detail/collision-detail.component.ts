@@ -1,4 +1,4 @@
-import {Component, Inject} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {Collision} from '../../models/collision.model';
 
@@ -7,9 +7,9 @@ import {Collision} from '../../models/collision.model';
   templateUrl: './collision-detail.component.html',
   styleUrls: ['./collision-detail.component.less']
 })
-export class CollisionDetailComponent {
+export class CollisionDetailComponent implements OnInit{
 
-  columnsToDisplay = ['courseName', 'category', 'capacity'];
+  columnsToDisplay = ['courseName', 'courseDay', 'courseTime'];
 
   constructor(
     public dialogRef: MatDialogRef<CollisionDetailComponent>,
@@ -17,6 +17,10 @@ export class CollisionDetailComponent {
 
   onNoClick(): void {
     this.dialogRef.close();
+  }
+
+  ngOnInit(): void {
+    console.log(this.data);
   }
 
 }

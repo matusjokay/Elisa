@@ -155,11 +155,11 @@ export class RequirementFormComponent implements OnInit {
     this.calendarEvents = [];
 
     this.resources = [
-      {id: '1', title: 'Pondelok'},
-      {id: '2', title: 'Utorok'},
-      {id: '3', title: 'Streda'},
-      {id: '4', title: 'Stvrtok'},
-      {id: '5', title: 'Piatok'},
+      {id: '1', title: 'Monday'},
+      {id: '2', title: 'Tuesday'},
+      {id: '3', title: 'Wednesday'},
+      {id: '4', title: 'Thursday'},
+      {id: '5', title: 'Friday'},
     ];
     this.duration = 5;
     this.activeType = this.types.find(function (type) {

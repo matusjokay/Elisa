@@ -1,6 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
-import {Event} from '../../models/event.model';
 import {Room} from '../../models/room';
 
 @Component({
@@ -27,6 +26,7 @@ export class EventDetailComponent implements OnInit{
   }
 
   addRoom() {
+    console.log(this);
     if(this.data.event.rooms.indexOf(this.activeRoom) === -1){
       this.data.event.rooms.push(this.activeRoom);
       this.data.rooms[this.activeRoom.id].events.push(this.data.event);
@@ -35,9 +35,10 @@ export class EventDetailComponent implements OnInit{
   }
 
   removeRoom(row){
+      console.log(row);
     if(this.data.event.rooms.length > 1){
-      this.data.rooms[this.activeRoom.id].events.splice(this.data.rooms[this.activeRoom.id].events.indexOf(this.data.event),1);
-      this.data.event.rooms.splice(row,1);
+      this.data.rooms[row.id].events.splice(this.data.rooms[row.id].events.indexOf(this.data.event),1);
+      this.data.event.rooms.splice(this.data.event.rooms.indexOf(row),1);
       this.dataSource = [...this.data.event.rooms];
     }
   }
