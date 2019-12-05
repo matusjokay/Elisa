@@ -5,7 +5,8 @@ from rest_framework.viewsets import ModelViewSet
 
 from . import models, serializers
 
-
+# TODO: Missing view set for
+# PERIOD, USER SUBJECT ROLE , FORM OF STUDY
 class GroupViewSet(ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
@@ -48,11 +49,11 @@ class EquipmentViewSet(ModelViewSet):
     serializer_class = serializers.EquipmentSerializer
 
 
-class RoomCategoryViewSet(ModelViewSet):
+class RoomTypeViewSet(ModelViewSet):
     """
     API endpoint that allows room categories to be viewed or edited.
     """
-    queryset = models.RoomCategory.objects.all()
+    queryset = models.RoomType.objects.all()
     serializer_class = serializers.RoomCategorySerializer
 
 

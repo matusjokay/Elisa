@@ -1,4 +1,4 @@
-<div fxLayout="row" fxLayoutAlign="center center" class="login-main">
+<div fxLayout="column" fxLayoutAlign="center center" class="login-main">
   <mat-card>
     <mat-card-header>
       <mat-card-title>Elisa</mat-card-title>
@@ -6,15 +6,31 @@
     <form (ngSubmit)="onSubmit()" [formGroup]="loginForm">
     <mat-card-content fxLayout="column">
       <mat-form-field>
-        <input matInput placeholder="Name" formControlName="name">
+        <input matInput
+        placeholder="Username"
+        formControlName="name"
+        [errorStateMatcher]="matcher">
+        <mat-hint>Enter username as AIS ID (ex: xuser)</mat-hint>
+        <mat-error *ngIf="loginForm.get('name').hasError('required')">
+          Username field is required!
+        </mat-error>
       </mat-form-field>
       <mat-form-field>
-        <input matInput type="password" placeholder="Password" formControlName="password">
+        <input matInput
+        type="password"
+        placeholder="Enter Password"
+        formControlName="password"
+        [errorStateMatcher]="matcher">
+        <mat-hint>Enter corresponding password</mat-hint>
+        <mat-error *ngIf="loginForm.get('password').hasError('required')">
+          Password field is required!
+        </mat-error>
       </mat-form-field>
     </mat-card-content>
     <mat-card-actions fxFlexAlign="end">
-      <button mat-raised-button color="primary">Login</button>
+      <button mat-raised-button color="primary" [disabled]="loginForm.invalid">Login</button>
     </mat-card-actions>
     </form>
   </mat-card>
+  <app-spinner [loadingText]="statusText" *ngIf="loading"></app-spinner>
 </div>

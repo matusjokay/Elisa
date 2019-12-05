@@ -8,7 +8,9 @@ import {
   MatIconModule,
   MatInputModule,
   MatListModule, MatMenuModule, MatPaginatorModule, MatSelectModule,
-  MatSidenavModule, MatSlideToggleModule, MatSortModule, MatTableModule, MatTabsModule, MatToolbarModule, MatTreeModule
+  MatSidenavModule, MatSlideToggleModule, MatSortModule, MatTableModule,
+  MatTabsModule, MatToolbarModule, MatTreeModule, MatSnackBarModule,
+  MatProgressSpinnerModule
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {LayoutModule} from '@angular/cdk/layout';
@@ -35,6 +37,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     MatTableModule,
     MatAutocompleteModule,
     MatTreeModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule,
     MatSelectModule,
     MatDialogModule,
     MatButtonToggleModule,
@@ -43,7 +47,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     MatSortModule,
     MatPaginatorModule
   ],
-  exports:[
+  exports: [
     CommonModule,
     MatSidenavModule,
     MatListModule,
@@ -62,6 +66,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     MatTableModule,
     MatAutocompleteModule,
     MatTreeModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule,
     MatSelectModule,
     MatDialogModule,
     MatButtonToggleModule,

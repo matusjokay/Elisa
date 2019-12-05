@@ -38,20 +38,20 @@ class RoomEquipmentSerializer(serializers.ModelSerializer):
 
 class RoomCategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.RoomCategory
+        model = models.RoomType
         fields = '__all__'
 
 
 class RoomSerializer(serializers.ModelSerializer):
     # category = RoomCategorySerializer()
     category = serializers.SlugRelatedField(
-        slug_field='name', queryset=models.RoomCategory.objects.all())
+        slug_field='name', queryset=models.RoomType.objects.all())
     equipment = RoomEquipmentSerializer(
         source='roomequipment_set', many=True, read_only=True)
 
     class Meta:
         model = models.Room
-        fields = ('id', 'name', 'capacity', 'category', 'department',
+        fields = ('id', 'name', 'capacity', 'room_type', 'department',
                   'equipment')
 
 
@@ -65,3 +65,17 @@ class ActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Activity
         fields = '__all__'
+
+class FormOfStudySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.FormOfStudy
+        fields = '__all__'
+
+# TODO: foreign keys and self references keys
+class PeriodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Period
+        fields = '__all__'
+
+# TODO: missing user group
+# missing user subject role

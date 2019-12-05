@@ -7,6 +7,7 @@ import {zip} from 'rxjs';
 import {DepartmentService} from '../../../services/department.service';
 import {UserDetailsComponent} from '../../users/user-details/user-details.component';
 import {CourseDetailsComponent} from '../course-details/course-details.component';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-course-list',
@@ -17,7 +18,7 @@ export class CourseListComponent implements OnInit {
   activeScheme;
   schemas;
 
-  pageSizeOptions = [15,50,100];
+  pageSizeOptions = [15, 50, 100];
   courses: Course[] = [];
   departments: any = [];
   displayedColumns: string[] = ['id', 'name', 'code', 'department'];
@@ -34,36 +35,50 @@ export class CourseListComponent implements OnInit {
 
   ngOnInit() {
     this.timetableService.getAllSchemas().subscribe(
-      response =>{
+      (response) => {
         this.schemas = response;
         this.getSchemeData();
+      }, (error) => {
+        console.error('Failed to load schema list');
+        catchError(error);
       }
     );
 
   }
 
-  getSchemeData(){
-    zip(
-      this.courseService.getAll(),
-      // this.departmentService.getAllMap(),
-    ).subscribe(([coursesData,departmentsData]) =>{
-      this.courses = coursesData;
-      // this.departments = departmentsData;
+  // getSchemeData(){
+  //   zip(
+  //     this.courseService.getAll(),
+  //     // this.departmentService.getAllMap(),
+  //   ).subscribe(([coursesData,departmentsData]) =>{
+  //     this.courses = coursesData;
+  //     // this.departments = departmentsData;
 
-      this.courses.forEach(course =>{
-        let index = course.department;
-        course.departmentObject = this.departments[index];
-      });
-      this.dataSource = new MatTableDataSource(this.courses);
-      this.dataSource.sortingDataAccessor = (item, property) => {
-        switch(property) {
-          case 'department.name': return item.departmentObject.name;
-          default: return item[property];
-        }
-      };
-      this.dataSource.sort = this.sort;
-      this.dataSource.paginator = this.paginator;
-    });
+  //     this.courses.forEach(course =>{
+  //       let index = course.department;
+  //       course.departmentObject = this.departments[index];
+  //     });
+  //     this.dataSource = new MatTableDataSource(this.courses);
+  //     this.dataSource.sortingDataAccessor = (item, property) => {
+  //       switch(property) {
+  //         case 'department.name': return item.departmentObject.name;
+  //         default: return item[property];
+  //       }
+  //     };
+  //     this.dataSource.sort = this.sort;
+  //     this.dataSource.paginator = this.paginator;
+  //   });
+  // }
+
+  getSchemeData() {
+    this.courseService.getAll().subscribe(
+      (courses) => {
+        console.log(courses);
+      }, (error) => {
+        console.error('Failed to load all courses');
+        catchError(error);
+      }
+    );
   }
 
   applyFilter(filterValue: string) {
@@ -83,8 +98,9 @@ export class CourseListComponent implements OnInit {
       data: {course: row, departments: this.departments}
     });
     dialogRef.afterClosed().subscribe(result => {
-      if(result){
-        this.ngOnInit();
+      if (result) {
+        // ngOnInit should not be explicitly called
+        // this.ngOnInit();
       }
     });
   }
@@ -95,8 +111,9 @@ export class CourseListComponent implements OnInit {
       data: {departments: this.departments}
     });
     dialogRef.afterClosed().subscribe(result => {
-      if(result){
-        this.ngOnInit();
+      if (result) {
+        // ngOnInit should not be explicitly called
+        // this.ngOnInit();
       }
     });
   }

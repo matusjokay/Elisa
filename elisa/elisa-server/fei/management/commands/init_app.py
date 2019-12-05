@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
         self.stdout.write("Groups count: " + str(Group.objects.all().count()))
 
-        self.stdout.write("Initializing tenant")
+        self.stdout.write("ng tenant")
 
         tenant = Version(schema_name='public', name='public')
         tenant.save()

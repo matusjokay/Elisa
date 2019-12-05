@@ -20,9 +20,11 @@ class VersionSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         name = str(validated_data['name']).lower()
 
-        query = Q(status__in=[Version.WORK_IN_PROGRESS, Version.NEW]) & ~Q(schema_name='public')
-        if Version.objects.filter(query).exists():
-            raise serializers.ValidationError("You have to publish version before creating a new one.")
+        # TODO: For now there can be multiple schemas that are work in progress
+        
+        # query = Q(status__in=[Version.WORK_IN_PROGRESS, Version.NEW]) & ~Q(schema_name='public')
+        # if Version.objects.filter(query).exists():
+        #     raise serializers.ValidationError("You have to publish version before creating a new one.")
 
         version = Version(
             schema_name=name,

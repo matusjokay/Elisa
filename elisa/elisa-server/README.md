@@ -20,27 +20,49 @@ We recommend using virtual environment to manage dependencies. To run locally:
       pip install -r requirements.txt
       ```
 
-2. Create PostgreSQL database:
+2. Install PostgreSQL and then run psql command in bash/cmd to create user that will own its created database:
+
+      First remove users privileges and then drop him with optional flag if he exists
 
       ```
-      createuser -d elisa
-      createdb -O elisa elisa
+      REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM elisa;
+      REVOKE ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public FROM elisa;
+      REVOKE ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public FROM elisa;
+      DROP USER IF EXISTS user;
       ```
 
-3. Set up database access:
+      Remove database with optional flag if it exists
 
-      If you are using the default PostgreSQL configuration, chances are you will
-      have to create a password for the newly created user in order to be able to
-      use it in Django:
+      ```
+      DROP DATABASE IF EXISTS elisa;
+      ```
+
+      Create user with name and password and also some roles
+
+      ```
+      CREATE USER elisa WITH PASSWORD 'secret' CREATEDB CREATEROLE;
+      ```
+
+      Create database with owner elisa user that we created
+
+      ```
+      CREATE DATABASE elisa OWNER elisa;
+      ```
+
+3. Setting migrations:
+
+      Remove all files and folders related to django migrations
+
+      then run the following command :
+      ```
+      ./manage.py makemigrations <app_name>
+            app names :
+                  fei
+                  school
+                  requirements
+                  timetables
+      ```
     
-      ```
-      psql
-      ALTER USER elisa WITH PASSWORD 'secret';
-      ```
-      
-      Add the chosen password to database settings (file `elisa/settings.py`). See
-      relevant
-      Django [doc](https://docs.djangoproject.com/en/2.2/ref/databases/).
 
 4. Install development ssl server:
 
@@ -64,6 +86,10 @@ We recommend using virtual environment to manage dependencies. To run locally:
      - set main timetable creator by username
           ```
           ./manage.py set_superuser <username>
+          ```
+     - create schemas in postgresql via command with login and pwd and directory of imported data subjects
+          ```
+          ./manage.py init_schemas <directory-of-data> <username> <password>
           ```
 
 7. Install required software to work with Oracle databases depending on yor OS. More info in cx-oracle
@@ -91,7 +117,11 @@ We recommend using virtual environment to manage dependencies. To run locally:
 9. Import data:
       - from csv files
           ```
-          ./manage.py import fei-data <schema>
+          ./manage.py import fei-data-new <schema>
+          ```
+          or imported them for all the schemas
+          ```
+          ./manage.py import fei-data-new all
           ```
       - or from import database using URLS defined in fei_importexport module (file `fei_importexport/urls.py`)).
 

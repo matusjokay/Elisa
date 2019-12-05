@@ -25,7 +25,9 @@ import { NavListItemComponent } from './components/nav-list-item/nav-list-item.c
 import { RequirementDetailsComponent } from './pages/requirement/requirement-details/requirement-details.component';
 import { RequirementListComponent } from './pages/requirement/requirement-list/requirement-list.component';
 import { RequirementFormComponent } from './pages/requirement/requirement-form/requirement-form.component';
-import { TimetableUpdateWrapperComponent } from './pages/timetable/timetable-update/timetable-update-wrapper/timetable-update-wrapper.component';
+import {
+  TimetableUpdateWrapperComponent
+} from './pages/timetable/timetable-update/timetable-update-wrapper/timetable-update-wrapper.component';
 import { TimetableUpdateFormComponent } from './pages/timetable/timetable-update/timetable-update-form/timetable-update-form.component';
 import { TimetableUpdateMainComponent } from './pages/timetable/timetable-update/timetable-update-main/timetable-update-main.component';
 import { TimetableNewComponent } from './pages/timetable/timetable-new/timetable-new.component';
@@ -33,7 +35,6 @@ import { CourseListComponent } from './pages/course/course-list/course-list.comp
 import {VersionListComponent} from './pages/version/version-list/version-list.component';
 import { RoomsListComponent } from './pages/room/rooms-list/rooms-list.component';
 import { EquipmentsListComponent } from './pages/equipment/equipments-list/equipments-list.component';
-import {AuthentificationModule} from './authentification/authentification.module';
 import { CollisionCardComponent } from './components/collision-card/collision-card.component';
 import { CollisionDetailComponent } from './components/collision-detail/collision-detail.component';
 import { EventDetailComponent } from './components/event-detail/event-detail.component';
@@ -41,11 +42,16 @@ import { CourseDetailsComponent } from './pages/course/course-details/course-det
 import { GroupDetailsComponent } from './pages/group/group-details/group-details.component';
 import { GroupListComponent } from './pages/group/group-list/group-list.component';
 import { RoomDetailsComponent } from './pages/room/room-details/room-details.component';
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material';
+import { SnackbarComponent } from './common/snackbar/snackbar.component';
+import { SpinnerComponent } from './common/spinner/spinner.component';
+import { LoginFormComponent } from './pages/login/login-form/login-form.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
+    LoginFormComponent,
     TimetableComponent,
     DashboardComponent,
     UserListComponent,
@@ -71,11 +77,12 @@ import { RoomDetailsComponent } from './pages/room/room-details/room-details.com
     CourseDetailsComponent,
     GroupDetailsComponent,
     GroupListComponent,
-    RoomDetailsComponent
+    RoomDetailsComponent,
+    SnackbarComponent,
+    SpinnerComponent
   ],
   imports: [
     BrowserModule,
-    AuthentificationModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
@@ -88,9 +95,12 @@ import { RoomDetailsComponent } from './pages/room/room-details/room-details.com
     provide: HTTP_INTERCEPTORS,
     useClass: TokenInterceptor,
     multi: true
-  }],
+  },
+  {provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher},
+  SnackbarComponent
+  ],
   bootstrap: [AppComponent],
-  entryComponents:[
+  entryComponents: [
     UserDetailsComponent,
     CourseDetailsComponent,
     RoomDetailsComponent,

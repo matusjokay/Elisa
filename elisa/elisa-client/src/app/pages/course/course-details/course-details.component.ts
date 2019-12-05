@@ -23,7 +23,8 @@ export class CourseDetailsComponent implements OnInit {
   ngOnInit() {
     if(!this.data.course){
       this.newCourse = true;
-      this.data.course = new Course();
+      // this has to be changed
+      this.data.course = new Object();
     }
     this.courseForm = new FormGroup({
       'code': new FormControl(this.data.course.code,[

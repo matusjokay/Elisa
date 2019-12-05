@@ -23,7 +23,8 @@ export class RoomDetailsComponent implements OnInit {
   ngOnInit() {
     if(!this.data.room){
       this.newRoom = true;
-      this.data.room = new Course();
+      // this also has to be changed
+      this.data.room = new Object();
     }
     this.roomForm = new FormGroup({
       'name': new FormControl(this.data.room.name,[

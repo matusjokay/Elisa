@@ -144,8 +144,10 @@ LDAP_AUTH_USER_FIELDS = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=10),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(minutes=30),
+    # 'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=30),
+    # 'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
 }
 
 SWAGGER_SETTINGS = {
@@ -162,8 +164,11 @@ SWAGGER_SETTINGS = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = [
+#     'http://localhost:4200'
+# ]
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = default_headers + ('cache-control', 'http_timetable_version')
+CORS_ALLOW_HEADERS = default_headers + ('cache-control', 'Timetable-Version')
 
 ROOT_URLCONF = 'elisa.urls'
 
@@ -190,9 +195,9 @@ DATABASES = {
         'ENGINE': 'django_tenants.postgresql_backend',
         'NAME': 'elisa',
         'USER': 'elisa',
-        'PASSWORD': 'elisa',
+        'PASSWORD': 'secret',
         'HOST': '127.0.0.1',
-        'PORT': '',
+        'PORT': '5432',
     },
     'import': {
         'ENGINE': 'django.db.backends.oracle',

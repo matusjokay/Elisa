@@ -125,13 +125,18 @@ export class TimetableService {
       ),share());
   }
 
-  getLastScheme(){
-    return this.http.get(environment.APIUrl + 'version/?status=latest').
-    pipe(
-      map((response: any) =>{
-          return response;
-        }
-      ),share());
+  getLastScheme() {
+    // const httpHeaders = new HttpHeaders();
+    // httpHeaders.append('Authorization', `Bearer ${localStorage.getItem('token')}`);
+    const token = localStorage.getItem('token');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      })
+    };
+    // map is probably redundant
+    return this.http.get(environment.APIUrl + 'versions/latest/', httpOptions).
+    pipe(share());
   }
 
   createSchema(body){
@@ -144,13 +149,15 @@ export class TimetableService {
       ));
   }
 
-  getAllSchemas(){
-    return this.http.get(environment.APIUrl + 'versions/').
-    pipe(
-      map((response: any) =>{
-          return response;
-        }
-      ),share());
+  getAllSchemas() {
+    const token = localStorage.getItem('token');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      })
+    };
+    return this.http.get(environment.APIUrl + 'versions/', httpOptions).
+    pipe(share());
   }
 
   createVersion(body){

@@ -45,12 +45,28 @@ class DepartmentResource(resources.ModelResource):
         fields = ('id', 'abbr', 'name', 'parent')
         export_order = ('id', 'abbr', 'name', 'parent')
 
+class PeriodResource(resources.ModelResource):
+    department = fields.Field(
+        attribute='department',
+        column_name='department',
+        widget=ForeignKeyWidgetWithCreation(models.Department))
+
+    class Meta:
+        model = models.Period
+        fields = ('id', 'name', 'department', 'university_period', 'academic_seq', 'previous', 'next', 'start_date', 'end_date', 'active',)
+        export_order = ('id', 'name', 'department', 'university_period', 'academic_seq', 'previous', 'next', 'start_date', 'end_date', 'active',)
 
 class CourseResource(resources.ModelResource):
+    period = fields.Field(
+        attribute='period',
+        column_name='period',
+        widget=ForeignKeyWidgetWithCreation(models.Period))
+
     class Meta:
         model = models.Course
         skip_unchanged = True
-        export_order = ('id', 'code', 'name', 'department', 'completion')
+        fields = ('id', 'period', 'department', 'teacher', 'code', 'name', 'completion', 'credits',)
+        export_order = ('id', 'code', 'name', 'period', 'department', 'teacher', 'completion', 'credits')
 
 
 class EquipmentResource(resources.ModelResource):
@@ -60,9 +76,9 @@ class EquipmentResource(resources.ModelResource):
         export_order = ('id', 'name')
 
 
-class RoomCategoryResource(resources.ModelResource):
+class RoomTypeResource(resources.ModelResource):
     class Meta:
-        model = models.RoomCategory
+        model = models.RoomType
         skip_unchanged = True
         export_order = ('id', 'name')
 
@@ -71,7 +87,7 @@ class RoomResource(resources.ModelResource):
     class Meta:
         model = models.Room
         skip_unchanged = True
-        export_order = ('id', 'name', 'capacity', 'category', 'department')
+        export_order = ('id', 'name', 'capacity', 'type', 'department')
 
 
 class RoomEquipmentResource(resources.ModelResource):
@@ -85,6 +101,7 @@ class RoomEquipmentResource(resources.ModelResource):
 
     class Meta:
         model = models.RoomEquipment
+        # idendification of id fields but this is a many to many join table
         import_id_fields = ('room', 'equipment')
         skip_unchanged = True
         fields = ('room', 'equipment', 'count')
@@ -93,6 +110,8 @@ class RoomEquipmentResource(resources.ModelResource):
 
 class UserResource(resources.ModelResource):
     class Meta:
+        # TODO: check if AppUser is a valid model 
+        # otherwise just use a normal user 
         model = AppUser
         fields = ('id', 'username', 'first_name', 'last_name', 'title_before', 'title_after',)
         skip_unchanged = True
@@ -105,57 +124,91 @@ class StudyTypeResource(resources.ModelResource):
         skip_unchanged = True
         export_order = ('id', 'name')
 
-
-class SubjectStudyTypeResource(resources.ModelResource):
-    times = fields.Field()
-
+class FormOfStudyResource(resources.ModelResource):
     class Meta:
-        model = models.SubjectStudyType
+        model = models.FormOfStudy
         skip_unchanged = True
-        export_order = ('subject', 'type', 'times')
+        export_order = ('id', 'name')
 
+
+# class SubjectStudyTypeResource(resources.ModelResource):
+#     times = fields.Field()
+
+#     class Meta:
+#         model = models.SubjectStudyType
+#         skip_unchanged = True
+#         export_order = ('subject', 'type', 'times')
+
+#     def skip_row(self, instance, original):
+#         #  Allow importing resources with empty id. We use ForeignKeys as
+#         #  import_id_fields to uniquely identify a model.
+#         if not instance.id:
+#             instance.id = original.id
+
+#         super().skip_row(instance, original)
+
+#     # delete unneeded columns from dataset in export
+#     def after_export(self, queryset, data, *args, **kwargs):
+#         del data['practice_hours']
+#         del data['lecture_hours']
+#         del data['id']
+#         pass
+
+#     # set times attribute for export
+#     def dehydrate_times(self, subject_study_type):
+#         return '%s/%s' % (subject_study_type.lecture_hours, subject_study_type.practice_hours)
+
+
+# class FacultyResource(resources.ModelResource):
+#     class Meta:
+#         model = models.Faculty
+#         skip_unchanged = True
+#         export_order = ('id', 'name', 'abbr')
+
+
+class SubjectUserResource(resources.ModelResource):
     def skip_row(self, instance, original):
-        #  Allow importing resources with empty id. We use ForeignKeys as
-        #  import_id_fields to uniquely identify a model.
         if not instance.id:
             instance.id = original.id
 
         super().skip_row(instance, original)
 
-    # delete unneeded columns from dataset in export
-    def after_export(self, queryset, data, *args, **kwargs):
-        del data['practice_hours']
-        del data['lecture_hours']
-        del data['id']
-        pass
-
-    # set times attribute for export
-    def dehydrate_times(self, subject_study_type):
-        return '%s/%s' % (subject_study_type.lecture_hours, subject_study_type.practice_hours)
-
-
-class FacultyResource(resources.ModelResource):
-    class Meta:
-        model = models.Faculty
-        skip_unchanged = True
-        export_order = ('id', 'name', 'abbr')
-
-
-class SubjectUserResource(resources.ModelResource):
     class Meta:
         model = models.SubjectUser
+        import_id_fields = ('subject', 'user')
+        skip_unchanged = True
         export_order = ('subject', 'user', 'role')
+
+class UserSubjectRoleResource(resources.ModelResource):
+    class Meta:
+        model = models.UserSubjectRole
+        skip_unchanged = True
+        export_order = ('id', 'name')
 
 
 class UserDepartmentResource(resources.ModelResource):
+    def skip_row(self, instance, original):
+        if not instance.id:
+            instance.id = original.id
+
+        super().skip_row(instance, original)
+
     class Meta:
         model = models.UserDepartment
+        import_id_fields = ('user', 'department')
         skip_unchanged = True
         export_order = ('user', 'department', 'employment')
 
-
+# TODO: CHECK IF FOREIGN KEY CHECKING IS NEEDED
 class UserGroupResource(resources.ModelResource):
+    def skip_row(self, instance, original):
+        if not instance.id:
+            instance.id = original.id
+
+        super().skip_row(instance, original)
+
     class Meta:
         model = models.UserGroup
+        import_id_fields = ('user', 'group')
         skip_unchanged = True
-        export_order = ('user', 'group', 'group_number', 'study_type')
+        export_order = ('user', 'group', 'group_number', 'form_of_study', 'study_type')

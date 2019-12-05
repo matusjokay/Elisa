@@ -17,6 +17,7 @@ from django.urls import include, path
 from rest_framework.routers import SimpleRouter
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
+    TokenVerifyView
 )
 from rest_framework_swagger.views import get_swagger_view
 
@@ -24,12 +25,13 @@ import school.views as school
 import fei.views as fei
 import requirements.views as requirements
 
+# TODO: Add missing view sets
 router = SimpleRouter()
 router.register(r'groups', school.GroupViewSet)
 router.register(r'departments', school.DepartmentViewSet)
 router.register(r'courses', school.CourseViewSet)
 router.register(r'equipments', school.EquipmentViewSet)
-router.register(r'room-categories', school.RoomCategoryViewSet)
+router.register(r'room-categories', school.RoomTypeViewSet)
 router.register(r'rooms', school.RoomViewSet)
 router.register(r'activity-categories', school.ActivityCategoryViewSet)
 router.register(r'activities', school.ActivityViewSet)
@@ -47,6 +49,7 @@ urlpatterns = [
     path('', include('authentication.urls')),
     path('teachers/', fei.TeachersList.as_view()),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('docs/', schema_view),
 ]
