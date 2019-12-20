@@ -88,9 +88,11 @@ We recommend using virtual environment to manage dependencies. To run locally:
           ./manage.py set_superuser <username>
           ```
      - create schemas in postgresql via command with login and pwd and directory of imported data subjects
+	 DISCLAIMER: in order to run this command you must first run the server ( runsslserver )
           ```
           ./manage.py init_schemas <directory-of-data> <username> <password>
           ```
+	TODO: Due to django-tenants it seems that when you make changes on models and recreate migrations it doesn't seems to apply them correctly after running migrate_schemas command. For now you must repeat steps 3, 5 and 6 with clean DB schemas.
 
 7. Install required software to work with Oracle databases depending on yor OS. More info in cx-oracle
     [doc](https://cx-oracle.readthedocs.io/en/latest/installation.html)

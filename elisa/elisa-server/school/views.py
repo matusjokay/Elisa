@@ -95,3 +95,11 @@ class ActivityViewSet(ModelViewSet):
     """
     queryset = models.Activity.objects.all()
     serializer_class = serializers.ActivitySerializer
+
+
+class PeriodsViewSet(ModelViewSet):
+    """
+    API endpoint that allows activities to be viewed or edited.
+    """
+    queryset = models.Period.objects.all()
+    serializer_class = serializers.PeriodSerializer

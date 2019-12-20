@@ -39,6 +39,7 @@ router.register(r'versions', fei.VersionViewSet, basename='versions')
 router.register(r'users', fei.UserViewSet)
 router.register(r'requirements', requirements.RequirementsViewSet)
 router.register(r'requirements-events', requirements.RequirementEventViewSet)
+router.register(r'periods', school.PeriodsViewSet)
 
 schema_view = get_swagger_view(title='Elisa API')
 

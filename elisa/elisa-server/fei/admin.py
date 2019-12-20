@@ -50,17 +50,29 @@ class PeriodResource(resources.ModelResource):
         attribute='department',
         column_name='department',
         widget=ForeignKeyWidgetWithCreation(models.Department))
+    # previous_period = fields.Field(
+    #     attribute='previous_period',
+    #     column_name='previous_period',
+    #     widget=ForeignKeyWidgetWithCreation(models.Period))
+    # next_period = fields.Field(
+    #     attribute='next_period',
+    #     column_name='next_period',
+    #     widget=ForeignKeyWidgetWithCreation(models.Period))
 
     class Meta:
         model = models.Period
-        fields = ('id', 'name', 'department', 'university_period', 'academic_seq', 'previous', 'next', 'start_date', 'end_date', 'active',)
-        export_order = ('id', 'name', 'department', 'university_period', 'academic_seq', 'previous', 'next', 'start_date', 'end_date', 'active',)
+        fields = ('id', 'name', 'department', 'university_period', 'academic_sequence', 'previous_period', 'next_period', 'start_date', 'end_date', 'active',)
+        export_order = ('id', 'name', 'department', 'university_period', 'academic_sequence', 'previous_period', 'next_period', 'start_date', 'end_date', 'active',)
 
 class CourseResource(resources.ModelResource):
     period = fields.Field(
         attribute='period',
         column_name='period',
         widget=ForeignKeyWidgetWithCreation(models.Period))
+    teacher = fields.Field(
+        attribute='teacher',
+        column_name='teacher',
+        widget=ForeignKeyWidgetWithCreation(AppUser))
 
     class Meta:
         model = models.Course
@@ -87,7 +99,7 @@ class RoomResource(resources.ModelResource):
     class Meta:
         model = models.Room
         skip_unchanged = True
-        export_order = ('id', 'name', 'capacity', 'type', 'department')
+        export_order = ('id', 'name', 'capacity', 'room_type', 'department')
 
 
 class RoomEquipmentResource(resources.ModelResource):
@@ -167,6 +179,10 @@ class FormOfStudyResource(resources.ModelResource):
 
 
 class SubjectUserResource(resources.ModelResource):
+    subject = fields.Field(
+        attribute='subject',
+        column_name='subject',
+        widget=ForeignKeyWidgetWithCreation(models.Course))
     def skip_row(self, instance, original):
         if not instance.id:
             instance.id = original.id

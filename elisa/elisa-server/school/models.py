@@ -2,7 +2,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from mptt.models import MPTTModel, TreeForeignKey
 
-from fei.models import AppUser
+# from fei.models import AppUser
 
 color_validator = RegexValidator(r'#[0-9a-fA-F]{6}', "Color has to be in hexadecimal format.")
 
@@ -50,40 +50,32 @@ class Period(models.Model):
     name = models.CharField(max_length=300)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     # low value = oldest , higher = newest
-    university_period = models.PositiveSmallIntegerField()
+    university_period = models.PositiveSmallIntegerField(null=True)
     # 1 is for WS , 2 is for SS
-    academic_sequence = models.PositiveSmallIntegerField()
-    previous_period = models.ForeignKey('self', related_name='previous', on_delete=models.CASCADE)
-    next_period = models.ForeignKey('self', related_name='next', on_delete=models.CASCADE)
+    academic_sequence = models.PositiveSmallIntegerField(null=True)
+    # previous_period = models.ForeignKey('self', related_name='previous', on_delete=models.CASCADE, null=True)
+    # next_period = models.ForeignKey('self', related_name='next', on_delete=models.CASCADE, null=True)
+    previous_period = models.PositiveIntegerField(null=True)
+    next_period = models.PositiveIntegerField(null=True)
     start_date = models.DateField()
     end_date = models.DateField()
     active = models.BooleanField()
 
-    class MPTTMeta:
-        order_insertion_by = ['university_period']
+    class Meta:
+        ordering = ['university_period']
 
-# class User(models.Model):
-#     id = models.BigAutoField(primary_key=True)
-#     username = models.CharField(max_length=100)
-#     first_name = models.CharField(max_length=100)
-#     last_name = models.CharField(max_length=100)
-#     title_before = models.CharField(max_length=50)
-#     title_after = models.CharField(max_length=50)
-
-#     class Meta:
-#         ordering = ['username']
 
 
 class Course(models.Model):
     id = models.BigAutoField(primary_key=True)
-    period_id = models.ForeignKey(Period, on_delete=models.CASCADE)
-    period = models.CharField(max_length=100)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    teacher = models.ForeignKey(AppUser, on_delete=models.CASCADE)
-    code = models.CharField(max_length=300)
-    name = models.CharField(max_length=300)
+    period = models.ForeignKey(Period, on_delete=models.CASCADE, null=True)
+    # period = models.CharField(max_length=100)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True)
+    teacher = models.ForeignKey('fei.AppUser', on_delete=models.CASCADE, null=True)
+    code = models.CharField(max_length=300, null=True)
+    name = models.CharField(max_length=300, null=True)
     completion = models.CharField(max_length=16, null=True)
-    credits = models.SmallIntegerField()
+    credits = models.SmallIntegerField(null=True)
 
     class Meta:
         ordering = ['name']
@@ -113,7 +105,7 @@ class RoomType(models.Model):
 class Room(models.Model):
     name = models.CharField(max_length=300, unique=True)
     capacity = models.PositiveIntegerField(blank=True, null=True)
-    room_type = models.ForeignKey(RoomType, on_delete=models.CASCADE)
+    room_type = models.ForeignKey(RoomType, on_delete=models.CASCADE, null=True)
     department = models.ForeignKey(
         Department, on_delete=models.CASCADE, blank=True, null=True)
     equipment = models.ManyToManyField(Equipment, through='RoomEquipment')
@@ -167,7 +159,7 @@ class FormOfStudy(models.Model):
 
 class UserGroup(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
-    user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    user = models.ForeignKey('fei.AppUser', on_delete=models.CASCADE)
     group_number = models.CharField(max_length=32, blank=True)
     form_of_study = models.ForeignKey(FormOfStudy, on_delete=models.CASCADE)
     study_type = models.ForeignKey(StudyType, on_delete=models.CASCADE, null=True)
@@ -175,7 +167,7 @@ class UserGroup(models.Model):
 
 
 class UserDepartment(models.Model):
-    user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    user = models.ForeignKey('fei.AppUser', on_delete=models.CASCADE)
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     employment = models.CharField(max_length=9, blank=True)
     # employment = models.PositiveSmallIntegerField(blank=True, null=True)
@@ -188,7 +180,7 @@ class UserSubjectRole(models.Model):
         return '{}'.format(self.name)
 
 class SubjectUser(models.Model):
-    user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    user = models.ForeignKey('fei.AppUser', on_delete=models.CASCADE)
     subject = models.ForeignKey(Course, on_delete=models.CASCADE)
     # role = models.PositiveSmallIntegerField()
     role = models.ForeignKey(UserSubjectRole, on_delete=models.CASCADE)

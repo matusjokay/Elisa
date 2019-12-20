@@ -36,9 +36,11 @@ class Command(BaseCommand):
         ('rooms.csv', resources.RoomResource()),
         ('room_equipment.csv', resources.RoomEquipmentResource()),
         ('user_subject_role.csv', resources.UserSubjectRoleResource()),
-        ('users.csv', resources.UserResource()),
+        # ('users.csv', resources.UserResource()),
         ('subjects_users.csv', resources.SubjectUserResource()),
         ('users_departments.csv', resources.UserDepartmentResource()),
+        ('form_of_study.csv', resources.FormOfStudyResource()),
+        ('studytypes.csv', resources.StudyTypeResource()),
         ('users_groups.csv', resources.UserGroupResource()),
     ]
 
@@ -71,7 +73,7 @@ class Command(BaseCommand):
 
     def doImport(self, options, fromAllSchema=None):
         for csv, resource in self.resource_mapping:
-            print(f"Opening {csv} for schema -> {options['schema_name']}") if fromAllSchema is None else print(f"Opening {csv} for schema -> {fromAllSchema}")
+            self.stdout.write(f"Opening {csv} for schema -> {options['schema_name']}") if fromAllSchema is None else self.stdout.write(f"Opening {csv} for schema -> {fromAllSchema}")
             # Nested folder for subjects of different periods
             if csv == 'subjects.csv':
                 schema_filename = fromAllSchema if fromAllSchema is not None else options['schema_name']
@@ -81,11 +83,7 @@ class Command(BaseCommand):
             else:
                 with open(os.path.join(options['directory'], csv), encoding="utf-8") as infile:
                     data = infile.read()
-                # if csv == 'departments.csv':
-                #     tablib.Dataset().headers = resources.DepartmentResource.Meta.fields
-                #     dataset.load(data, format='csv', delimiter=',')
-                # else:
-                    dataset = tablib.Dataset().load(data)
+                dataset = tablib.Dataset().load(data)
 
                 # In case of subject study types we parse subject hours from 3/1 into two separate columns
                 if csv == 'subjects_studytypes.csv':
@@ -103,13 +101,13 @@ class Command(BaseCommand):
                     data.headers = ('id', 'subject', 'user', 'role')
 
                     for (id, subject, user, role) in dataset:
-                        roles = role.split(",")
+                        roles = role.split("/")
                         # remove empty roles from column
                         # roles = list(filter(None,roles))
-                        role_id_from_text = role_map.get(roles[len(roles)-1])
+                        role_id_from_text = self.role_map.get(roles[len(roles)-1])
                         data.append((id, subject, user, role_id_from_text))
                     
                     dataset = data
 
-            print(f"Importing {csv} for schema -> {options['schema_name']}") if fromAllSchema is None else print(f"Importing {csv} for schema -> {fromAllSchema}")
+            self.stdout.write(f"Importing {csv} for schema -> {options['schema_name']}") if fromAllSchema is None else self.stdout.write(f"Importing {csv} for schema -> {fromAllSchema}")
             resource.import_data(dataset, raise_errors=True, use_transactions=True)

@@ -1,5 +1,6 @@
 import os
 import requests
+import urllib3
 import json
 
 from django.conf import settings
@@ -37,6 +38,8 @@ class Command(BaseCommand):
         parser.add_argument('pwd', type=str, help='Password')
 
     def handle(self, *args, **options):
+        # to hide unsecure requests warning
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         # returns the list of subjects for each version
         versions = os.listdir(os.path.join(options['directory'] + '/SUBJECTS'))
         r = requests.post(URLlogin, data=dict({'username': options['username'], 'password': options['pwd']}), verify=False)
@@ -50,9 +53,8 @@ class Command(BaseCommand):
             Dict = {'name': version_name}
             r = requests.post(URLversions, headers=headers, data=Dict, verify=False)
             if r.status_code == 400:
-                print(f"Schema -> {version_name} failed to be created. \nREASON: {r.text}")
+                self.stdout.write(f"Schema -> {version_name} failed to be created. \nREASON: {r.text}")
             elif r.status_code == 200 or r.status_code == 201:                    
                 if r.reason == 'Created':
-                    print(f"Schema -> {version_name} is successfully created!")
-        print('Created all schemas based on these versions')
-        print(versions)
+                    self.stdout.write(f"Schema -> {version_name} is successfully created!")
+        self.stdout.write('Schemas init done.')

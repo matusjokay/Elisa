@@ -9,6 +9,10 @@ class AppUserManager(UserManager):
 
 
 class AppUser(AbstractUser):
+    id = models.BigAutoField(primary_key=True)
+    username = models.CharField(max_length=100, unique=True)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
     title_before = models.CharField(max_length=32, blank=True, default='')
     title_after = models.CharField(max_length=32, blank=True, default='')
     objects = AppUserManager()
@@ -18,7 +22,10 @@ class AppUser(AbstractUser):
         Return True if the user is in specified group by role.
         """
         return self.groups.filter(name=role).exists()
-
+    
+    class Meta:
+        db_table = u'"public\".\"fei_appuser"'
+        ordering = ['id']
 
 class Version(TenantMixin):
     NEW = "NEW"

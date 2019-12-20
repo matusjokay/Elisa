@@ -11,14 +11,16 @@ class Command(BaseCommand):
     stealth_options = ('stdin',)
 
     def add_arguments(self, parser):
-        parser.add_argument('username', type=str, help='Main timetable creator username.')
-        parser.add_argument('user_id', type=str, help='Main timetable creator id.')
+        parser.add_argument('username', type=str, help='Users username.')
+        parser.add_argument('user_id', type=str, help='User id.')
+        parser.add_argument('role_id', type=str, help='Corresponding role id.')
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS('Checking groups...'))
-
+        role_id = int(options['role_id']) - 1
+        role_text = settings.GROUPS[role_id]
         try:
-            group = Group.objects.get(name=settings.MAIN_TIMETABLE_CREATOR)
+            group = Group.objects.get(name=role_text)
 
             self.stdout.write(self.style.SUCCESS('Creating superuser with username: %s' % options['username']))
 
@@ -33,6 +35,7 @@ class Command(BaseCommand):
                 user.is_active = True
 
             # add this user to main timetable creator group
+            user.is_superuser = True
             user.groups.add(group)
             user.save()
             self.stdout.write(self.style.SUCCESS('User created successfully.'))
