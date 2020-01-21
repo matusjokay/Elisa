@@ -1,4 +1,6 @@
 import os
+import csv
+import time
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
@@ -14,11 +16,13 @@ class Command(BaseCommand):
     stealth_options = ('stdin',)
 
     resource_mapping = [
-        ('users.csv', resources.UserResource())
+        ('users.csv', resources.UserResource()),
+        ('departments.csv', resources.DepartmentResource()),
+        ('periods.csv', resources.PeriodResource())
     ]
 
     def add_arguments(self, parser):
-        parser.add_argument('directory', type=str, help='Directory where import files are located')
+        parser.add_argument('directory', type=str, help='Directory where to get csv data to initialize initial to the database.')
 
     def handle(self, *args, **options):
         error = None
@@ -38,18 +42,27 @@ class Command(BaseCommand):
             self.stdout.write("Schema probably exists")
         if error is None:
             self.stdout.write("Tenant initialized")
-        self.insert_users(options['directory'])
+        # insert initial data
+        self.insert_data(options['directory'])
 
-    def insert_users(self, directory):
-        connection.set_schema_to_public()
+    def insert_data(self, directory):
+        # connection.set_schema_to_public()
         schema = get_tenant_model().objects.get(schema_name='public')
         connection.set_tenant(schema)
-        for csv, resource in self.resource_mapping:
-            self.stdout.write(f"Opening {csv}...")
-            with open(os.path.join(directory, csv), encoding="utf-8") as infile:
-                data = infile.read()
-            dataset = tablib.Dataset().load(data)
-            self.stdout.write(f"Importing {csv}...")
+        for csvFile, resource in self.resource_mapping:
+            self.stdout.write(f"Opening {csvFile}...")
+            with open(os.path.join(directory, csvFile), newline='', encoding="utf-8") as infile:
+                reader = csv.DictReader(infile, delimiter=',', quotechar='"')
+                data = tablib.Dataset()
+                data.headers = reader.fieldnames
+                for row in reader:
+                        data.append(row.values())
+            infile.close()
+            dataset = data
+            self.stdout.write(f"Importing {csvFile}...")
+            # resource.import_data(dataset, dry_run=True)
+            start_time = time.time()
             resource.import_data(dataset, raise_errors=True, use_transactions=True)
-            self.stdout.write(f"Done Importing {csv}")
+            end_time = time.time() - start_time
+            self.stdout.write(f"Done Importing {csvFile} and it took {end_time}!")
 

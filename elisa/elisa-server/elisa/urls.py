@@ -13,13 +13,15 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.urls import include, path
+from django.urls import include, path, re_path
 from rest_framework.routers import SimpleRouter
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
     TokenVerifyView
 )
-from rest_framework_swagger.views import get_swagger_view
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 import school.views as school
 import fei.views as fei
@@ -39,9 +41,21 @@ router.register(r'versions', fei.VersionViewSet, basename='versions')
 router.register(r'users', fei.UserViewSet)
 router.register(r'requirements', requirements.RequirementsViewSet)
 router.register(r'requirements-events', requirements.RequirementEventViewSet)
-router.register(r'periods', school.PeriodsViewSet)
+router.register(r'periods', fei.PeriodViewSet)
 
-schema_view = get_swagger_view(title='Elisa API')
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Elisa API",
+      default_version='v1',
+      description="All the available api endpoints",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="xjokay@stuba.sk"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
+
 
 urlpatterns = [
     path('', include(router.urls)),
@@ -52,5 +66,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('docs/', schema_view),
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

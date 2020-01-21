@@ -10,12 +10,12 @@ from django.db.utils import IntegrityError
 from django_fsm import TransitionNotAllowed
 from django_tenants.utils import get_tenant_model
 from rest_framework import viewsets, status, generics
-from rest_framework.decorators import action
+from rest_framework.decorators import action, list_route
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
-from .models import AppUser, Version
-from .serializers import VersionSerializer, UserSerializer, UserSerializerShort, TeachersListSerializer
+from .models import AppUser, Version, Period
+from .serializers import VersionSerializer, UserSerializer, UserSerializerShort, TeachersListSerializer, PeriodSerializer
 from authentication.permissions import IsMainTimetableCreator, IsLocalTimetableCreator, IsTeacher
 from school.models import ActivityCategory, SubjectUser
 
@@ -80,7 +80,6 @@ class VersionViewSet(viewsets.ModelViewSet):
                 serializer.save()
             except IntegrityError:
                 return Response("Schema already exists.", status=status.HTTP_400_BAD_REQUEST)
-
             schema_name = serializer.data['name']
             connection.set_tenant(get_schema(schema_name))
             # if setting exists and nothing is in database table, create activity categories
@@ -166,6 +165,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response("error2 ", status=status.HTTP_400_BAD_REQUEST)
 
+    @list_route(methods=['get'])
+    def logged(self, request):
+        current_user = request.user
+        if current_user.id is not None:
+            serializer = UserSerializer(current_user)
+            return Response(serializer.data)
+
 
 class TeachersList(generics.ListAPIView):
 
@@ -184,3 +190,20 @@ class TeachersList(generics.ListAPIView):
     def get_extra_actions(cls):
         return []
 
+class PeriodViewSet(viewsets.ModelViewSet):
+    queryset = Period.objects.all()
+    serializer_class = PeriodSerializer
+    # when read only just get requests are available in swagger
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticatedOrReadOnly])
+    def current(self, request, pk=None):
+        headers = request.headers['Timetable-Version']
+        headers_array = headers.split('_')
+        current_year = '/'.join(headers_array[1:])
+        current_semester = headers_array[0] + ' ' + current_year
+        print(f'current semester -> {current_semester} and current year -> {current_year}')
+        current_year += ' - '
+        periods = Period.objects.filter(Q(name__icontains=current_semester) | Q(name__icontains=current_year))
+        serializer = PeriodSerializer(periods, many=True)
+        return Response(serializer.data)

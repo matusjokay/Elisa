@@ -25,52 +25,29 @@ class Group(MPTTModel):
         order_insertion_by = ['name']
 
 
-class Department(MPTTModel):
-    id = models.BigAutoField(primary_key=True)
-    name = models.CharField(max_length=300)
-    abbr = models.CharField(max_length=30, blank=True, null=True)
-    parent = TreeForeignKey(
-        'self',
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True,
-        related_name='children',
-        db_index=True)
+# class Department(MPTTModel):
+#     # id = models.BigAutoField(primary_key=True)
+#     name = models.CharField(max_length=300)
+#     abbr = models.CharField(max_length=30, blank=True, null=True)
+#     parent = TreeForeignKey(
+#         'self',
+#         on_delete=models.CASCADE,
+#         blank=True,
+#         null=True,
+#         related_name='children',
+#         db_index=True)
 
-    class MPTTMeta:
-        order_insertion_by = ['name']
+#     class MPTTMeta:
+#         order_insertion_by = ['name']
 
-    def __str__(self):
-        return '{}'.format(self.name)
-
-# TODO: this class probably should be in public schema 
-# as a reference for all other tenants
-class Period(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    name = models.CharField(max_length=300)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    # low value = oldest , higher = newest
-    university_period = models.PositiveSmallIntegerField(null=True)
-    # 1 is for WS , 2 is for SS
-    academic_sequence = models.PositiveSmallIntegerField(null=True)
-    # previous_period = models.ForeignKey('self', related_name='previous', on_delete=models.CASCADE, null=True)
-    # next_period = models.ForeignKey('self', related_name='next', on_delete=models.CASCADE, null=True)
-    previous_period = models.PositiveIntegerField(null=True)
-    next_period = models.PositiveIntegerField(null=True)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    active = models.BooleanField()
-
-    class Meta:
-        ordering = ['university_period']
-
-
+#     def __str__(self):
+#         return '{}'.format(self.name)
 
 class Course(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    period = models.ForeignKey(Period, on_delete=models.CASCADE, null=True)
+    # id = models.BigAutoField(primary_key=True)
+    period = models.ForeignKey('fei.Period', on_delete=models.CASCADE, null=True)
     # period = models.CharField(max_length=100)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True)
+    department = models.ForeignKey('fei.Department', on_delete=models.CASCADE, null=True)
     teacher = models.ForeignKey('fei.AppUser', on_delete=models.CASCADE, null=True)
     code = models.CharField(max_length=300, null=True)
     name = models.CharField(max_length=300, null=True)
@@ -82,7 +59,7 @@ class Course(models.Model):
 
 
 class Equipment(models.Model):
-    id = models.AutoField(primary_key=True)
+    # id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=300, unique=True)
 
     class Meta:
@@ -107,7 +84,7 @@ class Room(models.Model):
     capacity = models.PositiveIntegerField(blank=True, null=True)
     room_type = models.ForeignKey(RoomType, on_delete=models.CASCADE, null=True)
     department = models.ForeignKey(
-        Department, on_delete=models.CASCADE, blank=True, null=True)
+        'fei.Department', on_delete=models.CASCADE, blank=True, null=True)
     equipment = models.ManyToManyField(Equipment, through='RoomEquipment')
 
     class Meta:
@@ -150,7 +127,7 @@ class StudyType(models.Model):
         return '{}'.format(self.name)
 
 class FormOfStudy(models.Model):
-    id = models.AutoField(primary_key=True)
+    # id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=32)
 
     def __str__(self):
@@ -168,9 +145,8 @@ class UserGroup(models.Model):
 
 class UserDepartment(models.Model):
     user = models.ForeignKey('fei.AppUser', on_delete=models.CASCADE)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    department = models.ForeignKey('fei.Department', on_delete=models.CASCADE)
     employment = models.CharField(max_length=9, blank=True)
-    # employment = models.PositiveSmallIntegerField(blank=True, null=True)
 
 
 class UserSubjectRole(models.Model):

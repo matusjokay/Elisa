@@ -28,7 +28,7 @@ We recommend using virtual environment to manage dependencies. To run locally:
       REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM elisa;
       REVOKE ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public FROM elisa;
       REVOKE ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public FROM elisa;
-      DROP USER IF EXISTS user;
+      DROP USER IF EXISTS elisa;
       ```
 
       Remove database with optional flag if it exists
@@ -83,16 +83,23 @@ We recommend using virtual environment to manage dependencies. To run locally:
           ```
           ./manage.py init_app
           ```
-     - set main timetable creator by username
+     - EXPLICITLY set main timetable creator by username
           ```
-          ./manage.py set_superuser <username>
+          ./manage.py set_user_role <username> <user_id> 1
           ```
+          <user_id> -> ais_id from stuba
+          1 -> number of role_id where 1 is a considered superuser
+
+          check elisa/settings.py for different role options
+
      - create schemas in postgresql via command with login and pwd and directory of imported data subjects
 	 DISCLAIMER: in order to run this command you must first run the server ( runsslserver )
           ```
           ./manage.py init_schemas <directory-of-data> <username> <password>
           ```
-	TODO: Due to django-tenants it seems that when you make changes on models and recreate migrations it doesn't seems to apply them correctly after running migrate_schemas command. For now you must repeat steps 3, 5 and 6 with clean DB schemas.
+	WARNING: Due to django-tenants it seems that when you make changes on models and recreate migrations it doesn't seems to apply them correctly after running migrate_schemas command (Checking generated migration files and their application by command executing).
+      It is better for now to repeat steps 3, 5 and 6 with clean DB schemas.
+      Script for dropping everything in the DB for enviroment would be preffered.
 
 7. Install required software to work with Oracle databases depending on yor OS. More info in cx-oracle
     [doc](https://cx-oracle.readthedocs.io/en/latest/installation.html)
@@ -120,10 +127,6 @@ We recommend using virtual environment to manage dependencies. To run locally:
       - from csv files
           ```
           ./manage.py import fei-data-new <schema>
-          ```
-          or imported them for all the schemas
-          ```
-          ./manage.py import fei-data-new all
           ```
       - or from import database using URLS defined in fei_importexport module (file `fei_importexport/urls.py`)).
 

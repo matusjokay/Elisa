@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from . import models
+from fei import models as fei_models
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -11,7 +12,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Department
+        model = fei_models.Department
         fields = ('id', 'name', 'abbr', 'parent')
 
 
@@ -44,15 +45,17 @@ class RoomCategorySerializer(serializers.ModelSerializer):
 
 class RoomSerializer(serializers.ModelSerializer):
     # category = RoomCategorySerializer()
-    category = serializers.SlugRelatedField(
-        slug_field='name', queryset=models.RoomType.objects.all())
-    equipment = RoomEquipmentSerializer(
-        source='roomequipment_set', many=True, read_only=True)
+    # category = serializers.SlugRelatedField(
+    #     slug_field='name', queryset=models.RoomType.objects.all())
+    # equipment = RoomEquipmentSerializer(
+    #     source='roomequipment_set', many=True, read_only=True)
+    department = DepartmentSerializer(
+        source='department_set', many=True, read_only=True
+    )
 
     class Meta:
         model = models.Room
-        fields = ('id', 'name', 'capacity', 'room_type', 'department',
-                  'equipment')
+        fields = ('id', 'name', 'capacity', 'room_type', 'department')
 
 
 class ActivityCategorySerializer(serializers.ModelSerializer):
@@ -74,7 +77,7 @@ class FormOfStudySerializer(serializers.ModelSerializer):
 # TODO: foreign keys and self references keys
 class PeriodSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Period
+        model = fei_models.Period
         fields = '__all__'
 
 # TODO: missing user group

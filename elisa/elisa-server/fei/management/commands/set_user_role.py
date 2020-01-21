@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('username', type=str, help='Users username.')
         parser.add_argument('user_id', type=str, help='User id.')
-        parser.add_argument('role_id', type=str, help='Corresponding role id.')
+        parser.add_argument('role_id', type=str, help=f'Corresponding role id with range [1-{len(settings.GROUPS)}]. As for superuser enter -> 1')
 
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS('Checking groups...'))

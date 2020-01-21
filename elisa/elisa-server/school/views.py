@@ -2,8 +2,11 @@ import django_filters
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.viewsets import ModelViewSet
-
+from rest_framework.decorators import action
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from . import models, serializers
+from fei import models as fei_models
 
 # TODO: Missing view set for
 # PERIOD, USER SUBJECT ROLE , FORM OF STUDY
@@ -22,7 +25,7 @@ class DepartmentViewSet(ModelViewSet):
     """
     API endpoint that allows departments to be viewed or edited.
     """
-    queryset = models.Department.objects.all()
+    queryset = fei_models.Department.objects.all()
     serializer_class = serializers.DepartmentSerializer
     filter_backends = (DjangoFilterBackend, SearchFilter)
     filterset_fields = ('parent',)
@@ -95,11 +98,3 @@ class ActivityViewSet(ModelViewSet):
     """
     queryset = models.Activity.objects.all()
     serializer_class = serializers.ActivitySerializer
-
-
-class PeriodsViewSet(ModelViewSet):
-    """
-    API endpoint that allows activities to be viewed or edited.
-    """
-    queryset = models.Period.objects.all()
-    serializer_class = serializers.PeriodSerializer

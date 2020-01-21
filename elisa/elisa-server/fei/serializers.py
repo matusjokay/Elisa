@@ -1,6 +1,7 @@
 from django.db.models import Q
 from rest_framework import serializers
-from .models import Version, AppUser
+from .models import Version, AppUser, Period
+import re
 
 from school.models import Course, SubjectUser
 
@@ -10,7 +11,9 @@ class UserMixin:
         """
         Return the full name with titles, with a space in between.
         """
-        full_name = '%s%s %s' % (obj.title_before, obj.get_full_name(), obj.title_after)
+        obj.title_before = '' if obj.title_before is None else obj.title_before
+        obj.title_after = '' if obj.title_after is None else obj.title_after
+        full_name = '%s%s%s' % (obj.title_before, obj.get_full_name(), obj.title_after)
         return full_name
 
 
@@ -64,6 +67,10 @@ class SubjectSerializer(serializers.ModelSerializer):
         model = Course
         fields = '__all__'
 
+class PeriodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Period
+        fields = '__all__'
 
 class TeachersListSerializer(serializers.ModelSerializer):
     subject = SubjectSerializer()

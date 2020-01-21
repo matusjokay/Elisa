@@ -1,8 +1,9 @@
 # from django.contrib import admin
 from import_export import resources, fields, widgets
+from import_export.widgets import ForeignKeyWidget
 
 from school import models
-from fei.models import AppUser
+from fei.models import AppUser, Department, Period
 
 
 class ForeignKeyWidgetWithCreation(widgets.ForeignKeyWidget):
@@ -38,10 +39,10 @@ class DepartmentResource(resources.ModelResource):
     parent = fields.Field(
         attribute='parent',
         column_name='parent',
-        widget=ForeignKeyWidgetWithCreation(models.Department))
+        widget=ForeignKeyWidgetWithCreation(Department))
 
     class Meta:
-        model = models.Department
+        model = Department
         fields = ('id', 'abbr', 'name', 'parent')
         export_order = ('id', 'abbr', 'name', 'parent')
 
@@ -49,7 +50,7 @@ class PeriodResource(resources.ModelResource):
     department = fields.Field(
         attribute='department',
         column_name='department',
-        widget=ForeignKeyWidgetWithCreation(models.Department))
+        widget=ForeignKeyWidget(Department))
     # previous_period = fields.Field(
     #     attribute='previous_period',
     #     column_name='previous_period',
@@ -60,7 +61,7 @@ class PeriodResource(resources.ModelResource):
     #     widget=ForeignKeyWidgetWithCreation(models.Period))
 
     class Meta:
-        model = models.Period
+        model = Period
         fields = ('id', 'name', 'department', 'university_period', 'academic_sequence', 'previous_period', 'next_period', 'start_date', 'end_date', 'active',)
         export_order = ('id', 'name', 'department', 'university_period', 'academic_sequence', 'previous_period', 'next_period', 'start_date', 'end_date', 'active',)
 
@@ -68,7 +69,7 @@ class CourseResource(resources.ModelResource):
     period = fields.Field(
         attribute='period',
         column_name='period',
-        widget=ForeignKeyWidgetWithCreation(models.Period))
+        widget=ForeignKeyWidgetWithCreation(Period))
     teacher = fields.Field(
         attribute='teacher',
         column_name='teacher',
@@ -96,6 +97,14 @@ class RoomTypeResource(resources.ModelResource):
 
 
 class RoomResource(resources.ModelResource):
+    room_type = fields.Field(
+        attribute='room_type',
+        column_name='room_type',
+        widget=ForeignKeyWidget(models.RoomType))
+    department = fields.Field(
+        attribute='department',
+        column_name='department',
+        widget=ForeignKeyWidget(Department))
     class Meta:
         model = models.Room
         skip_unchanged = True
@@ -103,6 +112,14 @@ class RoomResource(resources.ModelResource):
 
 
 class RoomEquipmentResource(resources.ModelResource):
+    room = fields.Field(
+        attribute='room',
+        column_name='room',
+        widget=ForeignKeyWidget(models.Room))
+    equipment = fields.Field(
+        attribute='equipment',
+        column_name='equipment',
+        widget=ForeignKeyWidget(models.Equipment))
     def skip_row(self, instance, original):
         #  Allow importing resources with empty id. We use ForeignKeys as
         #  import_id_fields to uniquely identify a model.
@@ -114,16 +131,14 @@ class RoomEquipmentResource(resources.ModelResource):
     class Meta:
         model = models.RoomEquipment
         # idendification of id fields but this is a many to many join table
-        import_id_fields = ('room', 'equipment')
+        # import_id_fields = ('room', 'equipment')
         skip_unchanged = True
-        fields = ('room', 'equipment', 'count')
-        export_order = ('room', 'equipment', 'count')
+        fields = ('id', 'room', 'equipment', 'count')
+        export_order = ('id', 'room', 'equipment', 'count')
 
 
 class UserResource(resources.ModelResource):
     class Meta:
-        # TODO: check if AppUser is a valid model 
-        # otherwise just use a normal user 
         model = AppUser
         fields = ('id', 'username', 'first_name', 'last_name', 'title_before', 'title_after',)
         skip_unchanged = True
@@ -182,7 +197,11 @@ class SubjectUserResource(resources.ModelResource):
     subject = fields.Field(
         attribute='subject',
         column_name='subject',
-        widget=ForeignKeyWidgetWithCreation(models.Course))
+        widget=ForeignKeyWidget(models.Course))
+    user = fields.Field(
+        attribute='user',
+        column_name='user',
+        widget=ForeignKeyWidget(AppUser))
     def skip_row(self, instance, original):
         if not instance.id:
             instance.id = original.id
@@ -191,7 +210,7 @@ class SubjectUserResource(resources.ModelResource):
 
     class Meta:
         model = models.SubjectUser
-        import_id_fields = ('subject', 'user')
+        # import_id_fields = ('subject', 'user')
         skip_unchanged = True
         export_order = ('subject', 'user', 'role')
 
@@ -203,6 +222,14 @@ class UserSubjectRoleResource(resources.ModelResource):
 
 
 class UserDepartmentResource(resources.ModelResource):
+    user = fields.Field(
+        attribute='user',
+        column_name='user',
+        widget=ForeignKeyWidget(AppUser))
+    department = fields.Field(
+        attribute='department',
+        column_name='department',
+        widget=ForeignKeyWidget(Department))
     def skip_row(self, instance, original):
         if not instance.id:
             instance.id = original.id
@@ -211,12 +238,28 @@ class UserDepartmentResource(resources.ModelResource):
 
     class Meta:
         model = models.UserDepartment
-        import_id_fields = ('user', 'department')
+        # import_id_fields = ('user', 'department')
         skip_unchanged = True
         export_order = ('user', 'department', 'employment')
 
 # TODO: CHECK IF FOREIGN KEY CHECKING IS NEEDED
 class UserGroupResource(resources.ModelResource):
+    user = fields.Field(
+        attribute='user',
+        column_name='user',
+        widget=ForeignKeyWidget(AppUser))
+    group = fields.Field(
+        attribute='group',
+        column_name='group',
+        widget=ForeignKeyWidget(models.Group))
+    form_of_study = fields.Field(
+        attribute='form_of_study',
+        column_name='form_of_study',
+        widget=ForeignKeyWidget(models.FormOfStudy))
+    study_type = fields.Field(
+        attribute='study_type',
+        column_name='study_type',
+        widget=ForeignKeyWidget(models.StudyType))
     def skip_row(self, instance, original):
         if not instance.id:
             instance.id = original.id
@@ -225,6 +268,6 @@ class UserGroupResource(resources.ModelResource):
 
     class Meta:
         model = models.UserGroup
-        import_id_fields = ('user', 'group')
+        # import_id_fields = ('user', 'group')
         skip_unchanged = True
         export_order = ('user', 'group', 'group_number', 'form_of_study', 'study_type')

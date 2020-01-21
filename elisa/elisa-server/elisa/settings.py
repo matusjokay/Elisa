@@ -40,7 +40,8 @@ SHARED_APPS = [
 ELISA_APPS = [
     'django_filters',
     'rest_framework',
-    'rest_framework_swagger',
+    'drf_yasg',
+    'django_extensions',
     'django_python3_ldap',
     'sslserver',
     'corsheaders',
@@ -105,8 +106,10 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
+    # 'DEFAULT_PERMISSION_CLASSES':
+    #     ('rest_framework.permissions.IsAuthenticated',),
     'DEFAULT_PERMISSION_CLASSES':
-        ('rest_framework.permissions.IsAuthenticated',),
+        ('rest_framework.permissions.AllowAny',),
     'DEFAULT_AUTHENTICATION_CLASSES':
         ('rest_framework_simplejwt.authentication.JWTAuthentication',),
     'DEFAULT_FILTER_BACKENDS':
@@ -144,16 +147,24 @@ LDAP_AUTH_USER_FIELDS = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=10),
-    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(minutes=30),
+    # just for testing purposes the validity time has been lowered
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=20),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(hours=1),
     # 'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=30),
     # 'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
+}
+
+GRAPH_MODELS = {
+    'all_applications': True,
+    'group_models': True,
 }
 
 SWAGGER_SETTINGS = {
     'LOGIN_URL': 'rest_framework:login',
     'LOGOUT_URL': 'rest_framework:logout',
     'USE_SESSION_AUTH': False,
+    'SHOW_REQUEST_HEADERS': True,
+    'JSON_EDITOR': True,
     'SECURITY_DEFINITIONS': {
         'api_key': {
             'type': 'apiKey',
@@ -198,16 +209,16 @@ DATABASES = {
         'PASSWORD': 'secret',
         'HOST': '127.0.0.1',
         'PORT': '5432',
-    },
-    'import': {
-        'ENGINE': 'django.db.backends.oracle',
-        'NAME': config('DB_IMPORT_NAME'),
-        'USER': config('DB_IMPORT_USER'),
-        'PASSWORD': config('DB_IMPORT_PASSWORD'),
-        # 'HOST': 'db-new.is.stuba.sk',
-        'HOST': config('DB_IMPORT_HOST'),
-        'PORT': config('DB_IMPORT_PORT', default='1521'),
     }
+    # 'import': {
+    #     'ENGINE': 'django.db.backends.oracle',
+    #     'NAME': config('DB_IMPORT_NAME'),
+    #     'USER': config('DB_IMPORT_USER'),
+    #     'PASSWORD': config('DB_IMPORT_PASSWORD'),
+    #     # 'HOST': 'db-new.is.stuba.sk',
+    #     'HOST': config('DB_IMPORT_HOST'),
+    #     'PORT': config('DB_IMPORT_PORT', default='1521'),
+    # }
 }
 
 DATABASE_ROUTERS = (
