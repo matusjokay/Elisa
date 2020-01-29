@@ -79,9 +79,9 @@ We recommend using virtual environment to manage dependencies. To run locally:
       More info in django-tenants [doc](https://django-tenants.readthedocs.io/en/latest/)
 
 6. On server where application is run, you have to run these commands:
-     - initialize groups and tenants
+     - initialize groups , tenants and insert initial data
           ```
-          ./manage.py init_app
+          ./manage.py init_app <directory-of-data>
           ```
      - EXPLICITLY set main timetable creator by username
           ```
@@ -92,14 +92,19 @@ We recommend using virtual environment to manage dependencies. To run locally:
 
           check elisa/settings.py for different role options
 
-     - create schemas in postgresql via command with login and pwd and directory of imported data subjects
-	 DISCLAIMER: in order to run this command you must first run the server ( runsslserver )
+      - create schemas in postgresql via command with login and specified schema you want to create. It's format should be as following ZS/LS_YYYY_YYYY
+      
+        **DISCLAIMER:** in order to run this command you must first run the server ( runsslserver )
           ```
-          ./manage.py init_schemas <directory-of-data> <username> <password>
+          ./manage.py init_schemas <username> <schema>
           ```
-	WARNING: Due to django-tenants it seems that when you make changes on models and recreate migrations it doesn't seems to apply them correctly after running migrate_schemas command (Checking generated migration files and their application by command executing).
-      It is better for now to repeat steps 3, 5 and 6 with clean DB schemas.
-      Script for dropping everything in the DB for enviroment would be preffered.
+	 **WARNING:** Due to django-tenants it seems that when you make changes on models and recreate migrations it doesn't seems to apply them correctly after running migrate_schemas command (Checking generated migration files and their application by command executing).
+       You can run a shell script to clean the postgres database and remove remaining migration files if you wish so to make this process much more comfortable.
+       The aforementioned script is located in the scripts folder executing it in the following manner :
+
+          ./clean_script.sh clean_db.sql
+       
+      Then you can go ahead and repeat steps 3 , 4 and 6
 
 7. Install required software to work with Oracle databases depending on yor OS. More info in cx-oracle
     [doc](https://cx-oracle.readthedocs.io/en/latest/installation.html)
@@ -124,11 +129,11 @@ We recommend using virtual environment to manage dependencies. To run locally:
     [doc](https://github.com/henriquebastos/python-decouple)
 
 9. Import data:
-      - from csv files
+      - **OPTIONAL** import data for specific schema entered. This script is being executed when `init_schemas` script is being run.
           ```
           ./manage.py import fei-data-new <schema>
           ```
-      - or from import database using URLS defined in fei_importexport module (file `fei_importexport/urls.py`)).
+      - or from import database using URLS defined in fei_importexport module (file `fei_importexport/urls.py`)). **TODO:** This script still needs some work to be updated since it then can build proper model definitions OR it will serve a look up functionality to check on new schema changes and then recreate it based on the previous ones.
 
 10. Run the server:
 

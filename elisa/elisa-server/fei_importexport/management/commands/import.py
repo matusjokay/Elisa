@@ -1,5 +1,6 @@
 import os
 import csv
+import time
 from django.core.management.base import BaseCommand
 from django.db import connection, utils
 from django.db.models import Q
@@ -96,6 +97,7 @@ class Command(BaseCommand):
 
     def doImport(self, options, fromAllSchema=None):
         list_periods_ids = self.get_filter_periods(options['schema_name'])
+        start_time = time.time()
         for csvFile, resource in self.resource_mapping:
             self.stdout.write(f"Opening {csvFile} for schema -> {options['schema_name']}") if fromAllSchema is None else self.stdout.write(f"Opening {csvFile} for schema -> {fromAllSchema}")
             # Nested folder for subjects of different periods
@@ -127,3 +129,5 @@ class Command(BaseCommand):
                 dataset = tablib.Dataset().load(data)
             self.stdout.write(f"Importing {csvFile} for schema -> {options['schema_name']}") if fromAllSchema is None else self.stdout.write(f"Importing {csvFile} for schema -> {fromAllSchema}")
             resource.import_data(dataset, raise_errors=True, use_transactions=True)
+        end_time = time.time() - start_time
+        self.stdout.write(f"Done Importing data and it took {end_time} seconds!")

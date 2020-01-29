@@ -64,5 +64,5 @@ class Command(BaseCommand):
             start_time = time.time()
             resource.import_data(dataset, raise_errors=True, use_transactions=True)
             end_time = time.time() - start_time
-            self.stdout.write(f"Done Importing {csvFile} and it took {end_time}!")
+            self.stdout.write(f"Done Importing {csvFile} and it took {end_time} seconds!")
 
