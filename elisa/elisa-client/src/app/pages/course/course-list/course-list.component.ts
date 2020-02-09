@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatDialog, MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import {MatDialog, MatPaginator, MatSort, MatTableDataSource, PageEvent} from '@angular/material';
 import {Course} from '../../../models/course';
 import {CourseService} from '../../../services/course.service';
 import {TimetableService} from '../../../services/timetable.service';
@@ -8,6 +8,9 @@ import {DepartmentService} from '../../../services/department.service';
 import {UserDetailsComponent} from '../../users/user-details/user-details.component';
 import {CourseDetailsComponent} from '../course-details/course-details.component';
 import { catchError } from 'rxjs/operators';
+import { Department } from 'src/app/models/department';
+import { SnackbarComponent } from 'src/app/common/snackbar/snackbar.component';
+import { Period } from 'src/app/models/period.model';
 
 @Component({
   selector: 'app-course-list',
@@ -18,10 +21,16 @@ export class CourseListComponent implements OnInit {
   activeScheme;
   schemas;
 
+  periods: Period[];
+
   pageSizeOptions = [15, 50, 100];
-  courses: Course[] = [];
-  departments: any = [];
-  displayedColumns: string[] = ['id', 'name', 'code', 'department'];
+  lastPageIndex: number;
+  lastPageSize: number;
+  coursesLength: number;
+  courses: Course[];
+  departments: Department[];
+  displayedColumns: string[] = ['id', 'name', 'code', 'teacher', 'department', 'completion', 'credits', 'actions'];
+  loading: boolean;
   dataSource: MatTableDataSource<Course>;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -31,19 +40,42 @@ export class CourseListComponent implements OnInit {
     private departmentService: DepartmentService,
     private timetableService: TimetableService,
     public dialog: MatDialog,
+    private snackBar: SnackbarComponent
   ) { }
 
   ngOnInit() {
-    this.timetableService.getAllSchemas().subscribe(
+    this.activeScheme = localStorage.getItem('active_scheme');
+    this.getSchemeData();
+    this.getDepartmentData();
+  }
+
+  getSchemeData() {
+    this.timetableService.getCurrentSelectedPeriods().subscribe(
       (response) => {
-        this.schemas = response;
-        this.getSchemeData();
+        this.periods = response;
+        this.loading = true;
+        this.getCourseData(1, 15);
       }, (error) => {
-        console.error('Failed to load schema list');
+        console.error('Failed to load periods list');
         catchError(error);
       }
     );
+  }
 
+  getDepartmentData() {
+    this.departmentService.getCachedDepartments().subscribe(
+      (departments) => {
+        console.log('Received departments in courseList');
+        this.departments = departments;
+      }
+    );
+  }
+
+  onPage(event: PageEvent) {
+    this.loadingAction();
+    this.getCourseData(event.pageIndex + 1, event.pageSize);
+    console.log('page event emitter called');
+    console.log(event);
   }
 
   // getSchemeData(){
@@ -70,14 +102,21 @@ export class CourseListComponent implements OnInit {
   //   });
   // }
 
-  getSchemeData() {
-    this.courseService.getAll().subscribe(
-      (courses) => {
-        console.log(courses);
+  getCourseData(pageNum: number, pageSize: number) {
+    this.lastPageIndex = pageNum;
+    this.lastPageSize = pageSize;
+    this.courseService.getAll(pageNum, pageSize).subscribe(
+      (page) => {
+        console.log(page);
+        this.coursesLength = page.count;
+        if (page.results) {
+          this.courses = page.results;
+          this.dataSource = new MatTableDataSource(this.courses);
+        }
       }, (error) => {
         console.error('Failed to load all courses');
         catchError(error);
-      }
+      }, () => this.loading = false
     );
   }
 
@@ -87,33 +126,66 @@ export class CourseListComponent implements OnInit {
     this.dataSource.filter = filterValue;
   }
 
-  schemaChange(schema: string) {
-    this.activeScheme = schema;
-    this.getSchemeData();
-  }
+  // schemaChange(schema: string) {
+  //   this.activeScheme = schema;
+  //   this.getSchemeData();
+  // }
 
-  showDetails(row){
+  showDetails(row) {
     const dialogRef = this.dialog.open(CourseDetailsComponent, {
       width: '500px',
-      data: {course: row, departments: this.departments}
+      data: {course: row, departments: this.departments, courseAction: 'edit'}
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // ngOnInit should not be explicitly called
-        // this.ngOnInit();
+        if (result === 'updated') {
+          this.snackBar.openSnackBar('Course successfully updated!', 'Close', this.snackBar.styles.success);
+          this.loadingAction();
+          this.getCourseData(this.lastPageIndex, this.lastPageSize);
+        } else if (result === 'failed') {
+          this.snackBar.openSnackBar('Failed to update course!', 'Close', this.snackBar.styles.failure);
+        }
       }
     });
   }
 
-  addCourse(){
+  removeCourse(row) {
+    console.log('removing course');
+    console.log(row);
     const dialogRef = this.dialog.open(CourseDetailsComponent, {
-      width: '500px',
-      data: {departments: this.departments}
+      width: '350px',
+      data: { course: row, courseAction: 'remove' }
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // ngOnInit should not be explicitly called
-        // this.ngOnInit();
+        if (result === 'failed') { this.snackBar.openSnackBar('Course deletion failed!', 'Close', this.snackBar.styles.failure); } else {
+          this.snackBar.openSnackBar('Course successfully deleted!', 'Close', this.snackBar.styles.success);
+          this.loadingAction();
+          this.getCourseData(this.lastPageIndex, this.lastPageSize);
+        }
+      }
+    });
+  }
+
+  loadingAction() {
+    this.loading = true;
+    this.dataSource = null;
+  }
+
+  addCourse() {
+    const dialogRef = this.dialog.open(CourseDetailsComponent, {
+      width: '500px',
+      data: { departments: this.departments , courseAction: 'add', periods: this.periods }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result === 'added') {
+          this.snackBar.openSnackBar('Course successfully added!', 'Close', this.snackBar.styles.success);
+          this.loadingAction();
+          this.getCourseData(this.lastPageIndex, this.lastPageSize);
+        } else if (result === 'failed') {
+          this.snackBar.openSnackBar('Failed to add course!', 'Close', this.snackBar.styles.failure);
+        }
       }
     });
   }

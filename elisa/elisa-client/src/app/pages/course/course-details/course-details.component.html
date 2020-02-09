@@ -1,23 +1,69 @@
-<div fxLayout="row" fxLayoutAlign="center center" class="login-main">
+<div fxLayout="row" fxLayoutAlign="space-between center">
+    <span></span>
+    <mat-label>
+      <h3>{{dialogLabel}}</h3>
+    </mat-label>
+    <button mat-mini-fab color="primary" (click)="onClose()">
+      <mat-icon>close</mat-icon>
+    </button>
+  <!-- <div fxLayoutAlign="end">
+    <button mat-fab color="primary" (click)="onClose()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div> -->
+</div>
+<div *ngIf="data.courseAction === 'remove'" fxLayout="column">
+  <mat-label>Are you sure you want to delete course ?</mat-label>
+  <h3>{{data.course.name}}</h3>
+  <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="5px">
+    <button mat-raised-button color="primary" (click)="onClose()">No</button>
+    <button mat-raised-button color="warn" (click)="onSubmit()">Yes</button>
+  </div>
+</div>
+<div *ngIf="data.courseAction !== 'remove'" fxLayout="row" fxLayoutAlign="center center" class="login-main">
   <form (ngSubmit)="onSubmit()" [formGroup]="courseForm">
     <div fxLayout="column">
       <mat-form-field>
-        <input matInput required placeholder="Code" formControlName="code" [value]="data.course.code ? data.course.code : ''">
+        <input matInput required placeholder="Code" formControlName="code" [value]="data.course ? data.course.code : ''">
       </mat-form-field>
       <mat-form-field>
-        <input matInput required placeholder="Name" formControlName="name" [value]="data.course.name ? data.course.name : ''">
+        <input matInput required placeholder="Name" formControlName="name" [value]="data.course ? data.course.name : ''">
       </mat-form-field>
       <mat-form-field>
-        <input matInput required placeholder="completion" formControlName="completion" [value]="data.course.completion ? data.course.completion : ''">
+        <mat-label>Completion</mat-label>
+        <mat-select [formControl]="courseForm.get('completion')" required>
+          <mat-option *ngFor="let completion of completionTypes" [value]="completion.value">
+            {{completion.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="courseForm.get('completion').hasError('required')">Please choose a Completion Type</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="number" placeholder="Enter number of credits"
+        [formControl]="courseForm.get('credits')"
+        [value]="data.course ? data.course.credits : 1">
+        <mat-error *ngIf="courseForm.get('credits').hasError('pattern')">Max number is 'DD'</mat-error>
+        <mat-error *ngIf="courseForm.get('credits').hasError('min')">Min number is '1'</mat-error>
       </mat-form-field>
       <mat-form-field>
         <mat-label>Department</mat-label>
-        <select matNativeControl required formControlName="department">
-          <option *ngFor="let department of data.departments | keyvalue" [value]="department.key">{{department.value.name}}</option>
-        </select>
+        <mat-select [formControl]="courseForm.get('department')" required>
+          <mat-option *ngFor="let department of data.departments" [value]="department.id">
+            {{department.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="courseForm.get('department').hasError('required')">Please choose a Department</mat-error>
       </mat-form-field>
-      <button mat-raised-button color="primary" [disabled]="!courseForm.valid">{{newCourse ? 'Add' : 'Update'}}</button>
-      <button *ngIf="!newCourse" mat-raised-button color="primary" (click)="removeCourse()">Remove</button>
+      <!-- Choose period if its a new course -->
+      <mat-form-field *ngIf="data.courseAction === 'add'">
+        <mat-label>Semester</mat-label>
+        <mat-select [formControl]="courseForm.get('period')" required>
+          <mat-option *ngFor="let period of data.periods" [value]="period.id">
+            {{period.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button color="primary" [disabled]="!courseForm.valid || !courseForm.dirty">{{data.courseAction === 'add' ? 'Add' : 'Update'}}</button>
     </div>
   </form>
 </div>

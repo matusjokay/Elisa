@@ -2,27 +2,27 @@ import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {map, share, distinctUntilChanged} from 'rxjs/operators';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Course} from '../models/course';
+import { IPage } from '../models/page.model';
+import { BaseService } from './base-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CourseService {
+export class CourseService extends BaseService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    super();
+  }
 
-  getAll(): Observable<Course[]> {
-    const token = localStorage.getItem('token');
-    const version = localStorage.getItem('active_scheme');
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${token}`,
-        'Timetable-Version': version
-      })
-    };
+  getAll(pageNum: number, pageSize: number): Observable<IPage> {
+    const httpParams = new HttpParams()
+      .set('page', pageNum.toString())
+      .set('page_size', pageSize.toString());
+    const httpOptions = this.getSchemaHeader();
 
-    return this.http.get<Course[]>(environment.APIUrl + 'courses/', httpOptions).pipe(
+    return this.http.get<IPage>(environment.APIUrl + 'courses/', { params: httpParams, headers : httpOptions }).pipe(
       distinctUntilChanged(),
       share()
       );
@@ -46,15 +46,18 @@ export class CourseService {
       share());
   }
 
-  deleteCourse(data: Course) {
-
+  deleteCourse(courseId: number) {
+    const httpOptions = this.getSchemaHeader();
+    return this.http.delete(environment.APIUrl + `courses/${courseId}/`, { headers: httpOptions });
   }
 
-  createCourse(post: any) {
-
+  createCourse(newCourse: Course) {
+    const httpOptions = this.getSchemaHeader();
+    return this.http.post<Course>(environment.APIUrl + 'courses/', newCourse, { headers: httpOptions });
   }
 
-  updateCourse(post: any) {
-
+  updateCourse(updatedCourse: Course) {
+    const httpOptions = this.getSchemaHeader();
+    return this.http.put<Course>(environment.APIUrl + `courses/${updatedCourse.id}/`, updatedCourse, { headers : httpOptions });
   }
 }

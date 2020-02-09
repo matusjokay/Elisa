@@ -3,10 +3,16 @@ from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from . import models, serializers
 from fei import models as fei_models
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 15
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 # TODO: Missing view set for
 # PERIOD, USER SUBJECT ROLE , FORM OF STUDY
@@ -37,7 +43,8 @@ class CourseViewSet(ModelViewSet):
     API endpoint that allows courses to be viewed or edited.
     """
     queryset = models.Course.objects.all()
-    serializer_class = serializers.CourseSerializer
+    serializer_class = serializers.CourseSerializerFull
+    pagination_class = StandardResultsSetPagination
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_fields = ('department',)
     search_fields = ('name', 'code')

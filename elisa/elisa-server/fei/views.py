@@ -13,12 +13,27 @@ from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action, list_route
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 
 from .models import AppUser, Version, Period
-from .serializers import VersionSerializer, UserSerializer, UserSerializerShort, TeachersListSerializer, PeriodSerializer
+from .serializers import VersionSerializer, UserSerializer, UserSerializerTable, UserSerializerShort, TeachersListSerializer, PeriodSerializer
 from authentication.permissions import IsMainTimetableCreator, IsLocalTimetableCreator, IsTeacher
 from school.models import ActivityCategory, SubjectUser
 
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 15
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+    def get_paginated_response(self, data):
+        return Response({
+            'links': {
+                'next': self.get_next_link(),
+                'previous': self.get_previous_link()
+            },
+            'count': self.page.paginator.count,
+            'results': data
+        })
 
 def get_schema(schema_name):
     try:
@@ -140,13 +155,30 @@ class VersionViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-
     queryset = AppUser.objects.all()
+    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
 
     def get_serializer_class(self):
         if self.action == 'set_main_timetable_maker':
             return UserSerializerShort
         return UserSerializer
+
+    # def list(self, request):
+    #     # super().list(request, *args, **kwargs)
+    #     queryset = AppUser.objects.all()
+    #     page = self.paginate_queryset(queryset)
+    #     serializer = UserSerializerTable(page, read_only=True)
+    #     return self.get_paginated_response(serializer.data)
+
+    @action(detail=False)
+    def table_users(self, request):
+        table_users = AppUser.objects.values('id', 'username', 'title_before', 'first_name', 'last_name', 'title_after', 'groups')
+        print(table_users.query)
+        page = self.paginate_queryset(table_users)
+        if page is not None:
+            serializer = UserSerializerTable(page, many=True, read_only=True)
+            return self.get_paginated_response(serializer.data)
 
     """
     Set user as main timetable maker

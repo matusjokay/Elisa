@@ -1,12 +1,15 @@
-import {Department} from './department';
+import { User } from './user';
+import { Department } from './department';
 
-export interface Course {
-  id: number;
+export class Course {
+  id?: number;
   name: string;
   code: string;
+  department: number | Department;
+  teacher?: number | User;
   completion: string;
-  department?: number;
-  departmentObject?: Department;
-  id_teacher: number;
-  teacher_name: string;
+  period: number;
+  public constructor(init?: Partial<Course>) {
+    Object.assign(this, init);
+  }
 }

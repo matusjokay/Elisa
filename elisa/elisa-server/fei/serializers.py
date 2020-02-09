@@ -13,7 +13,16 @@ class UserMixin:
         """
         obj.title_before = '' if obj.title_before is None else obj.title_before
         obj.title_after = '' if obj.title_after is None else obj.title_after
-        full_name = '%s%s%s' % (obj.title_before, obj.get_full_name(), obj.title_after)
+        full_name = '%s%s %s' % (obj.title_before, obj.get_full_name(), obj.title_after)
+        return full_name
+
+    def get_fullname_table(self, obj):
+        """
+        Return the full name with titles, with a space in between for table.
+        """
+        obj['title_before'] = '' if obj['title_before'] is None else obj['title_before']
+        obj['title_after'] = '' if obj['title_after'] is None else obj['title_after']
+        full_name = '%s%s %s %s' % (obj['title_before'], obj['first_name'], obj['last_name'], obj['title_after'])
         return full_name
 
 
@@ -61,6 +70,20 @@ class UserSerializerShort(UserMixin, serializers.ModelSerializer):
         model = AppUser
         fields = ('id', 'username', 'fullname', 'first_name', 'last_name')
 
+class UserSerializerCourse(UserMixin, serializers.ModelSerializer):
+    fullname = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AppUser
+        fields = ('id', 'fullname')
+
+class UserSerializerTable(UserMixin, serializers.ModelSerializer):
+    fullname_table = serializers.SerializerMethodField()
+    groups = serializers.SlugRelatedField(many=True, read_only=True, slug_field='name')
+
+    class Meta:
+        model = AppUser
+        fields = ('id', 'fullname_table', 'groups')
 
 class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
@@ -71,6 +94,11 @@ class PeriodSerializer(serializers.ModelSerializer):
     class Meta:
         model = Period
         fields = '__all__'
+
+class PeriodSerializerJustName(serializers.ModelSerializer):
+    class Meta:
+        model = Period
+        fields = ('id', 'name')
 
 class TeachersListSerializer(serializers.ModelSerializer):
     subject = SubjectSerializer()

@@ -16,6 +16,7 @@ import {Event} from '../../../../models/event.model';
 import {Collision} from '../../../../models/collision.model';
 import {MatDialog} from '@angular/material';
 import {EventDetailComponent} from '../../../../components/event-detail/event-detail.component';
+import { User } from 'src/app/models/user';
 
 @Component({
   selector: 'app-timetable-update-main',
@@ -315,9 +316,14 @@ export class TimetableUpdateMainComponent implements OnInit {
    * @param id
    */
   courseChange(id){
-    if(this.activeCourse !== id){
+    if (this.activeCourse !== id) {
       this.activeCourse = this.courses[id];
-      this.activeTeacher = this.teachers[this.courses[id].id_teacher];
+      const teacher = this.courses[id].teacher;
+      if (teacher instanceof User) {
+        this.activeTeacher = this.teachers[teacher.id];
+      } else {
+        this.activeTeacher = this.teachers[teacher];
+      }
     }
     this.reloadCourse();
   }

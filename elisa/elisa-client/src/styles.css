@@ -10,3 +10,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif;}
   width: 90%;
 }
 
+.blue-snackbar {
+  background: #2196F3;
+  color: white;
+}
+
+.red-snackbar {
+  background: #F44336;
+  color: white;
+}

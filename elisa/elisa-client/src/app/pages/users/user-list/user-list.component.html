@@ -23,12 +23,12 @@
   <mat-table class="data-table" [dataSource]="dataSource" matSort>
 
     <ng-container matColumnDef="id">
-      <mat-header-cell  *matHeaderCellDef mat-sort-header> No. </mat-header-cell>
+      <mat-header-cell  *matHeaderCellDef mat-sort-header> AIS ID </mat-header-cell>
       <mat-cell  *matCellDef="let element"> {{element.id}} </mat-cell>
     </ng-container>
 
     <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header = "last_name" > name </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header = "last_name" > Name </mat-header-cell>
       <mat-cell *matCellDef="let element"> {{element.first_name}} {{element.last_name}} </mat-cell>
     </ng-container>
 

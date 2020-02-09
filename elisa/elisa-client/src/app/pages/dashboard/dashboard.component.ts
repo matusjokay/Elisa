@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {TimetableService} from '../../services/timetable.service';
+import { DepartmentService } from 'src/app/services/department.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,7 +9,8 @@ import {TimetableService} from '../../services/timetable.service';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor(private timetableService: TimetableService) { }
+  constructor(private timetableService: TimetableService,
+    private departmentService: DepartmentService) { }
 
   ngOnInit() {
     if (!localStorage.getItem('active_scheme')) {
@@ -21,5 +23,21 @@ export class DashboardComponent implements OnInit {
         localStorage.setItem('active_scheme', schema['name']);
       });
     }
+  }
+
+  initData() {
+    this.departmentService.getCachedDepartments().subscribe(
+      (next) => {
+        console.log('received departments');
+        console.log(next);
+      }
+    );
+
+    this.timetableService.getCurrentSelectedPeriods().subscribe(
+      (success) => {
+        console.log('received current periods');
+        console.log(success);
+      }
+    );
   }
 }

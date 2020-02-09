@@ -1,14 +1,21 @@
 import { Injectable } from '@angular/core';
 import {environment} from '../../environments/environment';
-import {map, share, timeout} from 'rxjs/operators';
+import {map, share, timeout, distinctUntilChanged, shareReplay} from 'rxjs/operators';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
+import { BaseService } from './base-service.service';
+import { Period } from '../models/period.model';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TimetableService {
+export class TimetableService extends BaseService {
 
-  constructor(private http: HttpClient) { }
+  private cachePeriodList$: Observable<Array<Period>>;
+
+  constructor(private http: HttpClient) {
+    super();
+  }
 
   getActivitiesGroup(){
     let headers: HttpHeaders = new HttpHeaders();
@@ -112,17 +119,21 @@ export class TimetableService {
       ),share());
   }
 
-  getTimetableVersionLatest(){
-    let headers: HttpHeaders = new HttpHeaders();
-    headers = headers.append('Timetable-Version', localStorage.getItem('active_scheme'));
-    let options = ({headers: headers});
+  getTimetableVersionLatest() {
+    const token = localStorage.getItem('token');
+    const version = localStorage.getItem('active_scheme');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${token}`,
+        'Timetable-Version': version
+      })
+    };
 
-    return this.http.get(environment.APIUrl + 'timetables/latest/',options).
+    return this.http.get(environment.APIUrl + 'timetables/latest/', httpOptions).
     pipe(
-      map((response: any) =>{
-          return response;
-        }
-      ),share());
+      distinctUntilChanged(),
+      share()
+      );
   }
 
   getLastScheme() {
@@ -188,5 +199,20 @@ export class TimetableService {
           return response;
         }
       ));
+  }
+
+  getCurrentSelectedPeriods() {
+    if (!this.cachePeriodList$) {
+      this.cachePeriodList$ = this.requestPeriods().pipe(
+        shareReplay(1)
+      );
+    }
+
+    return this.cachePeriodList$;
+  }
+
+  private requestPeriods(): Observable<Period[]> {
+    const httpOptions = this.getSchemaHeader();
+    return this.http.get<Period[]>(environment.APIUrl + 'periods/current/', { headers: httpOptions });
   }
 }

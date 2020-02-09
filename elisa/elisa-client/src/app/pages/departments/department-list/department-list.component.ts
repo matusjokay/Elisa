@@ -15,30 +15,31 @@ import {NestedTreeControl} from '@angular/cdk/tree';
 export class DepartmentListComponent implements OnInit {
   departments: Department[];
 
-  treeControl = new NestedTreeControl<Department>(node => node.children);
+  // treeControl = new NestedTreeControl<Department>(node => node.children);
   dataSource = new MatTreeNestedDataSource<Department>();
 
-  displayedColumns: string[] = ['id','name','abbr','parent'];
+  displayedColumns: string[] = ['id', 'name', 'abbr', 'parent'];
 
   constructor(private httpClient: HttpClient) {
   }
 
   ngOnInit() {
-    this.getData().subscribe(data => {
-      this.departments = data;
-      this.dataSource.data = this.createTree(this.departments,null);;
-    });
+    // this.getData().subscribe(data => {
+    //   this.departments = data;
+    //   this.dataSource.data = this.createTree(this.departments,null);;
+    // });
+    console.log('todo fetch data and create tree??');
   }
 
-  getData(): Observable<Department[]>{
-    return this.httpClient.get<Department[]>(environment.APIUrl + 'departments/').pipe(map((data: any[]) => data.map((item: any) =>
-        new Department(
-          item.id,
-          item.name,
-          item.abbr,
-          item.parent
-        ))));
-  };
+  // getData(): Observable<Department[]>{
+  //   return this.httpClient.get<Department[]>(environment.APIUrl + 'departments/').pipe(map((data: any[]) => data.map((item: any) =>
+  //       new Department(
+  //         item.id,
+  //         item.name,
+  //         item.abbr,
+  //         item.parent
+  //       ))));
+  // }
 
   createTree(data, parent){
     var out = [];
@@ -52,13 +53,13 @@ export class DepartmentListComponent implements OnInit {
         out.push(data[i])
       }
     }
-    return out
+    return out;
   }
   // onSelect(department: Department): void {
   //   this.selectedDepartment = department;
   // }
 
-  hasChild = (_: number, node: Department) => !!node.children && node.children.length > 0;
+  // hasChild = (_: number, node: Department) => !!node.children && node.children.length > 0;
 
   save(department: Department): void{
     this.httpClient.post(environment.APIUrl + "postDepartment/", department).subscribe();

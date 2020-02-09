@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from . import models
 from fei import models as fei_models
-
+from fei import serializers as fei_serializers
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,8 +15,21 @@ class DepartmentSerializer(serializers.ModelSerializer):
         model = fei_models.Department
         fields = ('id', 'name', 'abbr', 'parent')
 
+class DepartmentSerializerShort(serializers.ModelSerializer):
+    class Meta:
+        model = fei_models.Department
+        fields = ('id', 'name')
+
 
 class CourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Course
+        fields = '__all__'
+
+class CourseSerializerFull(serializers.ModelSerializer):
+    teacher = fei_serializers.UserSerializerCourse()
+    # period = fei_serializers.PeriodSerializerJustName(read_only=True)
+    department = DepartmentSerializerShort()
     class Meta:
         model = models.Course
         fields = '__all__'

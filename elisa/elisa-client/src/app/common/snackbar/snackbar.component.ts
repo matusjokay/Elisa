@@ -8,6 +8,11 @@ import { MatSnackBar } from '@angular/material';
 })
 export class SnackbarComponent {
 
+  public styles = {
+    success: 'blue-snackbar',
+    failure: 'red-snackbar'
+  };
+
   constructor(public snackBar: MatSnackBar) { }
 
   openSnackBar(message: string, action: string, className: string) {

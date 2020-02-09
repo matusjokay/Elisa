@@ -13,11 +13,16 @@ export class RequirementService {
   constructor(private http: HttpClient) { }
 
   getUser(): Observable<any[]>{
-    let headers: HttpHeaders = new HttpHeaders();
-    headers = headers.append('Timetable-Version', localStorage.getItem('active_scheme'));
-    let options = ({headers: headers});
+    const token = localStorage.getItem('token');
+    const version = localStorage.getItem('active_scheme');
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${token}`,
+        'Timetable-Version': version
+      })
+    };
 
-    return this.http.get<any[]>(environment.APIUrl + "teachers/",options)
+    return this.http.get<any[]>(environment.APIUrl + 'teachers/', httpOptions)
       .pipe(
         map((response: any) => {
           return response.reduce(function(r, e) {

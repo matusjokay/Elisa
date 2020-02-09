@@ -1,7 +1,7 @@
 <div class="data-list" fxLayout="column" fxLayoutAlign="center center">
   <div class="header" >
     <div>
-      <h2 i18n="@@Courses">Courses</h2>
+      <h2 i18n="@@Courses">Courses for {{activeScheme}}</h2>
     </div>
     <div class="header-buttons" fxLayout="row" fxLayoutAlign="start center">
       <mat-form-field>
@@ -14,7 +14,7 @@
         <!--</mat-select>-->
       <!--</mat-form-field>-->
       <div>
-        <button mat-raised-button>Import</button>
+        <button mat-raised-button disabled>Import</button>
         <button mat-raised-button (click)="addCourse()">Add</button>
       </div>
     </div>
@@ -36,13 +36,41 @@
       <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
     </ng-container>
 
+    <ng-container matColumnDef="teacher">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Teacher </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.teacher ? element.teacher.fullname : 'Not Assigned'}} </mat-cell>
+    </ng-container>
+
     <ng-container matColumnDef="department">
       <mat-header-cell *matHeaderCellDef mat-sort-header = "department.name" > Department </mat-header-cell>
-      <mat-cell *matCellDef="let element"> {{element.departmentObject.name}} </mat-cell>
+      <mat-cell *matCellDef="let element"> {{element.department.name}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="completion">
+      <mat-header-cell *matHeaderCellDef mat-sort-header = "completion" > Completion </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.completion}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="credits">
+      <mat-header-cell *matHeaderCellDef mat-sort-header = "credits" > Credits </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{element.credits}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <button mat-icon-button matTooltip="Edit Course" (click)="showDetails(element)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button aria-label="Remove Course" (click)="removeCourse(element)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-cell>
     </ng-container>
 
     <mat-header-row  *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row  *matRowDef="let row; columns: displayedColumns;" (click)="showDetails(row)"></mat-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
   </mat-table>
-  <mat-paginator [pageSizeOptions]="pageSizeOptions"></mat-paginator>
+  <app-spinner [loadingText]='"loading data"' *ngIf="loading"></app-spinner>
+  <mat-paginator [pageSizeOptions]="pageSizeOptions" [length]="coursesLength" (page)="onPage($event)"></mat-paginator>
 </div>
