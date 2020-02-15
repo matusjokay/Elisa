@@ -1,9 +1,13 @@
 import os
+import json
 from django.db import connection, utils
 
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.management import call_command
+from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http.response import JsonResponse
 from django.db import transaction
 from django.db.models import Q
 from django.db.utils import IntegrityError
@@ -164,6 +168,18 @@ class UserViewSet(viewsets.ModelViewSet):
             return UserSerializerShort
         return UserSerializer
 
+    def create_full_names(self, results):
+        response_data = list()
+        for result in results:
+            Dict = dict()
+            title_before = result['title_before'] if result['title_before'] is not None else ''
+            title_after = f" {result['title_after']}" if result['title_after'] is not None else ''
+            full_name = f"{title_before}{result['first_name']} {result['last_name']}{title_after}"
+            Dict['id'] = result['id']
+            Dict['full_name'] = full_name
+            response_data.append(Dict)
+        return response_data
+
     # def list(self, request):
     #     # super().list(request, *args, **kwargs)
     #     queryset = AppUser.objects.all()
@@ -174,11 +190,25 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False)
     def table_users(self, request):
         table_users = AppUser.objects.values('id', 'username', 'title_before', 'first_name', 'last_name', 'title_after', 'groups')
-        print(table_users.query)
         page = self.paginate_queryset(table_users)
         if page is not None:
             serializer = UserSerializerTable(page, many=True, read_only=True)
             return self.get_paginated_response(serializer.data)
+    
+    @action(detail=False)
+    def list_for_role(self, request):
+        # serialize without serializer class
+        # users_list = list(AppUser.objects.values('id', 'username'))
+        users_list = list(AppUser.objects.values('id', 'title_before', 'first_name', 'last_name', 'title_after'))
+        return JsonResponse(users_list, safe=False)
+
+    @action(detail=False)
+    def list_for_role_detail(self, request):
+        # serialize without serializer class
+        # users_list = list(AppUser.objects.values('id', 'title_before', 'first_name', 'last_name', 'title_after'))
+        results = AppUser.objects.values('id', 'title_before', 'first_name', 'last_name', 'title_after')
+        data = self.create_full_names(results)
+        return JsonResponse(data, safe=False)
 
     """
     Set user as main timetable maker

@@ -46,6 +46,7 @@ import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/materi
 import { SnackbarComponent } from './common/snackbar/snackbar.component';
 import { SpinnerComponent } from './common/spinner/spinner.component';
 import { LoginFormComponent } from './pages/login/login-form/login-form.component';
+import { UserManagerComponent } from './pages/users/user-manager/user-manager.component';
 
 
 @NgModule({
@@ -79,7 +80,8 @@ import { LoginFormComponent } from './pages/login/login-form/login-form.componen
     GroupListComponent,
     RoomDetailsComponent,
     SnackbarComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    UserManagerComponent
   ],
   imports: [
     BrowserModule,

@@ -26,6 +26,11 @@ class CourseSerializer(serializers.ModelSerializer):
         model = models.Course
         fields = '__all__'
 
+class CourseSerializerShort(serializers.ModelSerializer):
+    class Meta:
+        model = models.Course
+        fields = ('id', 'name')
+
 class CourseSerializerFull(serializers.ModelSerializer):
     teacher = fei_serializers.UserSerializerCourse()
     # period = fei_serializers.PeriodSerializerJustName(read_only=True)
@@ -93,5 +98,20 @@ class PeriodSerializer(serializers.ModelSerializer):
         model = fei_models.Period
         fields = '__all__'
 
+class UserSubjectRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.UserSubjectRole
+        fields = '__all__'
+
 # TODO: missing user group
-# missing user subject role
+
+class SubjectUserSerializer(serializers.ModelSerializer):
+    subject = CourseSerializerShort()
+    user = fei_serializers.UserSerializerCourse()
+    # role = UserSubjectRoleSerializer()
+    # subject_id = serializers.PrimaryKeyRelatedField(queryset=models.Course.objects.all())
+    # user_id = serializers.PrimaryKeyRelatedField(queryset=fei_models.AppUser.objects.all())
+    class Meta:
+        model = models.SubjectUser
+        # fields = ('id', 'subject', 'user')
+        fields = '__all__'

@@ -10,12 +10,14 @@ db.sqlite3
 elisa/.vs/
 .idea/
 venv/
-docs
+docs/*
 elisa/elisa-server/school/migrations/*
 elisa/elisa-server/requirements/migrations/*
 elisa/elisa-server/timetables/migrations/*
 elisa/elisa-server/fei/migrations/*
 elisa/elisa-server/fei-importexport/migrations/*
+elisa/elisa-server/fei-data/*
+elisa/elisa-server/fei-data-new/*
 
 *.ini
 *.env

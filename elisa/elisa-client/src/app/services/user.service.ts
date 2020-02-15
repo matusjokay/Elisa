@@ -1,16 +1,21 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {map, share} from 'rxjs/operators';
+import {map, share, shareReplay} from 'rxjs/operators';
 import {User} from '../models/user';
 import {Observable} from 'rxjs';
+import { BaseService } from './base-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class UserService extends BaseService {
 
-  constructor(private http: HttpClient) { }
+  private cachedUsersList$: Observable<Array<User>>;
+
+  constructor(private http: HttpClient) {
+    super();
+  }
 
   getAll(): Observable<User[]>{
     return this.http.get<User[]>(environment.APIUrl + 'users/').
@@ -35,6 +40,21 @@ export class UserService {
       ),share());
   }
 
+  getCachedAllUsers() {
+    if (!this.cachedUsersList$) {
+      this.cachedUsersList$ = this.requestAllUsers().pipe(
+        shareReplay(1)
+      );
+    }
+
+    return this.cachedUsersList$;
+  }
+
+  private requestAllUsers(): Observable<User[]> {
+    const httpOptions = this.getAuthHeaderOnly();
+    return this.http.get<User[]>(environment.APIUrl + 'users/list_for_role/', { headers: httpOptions });
+  }
+
   deleteUser(user: User) {
     return this.http.delete(environment.APIUrl + 'users/' + user.id + '/').
     pipe(
@@ -45,10 +65,10 @@ export class UserService {
   }
 
   createUser(post: any) {
-    
+
   }
 
   updateUser(post: any) {
-    
+
   }
 }

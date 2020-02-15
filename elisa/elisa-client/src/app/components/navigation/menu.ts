@@ -37,6 +37,12 @@ export const navItems: NavItem[] = [
     i18n:"@@Requirement"
   },
   {
+    displayName: 'User Manager',
+    iconName: 'people',
+    route: [{ outlets: { adminView: ['user-manager']}}],
+    i18n: '@@Manager'
+  },
+  {
     displayName: 'Data',
     iconName: 'storage',
     i18n:"@@data",

@@ -50,24 +50,30 @@ export class AuthService {
     localStorage.removeItem('name');
   }
 
-  public isAuthenticated(): Observable<boolean> {
+  public async isAuthenticated(): Promise<boolean> {
     const token = localStorage.getItem('token');
     if (token) {
       const body = {
         'token': token
       };
-      return this.http
-        .post(environment.APIUrl + 'api/token/verify/', body)
-        .pipe(
-          map(res => true),
-          catchError((error: HttpErrorResponse) => {
-            if (error.status === 401) {
-              this.refreshToken();
-            } else {
-              return throwError(error);
-            }
-          }
-        ));
+      // return this.http
+      //   .post(environment.APIUrl + 'api/token/verify/', body)
+      //   .pipe(
+      //     map(res => true),
+      //     catchError((error: HttpErrorResponse) => {
+      //       if (error.status === 401) {
+      //         this.refreshToken();
+      //       } else {
+      //         return throwError(error);
+      //       }
+      //     }
+      //   ));
+      const result = await this.http.post(environment.APIUrl + 'api/token/verify/', body).toPromise();
+      if (result && result['code'] && result['code'] === 'token_not_valid') {
+        return false;
+      } else {
+        return true;
+      }
       // const unauthorized = response['code'];
       // if (unauthorized === 'token_not_valid') {
       //   this.refreshToken();
@@ -76,7 +82,7 @@ export class AuthService {
       //   return true;
       // }
     } else {
-      return of(false);
+      return false;
     }
 
     // if (token) {
@@ -91,8 +97,9 @@ export class AuthService {
     const body = {
         'refresh': refreshToken
     };
+    const httpOptions = this.httpHeaders;
     return this.http
-      .post(environment.APIUrl + 'api/token/refresh/', body)
+      .post(environment.APIUrl + 'api/token/refresh/', body, { headers: httpOptions })
         .pipe(
           // tap(response => {
           //   // setting the token from response after refreshing

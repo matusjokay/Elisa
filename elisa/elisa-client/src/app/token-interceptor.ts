@@ -61,7 +61,6 @@ export class TokenInterceptor implements HttpInterceptor {
           return this.auth.refreshToken().pipe(
             tap((token: any) => {
               console.log('access token obtained through refresh call');
-              console.log(token);
               this.tokenRefreshInProgress = false;
               this.refreshTokenSubject.next(token['access']);
               localStorage.setItem('token', token['access']);

@@ -1,0 +1,22 @@
+<div fxLayout="column" fxLayoutAlign="space-around center">
+  <h3>Search and edit Users</h3>
+  <form class="search-form">
+    <mat-form-field class="search-full-width">
+      <input type="text"
+            placeholder="Search user by name"
+            matInput
+            [formControl]="searchForm.get('name')"
+            [matAutocomplete]="auto"
+            (keyup.enter)="onEnter($event)">
+      <button mat-button *ngIf="searchForm.get('name')" matSuffix mat-icon-button aria-label="Clear" (click)="onClear()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelectionChanged($event)" [displayWith]="displayFn">
+        <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+          {{option.title_before}} {{option.first_name}} {{option.last_name}} {{option.title_after}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+    <button mat-raised-button color="primary" [disabled]="!searchForm.valid && !selected" (click)="onManageClick()">Manage</button>
+  </form>
+</div>

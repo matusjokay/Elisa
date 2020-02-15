@@ -4,6 +4,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from . import models, serializers
@@ -105,3 +106,22 @@ class ActivityViewSet(ModelViewSet):
     """
     queryset = models.Activity.objects.all()
     serializer_class = serializers.ActivitySerializer
+
+class SubjectUserViewSet(ModelViewSet):
+    """
+    API endpoint that allows managing of users (teachers, student etc) 
+    to adjust relationship between courses.
+    """
+    queryset = models.SubjectUser.objects.all()
+    serializer_class = serializers.SubjectUserSerializer
+
+    @action(detail=False)
+    def filter_by_role(self, request):
+        if request.query_params.get('role_id') is None:
+            queryset = models.SubjectUser.objects.all()
+        else:
+            role_id = int(request.query_params.get('role_id'))
+            queryset = models.SubjectUser.objects.filter(role=role_id)
+        print(queryset)
+        serializer = serializers.SubjectUserSerializer(queryset, many=True)
+        return Response(serializer.data)

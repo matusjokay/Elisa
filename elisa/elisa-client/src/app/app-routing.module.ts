@@ -17,6 +17,7 @@ import {VersionListComponent} from './pages/version/version-list/version-list.co
 import {RoomsListComponent} from './pages/room/rooms-list/rooms-list.component';
 import {GroupListComponent} from './pages/group/group-list/group-list.component';
 import { LoginFormComponent } from './pages/login/login-form/login-form.component';
+import { UserManagerComponent } from './pages/users/user-manager/user-manager.component';
 
 const routes: Routes = [
   {
@@ -64,6 +65,12 @@ const routes: Routes = [
         outlet: 'adminView',
         canActivate: [AuthGuardService],
         data: {role: 2}
+      },
+      { path: 'user-manager',
+        component: UserManagerComponent,
+        outlet: 'adminView',
+        canActivate: [AuthGuardService],
+        data: {role: 1}
       },
       { path: 'requirement-form',
         component: RequirementFormComponent,

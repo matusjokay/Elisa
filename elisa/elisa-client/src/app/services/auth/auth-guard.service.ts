@@ -11,12 +11,32 @@ export class AuthGuardService implements CanActivate {
 
   constructor(public auth: AuthService, public router: Router) { }
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> {
     const expectedRole = route.data.role;
-    return this.auth.isAuthenticated().pipe(
-      map(res => {
-        if (res) {
-          console.log(res);
+    // return this.auth.isAuthenticated().pipe(
+    //   map(res => {
+    //     if (res) {
+    //       console.log(res);
+    //       console.log('now to check if you have roles to access this');
+    //       if (localStorage.getItem('active_role') >= expectedRole) {
+    //         return true;
+    //       } else {
+    //         return false;
+    //       }
+    //     } else {
+    //       this.router.navigate(['login']);
+    //     }
+    //   }),
+    //   catchError(() => {
+    //     this.router.navigate(['login']);
+    //     return of(false);
+    //   })
+    // );
+
+    return this.auth.isAuthenticated().then(
+      (result) => {
+        if (result) {
+          console.log(result);
           console.log('now to check if you have roles to access this');
           if (localStorage.getItem('active_role') >= expectedRole) {
             return true;
@@ -24,13 +44,9 @@ export class AuthGuardService implements CanActivate {
             return false;
           }
         } else {
-          this.router.navigate(['login']);
+          return false;
         }
-      }),
-      catchError(() => {
-        this.router.navigate(['login']);
-        return of(false);
-      })
+      }
     );
     // return this.auth.isAuthenticated().subscribe(
     //   (next) => {
