@@ -1,5 +1,8 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatDialog, MatPaginator, MatSort, MatTableDataSource, PageEvent} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {Course} from '../../../models/course';
 import {CourseService} from '../../../services/course.service';
 import {TimetableService} from '../../../services/timetable.service';
@@ -11,6 +14,7 @@ import { catchError } from 'rxjs/operators';
 import { Department } from 'src/app/models/department';
 import { SnackbarComponent } from 'src/app/common/snackbar/snackbar.component';
 import { Period } from 'src/app/models/period.model';
+import { BaseService } from 'src/app/services/base-service.service';
 
 @Component({
   selector: 'app-course-list',
@@ -18,7 +22,7 @@ import { Period } from 'src/app/models/period.model';
   styleUrls: ['./course-list.component.less']
 })
 export class CourseListComponent implements OnInit {
-  activeScheme;
+  activeScheme: string;
   schemas;
 
   periods: Period[];
@@ -39,12 +43,14 @@ export class CourseListComponent implements OnInit {
     private courseService: CourseService,
     private departmentService: DepartmentService,
     private timetableService: TimetableService,
+    private baseService: BaseService,
     public dialog: MatDialog,
     private snackBar: SnackbarComponent
   ) { }
 
   ngOnInit() {
-    this.activeScheme = localStorage.getItem('active_scheme');
+    this.activeScheme = !localStorage.getItem('active_scheme') ?
+      'UNKNOWN PERIOD' : localStorage.getItem('active_scheme');
     this.getSchemeData();
     this.getDepartmentData();
   }
@@ -165,6 +171,11 @@ export class CourseListComponent implements OnInit {
         }
       }
     });
+  }
+
+  handlerTeachersButton(row) {
+    console.log('addding teachers');
+    console.log(row);
   }
 
   loadingAction() {

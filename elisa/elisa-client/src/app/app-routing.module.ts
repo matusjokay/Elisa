@@ -13,113 +13,105 @@ import {
 } from './pages/timetable/timetable-update/timetable-update-wrapper/timetable-update-wrapper.component';
 import {TimetableNewComponent} from './pages/timetable/timetable-new/timetable-new.component';
 import {CourseListComponent} from './pages/course/course-list/course-list.component';
-import {VersionListComponent} from './pages/version/version-list/version-list.component';
 import {RoomsListComponent} from './pages/room/rooms-list/rooms-list.component';
 import {GroupListComponent} from './pages/group/group-list/group-list.component';
 import { LoginFormComponent } from './pages/login/login-form/login-form.component';
 import { UserManagerComponent } from './pages/users/user-manager/user-manager.component';
+import { VersionSelectComponent } from './pages/version/version-select/version-select.component';
+import { MaterialModule } from './material/material.module';
+import { RoleManager } from './models/role.model';
 
 const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: '/admin/(adminView:dashboard)',
+    redirectTo: '/dashboard',
     canActivate: [AuthGuardService],
-    data: {role: 1}
+    data: {roles: RoleManager.ALL}
   },
   {
     path: 'login',
-    // loadChildren: './authentification/authentification.module#AuthentificationModule'
     component: LoginFormComponent
   },
   {
-    path: 'admin',
+    path: 'version-select',
+    component: VersionSelectComponent
+  },
+  {
+    path: '',
     component: NavigationComponent,
     canActivate: [AuthGuardService],
-    data: {role: 1},
+    data: {roles: RoleManager.ALL},
     children: [
       { path: '',
         pathMatch: 'full',
-        redirectTo: '/admin/(adminView:dashboard)'
+        redirectTo: '/dashboard'
       },
       { path: 'dashboard',
         component: DashboardComponent,
-        outlet: 'adminView',
         canActivate: [AuthGuardService],
-        data: {role: 1}
+        // IT FIRST GOES THROUGH THE PARENT AND THEN CHECKS
+        // THE CHILDREN WHICH COULD HAVE DIFFERENT ROLE ACCESS
+        // AUTH GUARD IS THEREFORE CALLED TWICE
+        data: {roles: RoleManager.ALL}
       },
       { path: 'timetable',
         component: HomeComponent,
-        outlet: 'adminView',
         canActivate: [AuthGuardService],
-        data: {role: 1}
+        data: {roles: [1]}
       },
       { path: 'new-timetable',
         component: TimetableNewComponent,
-        outlet: 'adminView',
         canActivate: [AuthGuardService],
-        data: {role: 3}
+        data: {roles: [3]}
       },
       { path: 'update-timetable',
         component: TimetableUpdateWrapperComponent,
-        outlet: 'adminView',
         canActivate: [AuthGuardService],
-        data: {role: 2}
+        data: {roles: [2]}
       },
       { path: 'user-manager',
         component: UserManagerComponent,
-        outlet: 'adminView',
         canActivate: [AuthGuardService],
-        data: {role: 1}
+        data: {roles: [1]}
       },
       { path: 'requirement-form',
         component: RequirementFormComponent,
-        outlet: 'adminView',
         canActivate: [AuthGuardService],
-        data: {role: 1}
-      },
-      { path: 'version-list',
-        component: VersionListComponent,
-        outlet: 'adminView',
-        canActivate: [AuthGuardService],
-        data: {role: 2}
+        data: {roles: [1]}
       },
       { path: 'course-list',
         component: CourseListComponent,
-        outlet: 'adminView',
         canActivate: [AuthGuardService],
-        data: {role: 2}
+        data: {roles: [2]}
       },
       { path: 'group-list',
         component: GroupListComponent,
-        outlet: 'adminView',
         canActivate: [AuthGuardService],
-        data: {role: 2}
+        data: {roles: [2]}
       },
       { path: 'user-list',
         component: UserListComponent,
-        outlet: 'adminView',
         canActivate: [AuthGuardService],
-        data: {role: 2}
+        data: {roles: [2]}
       },
       { path: 'department-list',
         component: DepartmentListComponent,
-        outlet: 'adminView',
         canActivate: [AuthGuardService],
-        data: {role: 2}
+        data: {roles: [2]}
       },
       { path: 'room-list',
         component: RoomsListComponent,
-        outlet: 'adminView',
         canActivate: [AuthGuardService],
-        data: {role: 2}
+        data: {roles: [2]}
       },
     ]
   },
 ];
 
 @NgModule({
-  imports: [ RouterModule.forRoot(routes)],
+  imports: [ RouterModule.forRoot(routes),
+  MaterialModule],
   exports: [ RouterModule ]
 })
 export class AppRoutingModule {}

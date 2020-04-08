@@ -62,8 +62,11 @@
         <button mat-icon-button matTooltip="Edit Course" (click)="showDetails(element)">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button aria-label="Remove Course" (click)="removeCourse(element)">
+        <button mat-icon-button matTooltip="Remove Course" (click)="removeCourse(element)">
           <mat-icon>delete</mat-icon>
+        </button>
+        <button mat-icon-button matTooltip="Add Teachers" (click)="handlerTeachersButton(element)">
+          <mat-icon>settings</mat-icon>
         </button>
       </mat-cell>
     </ng-container>

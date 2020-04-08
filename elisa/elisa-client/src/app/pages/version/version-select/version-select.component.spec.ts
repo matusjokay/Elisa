@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { VersionListComponent } from './version-list.component';
+import { VersionSelectComponent } from './version-select.component';
 
-describe('VersionListComponent', () => {
-  let component: VersionListComponent;
-  let fixture: ComponentFixture<VersionListComponent>;
+describe('RoleSelectComponent', () => {
+  let component: VersionSelectComponent;
+  let fixture: ComponentFixture<VersionSelectComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ VersionListComponent ]
+      declarations: [ VersionSelectComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(VersionListComponent);
+    fixture = TestBed.createComponent(VersionSelectComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -9,14 +9,13 @@ import { BaseService } from './base-service.service';
 @Injectable({
   providedIn: 'root'
 })
-export class DepartmentService extends BaseService {
+export class DepartmentService {
 
   // Trailing suffix of $ is an indicator of an Observable variable
   private cacheDepartmentList$: Observable<Array<Department>>;
 
-  constructor(private http: HttpClient) {
-    super();
-  }
+  constructor(private http: HttpClient,
+    private baseService: BaseService) { }
 
   getAllMap(): Observable<Department[]>{
 
@@ -45,7 +44,7 @@ export class DepartmentService extends BaseService {
   }
 
   private requestDepartments(): Observable<Department[]> {
-    const httpOptions = this.getSchemaHeader();
+    const httpOptions = this.baseService.getSchemaHeader();
     return this.http.get<Department[]>(environment.APIUrl + 'departments/', { headers: httpOptions });
   }
 

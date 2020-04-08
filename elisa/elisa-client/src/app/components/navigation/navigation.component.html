@@ -3,12 +3,32 @@
     <div fxLayout="column" fxLayoutAlign="center center">
       <h1>Elisa</h1>
       <span>{{userName}}</span>
+      <!-- <span>Logged as: <br>{{userRoleName}}</span> -->
       <button mat-raised-button (click)="logout()">Logout</button>
     </div>
     <mat-divider></mat-divider>
     <mat-nav-list fxLayout="column">
       <app-nav-list-item *ngFor="let item of menu" [item]="item"></app-nav-list-item>
     </mat-nav-list>
+    <mat-divider></mat-divider>
+      <div class="role-content">
+        <mat-expansion-panel (opened)="panelOpenState = true"
+        (closed)="panelOpenState = false">
+          <mat-expansion-panel-header>
+          <mat-panel-title>
+          User Roles:
+          </mat-panel-title>
+          <!-- <mat-panel-description>
+          Currently I am {{panelOpenState ? 'open' : 'closed'}}
+          </mat-panel-description> -->
+          </mat-expansion-panel-header>
+          <mat-list dense>
+            <!-- <mat-list-item> Pepper </mat-list-item>
+            <mat-list-item> Salt </mat-list-item> -->
+            <mat-list-item *ngFor="let role of roleObjects">{{role.name}}</mat-list-item>
+          </mat-list>
+        </mat-expansion-panel>
+      </div>
     <mat-divider></mat-divider>
     <mat-nav-list class="languages" fxLayout="row">
       <mat-list-item>
@@ -24,6 +44,7 @@
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
-    <router-outlet name='adminView'></router-outlet>
+    <!-- <router-outlet name='adminView'></router-outlet> -->
+    <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>

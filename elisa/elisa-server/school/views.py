@@ -10,13 +10,16 @@ from drf_yasg import openapi
 from . import models, serializers
 from fei import models as fei_models
 
+
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 15
     page_size_query_param = 'page_size'
     max_page_size = 100
 
 # TODO: Missing view set for
-# PERIOD, USER SUBJECT ROLE , FORM OF STUDY
+# FORM OF STUDY
+
+
 class GroupViewSet(ModelViewSet):
     """
     API endpoint that allows groups to be viewed or edited.
@@ -107,9 +110,10 @@ class ActivityViewSet(ModelViewSet):
     queryset = models.Activity.objects.all()
     serializer_class = serializers.ActivitySerializer
 
+
 class SubjectUserViewSet(ModelViewSet):
     """
-    API endpoint that allows managing of users (teachers, student etc) 
+    API endpoint that allows managing of users (teachers, student etc)
     to adjust relationship between courses.
     """
     queryset = models.SubjectUser.objects.all()
@@ -122,6 +126,5 @@ class SubjectUserViewSet(ModelViewSet):
         else:
             role_id = int(request.query_params.get('role_id'))
             queryset = models.SubjectUser.objects.filter(role=role_id)
-        print(queryset)
         serializer = serializers.SubjectUserSerializer(queryset, many=True)
         return Response(serializer.data)

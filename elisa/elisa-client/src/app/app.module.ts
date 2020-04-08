@@ -11,7 +11,7 @@ import { TimetableComponent } from './pages/timetable/timetable/timetable.compon
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { UserListComponent } from './pages/users/user-list/user-list.component';
 import { UserDetailsComponent } from './pages/users/user-details/user-details.component';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule, HttpClientXsrfModule} from '@angular/common/http';
 
 import {TokenInterceptor} from './token-interceptor';
 import { DepartmentListComponent } from './pages/departments/department-list/department-list.component';
@@ -32,7 +32,6 @@ import { TimetableUpdateFormComponent } from './pages/timetable/timetable-update
 import { TimetableUpdateMainComponent } from './pages/timetable/timetable-update/timetable-update-main/timetable-update-main.component';
 import { TimetableNewComponent } from './pages/timetable/timetable-new/timetable-new.component';
 import { CourseListComponent } from './pages/course/course-list/course-list.component';
-import {VersionListComponent} from './pages/version/version-list/version-list.component';
 import { RoomsListComponent } from './pages/room/rooms-list/rooms-list.component';
 import { EquipmentsListComponent } from './pages/equipment/equipments-list/equipments-list.component';
 import { CollisionCardComponent } from './components/collision-card/collision-card.component';
@@ -42,11 +41,13 @@ import { CourseDetailsComponent } from './pages/course/course-details/course-det
 import { GroupDetailsComponent } from './pages/group/group-details/group-details.component';
 import { GroupListComponent } from './pages/group/group-list/group-list.component';
 import { RoomDetailsComponent } from './pages/room/room-details/room-details.component';
-import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material';
+import { ErrorStateMatcher, ShowOnDirtyErrorStateMatcher } from '@angular/material/core';
 import { SnackbarComponent } from './common/snackbar/snackbar.component';
 import { SpinnerComponent } from './common/spinner/spinner.component';
 import { LoginFormComponent } from './pages/login/login-form/login-form.component';
 import { UserManagerComponent } from './pages/users/user-manager/user-manager.component';
+import { VersionSelectComponent } from './pages/version/version-select/version-select.component';
+import { UserRoleDetailComponent } from './pages/users/user-manager/user-role-detail/user-role-detail.component';
 
 
 @NgModule({
@@ -69,7 +70,6 @@ import { UserManagerComponent } from './pages/users/user-manager/user-manager.co
     TimetableUpdateMainComponent,
     TimetableNewComponent,
     CourseListComponent,
-    VersionListComponent,
     RoomsListComponent,
     EquipmentsListComponent,
     CollisionCardComponent,
@@ -81,15 +81,18 @@ import { UserManagerComponent } from './pages/users/user-manager/user-manager.co
     RoomDetailsComponent,
     SnackbarComponent,
     SpinnerComponent,
-    UserManagerComponent
+    UserManagerComponent,
+    VersionSelectComponent,
+    UserRoleDetailComponent
   ],
   imports: [
     BrowserModule,
+    MaterialModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    MaterialModule,
+    HttpClientXsrfModule,
     FullCalendarModule,
     AngularDraggableModule,
   ],

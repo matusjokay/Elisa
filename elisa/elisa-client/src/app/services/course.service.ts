@@ -10,17 +10,16 @@ import { BaseService } from './base-service.service';
 @Injectable({
   providedIn: 'root'
 })
-export class CourseService extends BaseService {
+export class CourseService {
 
-  constructor(private http: HttpClient) {
-    super();
-  }
+  constructor(private http: HttpClient,
+    private baseService: BaseService) { }
 
   getAll(pageNum: number, pageSize: number): Observable<IPage> {
     const httpParams = new HttpParams()
       .set('page', pageNum.toString())
       .set('page_size', pageSize.toString());
-    const httpOptions = this.getSchemaHeader();
+    const httpOptions = this.baseService.getSchemaHeader();
 
     return this.http.get<IPage>(environment.APIUrl + 'courses/', { params: httpParams, headers : httpOptions }).pipe(
       distinctUntilChanged(),
@@ -47,17 +46,17 @@ export class CourseService extends BaseService {
   }
 
   deleteCourse(courseId: number) {
-    const httpOptions = this.getSchemaHeader();
+    const httpOptions = this.baseService.getSchemaHeader();
     return this.http.delete(environment.APIUrl + `courses/${courseId}/`, { headers: httpOptions });
   }
 
   createCourse(newCourse: Course) {
-    const httpOptions = this.getSchemaHeader();
+    const httpOptions = this.baseService.getSchemaHeader();
     return this.http.post<Course>(environment.APIUrl + 'courses/', newCourse, { headers: httpOptions });
   }
 
   updateCourse(updatedCourse: Course) {
-    const httpOptions = this.getSchemaHeader();
+    const httpOptions = this.baseService.getSchemaHeader();
     return this.http.put<Course>(environment.APIUrl + `courses/${updatedCourse.id}/`, updatedCourse, { headers : httpOptions });
   }
 }

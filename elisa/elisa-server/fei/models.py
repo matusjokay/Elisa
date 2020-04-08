@@ -13,23 +13,66 @@ class AppUser(AbstractUser):
     username = models.CharField(max_length=100, unique=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    title_before = models.CharField(max_length=32, blank=True, null=True, default=None)
-    title_after = models.CharField(max_length=32, blank=True, null=True, default=None)
+    title_before = models.CharField(
+        max_length=32, blank=True, null=True, default=None)
+    title_after = models.CharField(
+        max_length=32,
+        blank=True,
+        null=True,
+        default=None)
+    session_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        default=None)
+    access_id = models.CharField(
+        max_length=500,
+        blank=True,
+        null=True,
+        default=None)
     objects = AppUserManager()
 
+    """
+    Return True if the user is in specified group by role
+    """
     def has_role(self, role):
-        """
-        Return True if the user is in specified group by role.
-        """
         return self.groups.filter(name=role).exists()
-    
+
+    """
+    Creates the full name for user with all its academic 
+    titles if he has them available
+    """
+    def construct_name(self):
+        name = self.first_name + ' ' + self.last_name
+        if self.title_before is not None:
+            name = self.title_before + \
+                self.first_name + ' ' + self.last_name
+        if self.title_after is not None:
+            name = self.first_name + ' ' + \
+                self.last_name + ' ' + self.title_after
+        if self.title_before is not None and self.title_after is not None:
+            name = self.title_before + self.first_name + \
+                ' ' + self.last_name + ' ' + self.title_after
+        return name
+
+    """
+    Fetches id vales of users roles
+    """
+    def fetch_role_ids(self):
+        groups_qs = self.groups.values_list(
+            'id',
+            flat=True)
+        groups = list()
+        for group in groups_qs:
+            groups.append(group)
+        return groups
+
     class Meta:
         db_table = u'"public\".\"fei_appuser"'
         ordering = ['id']
-        
+
 
 class Department(models.Model):
-    # id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=300)
     abbr = models.CharField(max_length=30, blank=True, null=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
@@ -41,6 +84,7 @@ class Department(models.Model):
     def __str__(self):
         return '{}'.format(self.name)
 
+
 class Period(models.Model):
     # id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=300)
@@ -49,8 +93,6 @@ class Period(models.Model):
     university_period = models.PositiveSmallIntegerField(null=True)
     # 1 is for WS , 2 is for SS
     academic_sequence = models.PositiveSmallIntegerField(null=True)
-    # previous_period = models.ForeignKey('self', related_name='previous', on_delete=models.CASCADE, null=True)
-    # next_period = models.ForeignKey('self', related_name='next', on_delete=models.CASCADE, null=True)
     previous_period = models.PositiveIntegerField(null=True)
     next_period = models.PositiveIntegerField(null=True)
     start_date = models.DateField()
@@ -61,40 +103,6 @@ class Period(models.Model):
         db_table = u'"public\".\"fei_period"'
         ordering = ['university_period']
 
-# class FacultyCourse(models.Model):
-#     # id = models.BigAutoField(primary_key=True)
-#     period = models.ForeignKey(Period, on_delete=models.CASCADE, null=True)
-#     # period = models.CharField(max_length=100)
-#     department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True)
-#     teacher = models.ForeignKey(AppUser, on_delete=models.CASCADE, null=True)
-#     code = models.CharField(max_length=300, null=True)
-#     name = models.CharField(max_length=300, null=True)
-#     completion = models.CharField(max_length=16, null=True)
-#     credits = models.SmallIntegerField(null=True)
-
-#     class Meta:
-#         db_table = u'"public\".\"fei_faculty_course"'
-#         ordering = ['period']
-
-# class UserSubjectRole(models.Model):
-#     name = models.CharField(max_length=32)
-
-#     def __str__(self):
-#         return '{}'.format(self.name)
-
-#     class Meta:
-#         db_table = u'"public\".\"fei_user_subject_role"'
-#         ordering = ['name']
-
-# class SubjectUser(models.Model):
-#     user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
-#     subject = models.ForeignKey(FacultyCourse, on_delete=models.CASCADE)
-#     # role = models.PositiveSmallIntegerField()
-#     role = models.ForeignKey(UserSubjectRole, on_delete=models.CASCADE)
-
-#     class Meta:
-#         db_table = u'"public\".\"fei_subject_user"'
-#         ordering = ['user']
 
 class Version(TenantMixin):
     NEW = "NEW"
@@ -107,7 +115,11 @@ class Version(TenantMixin):
         (PUBLIC, 'Published'),
         (HIDDEN, 'Hidden'),)
     name = models.CharField(max_length=100)
-    status = FSMField(max_length=6, choices=STATUSES, default=NEW, protected=True)
+    status = FSMField(
+        max_length=6,
+        choices=STATUSES,
+        default=NEW,
+        protected=True)
     auto_drop_schema = models.BooleanField(default=True)
 
     @transition(field=status, source=NEW, target=WORK_IN_PROGRESS)

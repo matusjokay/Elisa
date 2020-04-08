@@ -15,7 +15,8 @@ class VersionMiddleware(TenantMainMiddleware):
     def get_public_name(self):
         schema_name = None
         try:
-            schema_name = get_tenant_model().objects.filter(status=get_tenant_model().PUBLIC).last()
+            schema_name = get_tenant_model().objects.filter(
+                status=get_tenant_model().PUBLIC).last()
         except get_tenant_model().DoesNotExist:
             print("No published schema.")
 
@@ -25,7 +26,9 @@ class VersionMiddleware(TenantMainMiddleware):
 
     def process_request(self, request):
         connection.set_schema_to_public()
-        schema_name = request.META.get('HTTP_TIMETABLE_VERSION', self.get_public_name())
+        schema_name = request.META.get(
+            'HTTP_TIMETABLE_VERSION',
+            self.get_public_name())
 
         try:
             version = get_tenant_model().objects.get(name=schema_name)

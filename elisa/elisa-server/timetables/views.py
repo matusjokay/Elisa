@@ -30,15 +30,17 @@ class TimetableViewSet(NestedViewSetMixin, ModelViewSet):
 
         try:
             if self.request.user.has_role(settings.MAIN_TIMETABLE_CREATOR):
-                # looking for timetables owned by user and timetables ready for merge from local timetable creators
-                timetables = models.Timetable.objects.filter(Q(owner=self.request.user) |
-                                                             Q(status=models.Timetable.READY_FOR_MERGE))
+                # looking for timetables owned by user and timetables ready for
+                # merge from local timetable creators
+                timetables = models.Timetable.objects.filter(
+                    Q(owner=self.request.user) | Q(status=models.Timetable.READY_FOR_MERGE))
             if self.request.user.has_role(settings.LOCAL_TIMETABLE_CREATOR):
                 # looking for timetables owned by user
-                timetables = models.Timetable.objects.filter(owner=self.request.user)
+                timetables = models.Timetable.objects.filter(
+                    owner=self.request.user)
             if self.request.user.has_role(settings.TEACHER):
-                timetables = models.Timetable.objects.filter(status=models.Timetable.PUBLISHED_FOR_TEACHERS)\
-                    .latest('updated_at')
+                timetables = models.Timetable.objects.filter(
+                    status=models.Timetable.PUBLISHED_FOR_TEACHERS) .latest('updated_at')
         except models.Timetable.DoesNotExist as e:
             print("No timetable found for users %s" % self.request.user.id)
 
@@ -52,10 +54,11 @@ class TimetableViewSet(NestedViewSetMixin, ModelViewSet):
         timetable = None
         if request.user.has_role(settings.MAIN_TIMETABLE_CREATOR) \
                 or request.user.has_role(settings.LOCAL_TIMETABLE_CREATOR):
-            timetable = models.Timetable.objects.filter(owner=request.user).latest('updated_at')
+            timetable = models.Timetable.objects.filter(
+                owner=request.user).latest('updated_at')
         elif request.user.has_role(settings.TEACHER):
-            timetable = models.Timetable.objects.filter(status=models.Timetable.PUBLISHED_FOR_TEACHERS) \
-                .latest('updated_at')
+            timetable = models.Timetable.objects.filter(
+                status=models.Timetable.PUBLISHED_FOR_TEACHERS) .latest('updated_at')
 
         if timetable is not None:
             serializer = serializers.TimetableSerializer(timetable)
@@ -63,8 +66,12 @@ class TimetableViewSet(NestedViewSetMixin, ModelViewSet):
 
         return Response("No latest version", status=404)
 
-    # TODO merge methods below to one, with changing method called on timetable instance if possible
-    @action(detail=True, methods=['post'], permission_classes=[IsMainTimetableCreator])
+    # TODO merge methods below to one, with changing method called on
+    # timetable instance if possible
+    @action(
+        detail=True,
+        methods=['post'],
+        permission_classes=[IsMainTimetableCreator])
     def publish(self, request, pk=None):
         """
         Set timetable status to published for everyone
@@ -80,7 +87,10 @@ class TimetableViewSet(NestedViewSetMixin, ModelViewSet):
 
         return Response(status=200)
 
-    @action(detail=True, methods=['post'], permission_classes=[IsMainTimetableCreator])
+    @action(
+        detail=True,
+        methods=['post'],
+        permission_classes=[IsMainTimetableCreator])
     def publish_teachers(self, request, pk=None):
         """
         Set timetable status to published for teachers
@@ -96,7 +106,10 @@ class TimetableViewSet(NestedViewSetMixin, ModelViewSet):
 
         return Response(status=200)
 
-    @action(detail=True, methods=['post'], permission_classes=[IsLocalTimetableCreator])
+    @action(
+        detail=True,
+        methods=['post'],
+        permission_classes=[IsLocalTimetableCreator])
     def merge(self, request, pk=None):
         """
         Set timetable status to ready for merge
@@ -112,7 +125,10 @@ class TimetableViewSet(NestedViewSetMixin, ModelViewSet):
 
         return Response(status=200)
 
-    @action(detail=True, methods=['post'], permission_classes=[IsMainTimetableCreator])
+    @action(
+        detail=True,
+        methods=['post'],
+        permission_classes=[IsMainTimetableCreator])
     def merge_done(self, request, pk=None):
         """
         Set timetable status as merged

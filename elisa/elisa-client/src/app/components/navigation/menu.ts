@@ -1,92 +1,97 @@
 import {NavItem} from './nav-item';
+import { RoleManager } from 'src/app/models/role.model';
 
 export const navItems: NavItem[] = [
   {
     displayName: 'Dashboard',
     iconName: 'home',
-    route: ['/admin',{outlets:{adminView:'dashboard'}}],
-    i18n:"@@dashboard"
+    route: ['/dashboard'],
+    i18n: '@@dashboard',
+    forRoles: RoleManager.ALL
   },
   {
     displayName: 'Timetable',
     iconName: 'calendar_today',
-    route: [{outlets:{adminView:['timetable']}}],
-    i18n:"@@timetable"
+    route: ['/timetable'],
+    i18n: '@@timetable',
+    forRoles: [
+      RoleManager.MAIN_TIMETABLE_CREATOR.id,
+      RoleManager.LOCAL_TIMETABLE_CREATOR.id
+    ],
   },
   {
     displayName: 'Timetable creation',
     iconName: 'add',
-    i18n:"@@timetable-creation",
-    children:[
+    i18n: '@@timetable-creation',
+    forRoles: [
+      RoleManager.MAIN_TIMETABLE_CREATOR.id,
+      RoleManager.LOCAL_TIMETABLE_CREATOR.id
+    ],
+    children: [
       {
         displayName: 'Update timetable',
-        route: [{outlets:{adminView:['update-timetable']}}],
-        i18n:"@@timetable-update"
+        route: ['/update-timetable'],
+        i18n: '@@timetable-update'
       },
       {
         displayName: 'New timetable',
-        route: [{outlets:{adminView:['new-timetable']}}],
-        i18n:"@@timetable-new"
+        route: ['/new-timetable'],
+        i18n: '@@timetable-new'
       },
     ]
   },
   {
     displayName: 'Requirement',
     iconName: 'note_add',
-    route: [{outlets:{adminView:['requirement-form']}}],
-    i18n:"@@Requirement"
+    route: ['/requirement-form'],
+    i18n: '@@Requirement',
+    forRoles: RoleManager.ALL
   },
   {
     displayName: 'User Manager',
     iconName: 'people',
-    route: [{ outlets: { adminView: ['user-manager']}}],
-    i18n: '@@Manager'
+    route: ['/user-manager'],
+    i18n: '@@Manager',
+    forRoles: [
+      RoleManager.MAIN_TIMETABLE_CREATOR.id,
+      RoleManager.LOCAL_TIMETABLE_CREATOR.id,
+      RoleManager.TEACHER.id
+    ]
   },
   {
     displayName: 'Data',
     iconName: 'storage',
-    i18n:"@@data",
-    children:[
-      // {
-      //   displayName: 'Versions',
-      //   route: [{outlets:{adminView:['version-list']}}],
-      //   i18n:"@@Versions"
-      // },
+    i18n: '@@data',
+    forRoles: [
+      RoleManager.MAIN_TIMETABLE_CREATOR.id,
+      RoleManager.LOCAL_TIMETABLE_CREATOR.id
+    ],
+    children: [
       {
         displayName: 'Courses',
-        route: [{outlets:{adminView:['course-list']}}],
-        i18n:"@@Courses"
+        route: ['/course-list'],
+        i18n: '@@Courses'
       },
       {
         displayName: 'Users',
-        route: [{outlets:{adminView:['user-list']}}],
-        i18n:"@@users"
+        route: ['/user-list'],
+        i18n: '@@users'
       },
       {
         displayName: 'Departments',
-        route: [{outlets:{adminView:['department-list']}}],
-        i18n:"@@departments"
+        route: ['/department-list'],
+        i18n: '@@departments'
       },
       {
         displayName: 'Groups',
-        route: [{outlets:{adminView:['group-list']}}],
-        i18n:"@@Requirements"
+        route: ['/group-list'],
+        i18n: '@@Requirements'
       },
       {
         displayName: 'Rooms',
-        route: [{outlets:{adminView:['room-list']}}],
-        i18n:"@@rooms"
-      },
-      // {
-      //   displayName: 'Equipments',
-      //   route: [{outlets:{adminView:['equipment-list']}}],
-      //   i18n:"@@equipments"
-      // },
-      {
-        displayName: 'Requirements',
-        route: [{outlets:{adminView:['Requirement-list']}}],
-        i18n:"@@Requirements"
-      },
+        route: ['/room-list'],
+        i18n: '@@rooms'
+      }
     ]
   },
 ];

@@ -9,6 +9,8 @@ import { DepartmentService } from 'src/app/services/department.service';
 })
 export class DashboardComponent implements OnInit {
 
+  activeSchema: string;
+
   constructor(private timetableService: TimetableService,
     private departmentService: DepartmentService) { }
 
@@ -23,6 +25,8 @@ export class DashboardComponent implements OnInit {
         localStorage.setItem('active_scheme', schema['name']);
       });
     }
+    this.activeSchema = localStorage.getItem('active_scheme');
+    this.initData();
   }
 
   initData() {

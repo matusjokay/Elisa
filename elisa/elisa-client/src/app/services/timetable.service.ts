@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {environment} from '../../environments/environment';
-import {map, share, timeout, distinctUntilChanged, shareReplay} from 'rxjs/operators';
+import {map, share, distinctUntilChanged, shareReplay} from 'rxjs/operators';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { BaseService } from './base-service.service';
 import { Period } from '../models/period.model';
@@ -9,13 +9,12 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class TimetableService extends BaseService {
+export class TimetableService {
 
   private cachePeriodList$: Observable<Array<Period>>;
 
-  constructor(private http: HttpClient) {
-    super();
-  }
+  constructor(private http: HttpClient,
+    private baseService: BaseService) { }
 
   getActivitiesGroup(){
     let headers: HttpHeaders = new HttpHeaders();
@@ -120,16 +119,18 @@ export class TimetableService extends BaseService {
   }
 
   getTimetableVersionLatest() {
-    const token = localStorage.getItem('token');
-    const version = localStorage.getItem('active_scheme');
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${token}`,
-        'Timetable-Version': version
-      })
-    };
+    // const token = localStorage.getItem('token');
+    // const version = localStorage.getItem('active_scheme');
+    // const httpOptions = {
+    //   headers: new HttpHeaders({
+    //     'Authorization': `Bearer ${token}`,
+    //     'Timetable-Version': version
+    //   })
+    // };
 
-    return this.http.get(environment.APIUrl + 'timetables/latest/', httpOptions).
+    const httpOptions = this.baseService.getSchemaHeader();
+
+    return this.http.get(environment.APIUrl + 'timetables/latest/', { headers: httpOptions }).
     pipe(
       distinctUntilChanged(),
       share()
@@ -137,16 +138,9 @@ export class TimetableService extends BaseService {
   }
 
   getLastScheme() {
-    // const httpHeaders = new HttpHeaders();
-    // httpHeaders.append('Authorization', `Bearer ${localStorage.getItem('token')}`);
-    const token = localStorage.getItem('token');
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${token}`
-      })
-    };
-    // map is probably redundant
-    return this.http.get(environment.APIUrl + 'versions/latest/', httpOptions).
+
+    const httpOptions = this.baseService.getAuthHeaderOnly();
+    return this.http.get(environment.APIUrl + 'versions/latest/', { headers: httpOptions }).
     pipe(share());
   }
 
@@ -161,14 +155,11 @@ export class TimetableService extends BaseService {
   }
 
   getAllSchemas() {
-    const token = localStorage.getItem('token');
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Authorization': `Bearer ${token}`
-      })
-    };
-    return this.http.get(environment.APIUrl + 'versions/', httpOptions).
-    pipe(share());
+    const httpOptions = this.baseService.getAuthHeaderOnly();
+    return this.http.get(environment.APIUrl + 'versions/', { headers: httpOptions }).
+    pipe(
+      share()
+      );
   }
 
   createVersion(body){
@@ -212,7 +203,7 @@ export class TimetableService extends BaseService {
   }
 
   private requestPeriods(): Observable<Period[]> {
-    const httpOptions = this.getSchemaHeader();
+    const httpOptions = this.baseService.getSchemaHeader();
     return this.http.get<Period[]>(environment.APIUrl + 'periods/current/', { headers: httpOptions });
   }
 }

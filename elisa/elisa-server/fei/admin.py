@@ -46,6 +46,7 @@ class DepartmentResource(resources.ModelResource):
         fields = ('id', 'abbr', 'name', 'parent')
         export_order = ('id', 'abbr', 'name', 'parent')
 
+
 class PeriodResource(resources.ModelResource):
     department = fields.Field(
         attribute='department',
@@ -62,8 +63,31 @@ class PeriodResource(resources.ModelResource):
 
     class Meta:
         model = Period
-        fields = ('id', 'name', 'department', 'university_period', 'academic_sequence', 'previous_period', 'next_period', 'start_date', 'end_date', 'active',)
-        export_order = ('id', 'name', 'department', 'university_period', 'academic_sequence', 'previous_period', 'next_period', 'start_date', 'end_date', 'active',)
+        fields = (
+            'id',
+            'name',
+            'department',
+            'university_period',
+            'academic_sequence',
+            'previous_period',
+            'next_period',
+            'start_date',
+            'end_date',
+            'active',
+        )
+        export_order = (
+            'id',
+            'name',
+            'department',
+            'university_period',
+            'academic_sequence',
+            'previous_period',
+            'next_period',
+            'start_date',
+            'end_date',
+            'active',
+        )
+
 
 class CourseResource(resources.ModelResource):
     period = fields.Field(
@@ -78,8 +102,25 @@ class CourseResource(resources.ModelResource):
     class Meta:
         model = models.Course
         skip_unchanged = True
-        fields = ('id', 'period', 'department', 'teacher', 'code', 'name', 'completion', 'credits',)
-        export_order = ('id', 'code', 'name', 'period', 'department', 'teacher', 'completion', 'credits')
+        fields = (
+            'id',
+            'period',
+            'department',
+            'teacher',
+            'code',
+            'name',
+            'completion',
+            'credits',
+        )
+        export_order = (
+            'id',
+            'code',
+            'name',
+            'period',
+            'department',
+            'teacher',
+            'completion',
+            'credits')
 
 
 class EquipmentResource(resources.ModelResource):
@@ -105,6 +146,7 @@ class RoomResource(resources.ModelResource):
         attribute='department',
         column_name='department',
         widget=ForeignKeyWidget(Department))
+
     class Meta:
         model = models.Room
         skip_unchanged = True
@@ -120,6 +162,7 @@ class RoomEquipmentResource(resources.ModelResource):
         attribute='equipment',
         column_name='equipment',
         widget=ForeignKeyWidget(models.Equipment))
+
     def skip_row(self, instance, original):
         #  Allow importing resources with empty id. We use ForeignKeys as
         #  import_id_fields to uniquely identify a model.
@@ -140,9 +183,23 @@ class RoomEquipmentResource(resources.ModelResource):
 class UserResource(resources.ModelResource):
     class Meta:
         model = AppUser
-        fields = ('id', 'username', 'first_name', 'last_name', 'title_before', 'title_after',)
+        fields = (
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'title_before',
+            'title_after',
+        )
         skip_unchanged = True
-        export_order = ('id', 'username', 'first_name', 'last_name', 'title_before', 'title_after',)
+        export_order = (
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'title_before',
+            'title_after',
+        )
 
 
 class StudyTypeResource(resources.ModelResource):
@@ -150,6 +207,7 @@ class StudyTypeResource(resources.ModelResource):
         model = models.StudyType
         skip_unchanged = True
         export_order = ('id', 'name')
+
 
 class FormOfStudyResource(resources.ModelResource):
     class Meta:
@@ -183,7 +241,8 @@ class FormOfStudyResource(resources.ModelResource):
 
 #     # set times attribute for export
 #     def dehydrate_times(self, subject_study_type):
-#         return '%s/%s' % (subject_study_type.lecture_hours, subject_study_type.practice_hours)
+# return '%s/%s' % (subject_study_type.lecture_hours,
+# subject_study_type.practice_hours)
 
 
 # class FacultyResource(resources.ModelResource):
@@ -202,6 +261,7 @@ class SubjectUserResource(resources.ModelResource):
         attribute='user',
         column_name='user',
         widget=ForeignKeyWidget(AppUser))
+
     def skip_row(self, instance, original):
         if not instance.id:
             instance.id = original.id
@@ -213,6 +273,7 @@ class SubjectUserResource(resources.ModelResource):
         # import_id_fields = ('subject', 'user')
         skip_unchanged = True
         export_order = ('subject', 'user', 'role')
+
 
 class UserSubjectRoleResource(resources.ModelResource):
     class Meta:
@@ -230,6 +291,7 @@ class UserDepartmentResource(resources.ModelResource):
         attribute='department',
         column_name='department',
         widget=ForeignKeyWidget(Department))
+
     def skip_row(self, instance, original):
         if not instance.id:
             instance.id = original.id
@@ -243,6 +305,8 @@ class UserDepartmentResource(resources.ModelResource):
         export_order = ('user', 'department', 'employment')
 
 # TODO: CHECK IF FOREIGN KEY CHECKING IS NEEDED
+
+
 class UserGroupResource(resources.ModelResource):
     user = fields.Field(
         attribute='user',
@@ -260,6 +324,7 @@ class UserGroupResource(resources.ModelResource):
         attribute='study_type',
         column_name='study_type',
         widget=ForeignKeyWidget(models.StudyType))
+
     def skip_row(self, instance, original):
         if not instance.id:
             instance.id = original.id
@@ -270,4 +335,9 @@ class UserGroupResource(resources.ModelResource):
         model = models.UserGroup
         # import_id_fields = ('user', 'group')
         skip_unchanged = True
-        export_order = ('user', 'group', 'group_number', 'form_of_study', 'study_type')
+        export_order = (
+            'user',
+            'group',
+            'group_number',
+            'form_of_study',
+            'study_type')

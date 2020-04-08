@@ -14,7 +14,7 @@ import {TimetableComponent} from '../../timetable/timetable.component';
 import {TimetableService} from '../../../../services/timetable.service';
 import {Event} from '../../../../models/event.model';
 import {Collision} from '../../../../models/collision.model';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {EventDetailComponent} from '../../../../components/event-detail/event-detail.component';
 import { User } from 'src/app/models/user';
 

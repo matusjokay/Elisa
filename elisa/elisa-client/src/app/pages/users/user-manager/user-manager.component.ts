@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { User } from 'src/app/models/user';
 import { UserService } from 'src/app/services/user.service';
-import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-user-manager',
@@ -22,6 +22,7 @@ export class UserManagerComponent implements OnInit {
   users: User[];
   selectedUser: User;
   selected = false;
+  manage = false;
 
   filteredOptions: Observable<any>;
 
@@ -34,16 +35,20 @@ export class UserManagerComponent implements OnInit {
       name: ['', [Validators.required]]
     });
 
-    this.userService.getCachedAllUsers().subscribe(
-      (result) => this.users = result,
-      (error) => console.error('failed to fetch users')
-    );
+    this.fetchAllUsers();
 
     this.filteredOptions = this.searchForm.get('name').valueChanges
       .pipe(
         startWith(''),
         map(value => value && value.length >= 2 ? this._filter(value).splice(0, 50) : [])
       );
+  }
+
+  fetchAllUsers() {
+    this.userService.getCachedAllUsers().subscribe(
+      (result) => this.users = result,
+      (error) => console.error('failed to fetch users')
+    );
   }
 
   displayFn(user: User): string {
@@ -53,10 +58,13 @@ export class UserManagerComponent implements OnInit {
     return user ? fullName : '';
   }
 
+  /**
+   * Filters based on first and last name
+   * without being case sensitive
+   * @param value provided string in the input box
+   */
   private _filter(value: string) {
-    // const filterValue = `${value.first_name.toLowerCase()} ${value.last_name.toLowerCase()}`;
     value = value.toLowerCase();
-    // return this.options.filter(option => option.name.toLowerCase().includes(filterValue));
     return this.users.filter(user => {
       const combinedFirst = `${user.first_name.toLowerCase()} ${user.last_name.toLowerCase()}`;
       const combinedSecond = `${user.last_name.toLowerCase()} ${user.first_name.toLowerCase()}`;
@@ -69,6 +77,7 @@ export class UserManagerComponent implements OnInit {
     });
   }
 
+  // TODO: on enter key press call manage
   onEnter(event: string) {
     console.log('TODO: pressing enter and selecting');
     console.log(event);
@@ -80,14 +89,19 @@ export class UserManagerComponent implements OnInit {
   }
 
   onSelectionChanged(event: MatAutocompleteSelectedEvent) {
-    console.log('selected option');
     this.selectedUser = event.option.value;
     this.selected = true;
+    this.manage = false;
   }
 
   onManageClick() {
-    console.log('Go to manage page');
-    console.log(this.selectedUser);
+    this.manage = true;
+  }
+
+  onCloseDetailHandle(value) {
+    if (value) {
+      this.manage = false;
+    }
   }
 
 }

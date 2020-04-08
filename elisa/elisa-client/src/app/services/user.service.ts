@@ -9,13 +9,12 @@ import { BaseService } from './base-service.service';
 @Injectable({
   providedIn: 'root'
 })
-export class UserService extends BaseService {
+export class UserService {
 
   private cachedUsersList$: Observable<Array<User>>;
 
-  constructor(private http: HttpClient) {
-    super();
-  }
+  constructor(private http: HttpClient,
+    private baseService: BaseService) { }
 
   getAll(): Observable<User[]>{
     return this.http.get<User[]>(environment.APIUrl + 'users/').
@@ -51,7 +50,7 @@ export class UserService extends BaseService {
   }
 
   private requestAllUsers(): Observable<User[]> {
-    const httpOptions = this.getAuthHeaderOnly();
+    const httpOptions = this.baseService.getAuthHeaderOnly();
     return this.http.get<User[]>(environment.APIUrl + 'users/list_for_role/', { headers: httpOptions });
   }
 

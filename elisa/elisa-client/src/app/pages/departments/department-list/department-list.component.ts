@@ -4,7 +4,7 @@ import {environment} from '../../../../environments/environment';
 import {Department} from '../../../models/department';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
-import {MatTreeNestedDataSource} from '@angular/material';
+import { MatTreeNestedDataSource } from '@angular/material/tree';
 import {NestedTreeControl} from '@angular/cdk/tree';
 
 @Component({

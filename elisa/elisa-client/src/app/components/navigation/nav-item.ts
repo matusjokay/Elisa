@@ -4,4 +4,5 @@ export interface NavItem {
   route?: any;
   i18n: string;
   children?: NavItem[];
+  forRoles?: number[];
 }

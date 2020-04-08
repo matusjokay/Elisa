@@ -1,0 +1,37 @@
+<mat-card>
+  <div fxLayout="column" fxLayoutAlign="start end">
+    <button mat-mini-fab color="primary" (click)="onClose()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <div fxLayout="row" fxLayoutAlign="space-around center">
+    <mat-card>
+      <h3>User</h3>
+      <img width="100em" height="100em" src="https://cdn1.iconfinder.com/data/icons/line-full-package/150/.svg-5-512.png">
+    <mat-card>
+      <p>AIS ID: <b>{{user.id}}</b></p>
+      <p>Name: <b>{{user.title_before}} {{user.first_name}} {{user.last_name}} {{user.title_after}}</b></p>
+      <p>Username: <b>{{user.username}}</b></p>
+    </mat-card>
+    </mat-card>
+    <div fxLayout="column" fxLayoutAlign="space-around center">
+      <mat-card>
+        <h3>Select roles for user</h3>
+        <mat-form-field class="role-chooser">
+          <mat-label>User roles</mat-label>
+          <mat-select
+          [(ngModel)]="selectedRoles"
+          (selectionChange)="onRolesSelect($event)"
+          [compareWith]="compareWithFn"
+          multiple>
+            <mat-option *ngFor="let role of availableRoles" [value]="role">{{role.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-raised-button color="primary"
+        [disabled]="!changed || loading"
+        (click)="onUpdate()">Update</button>
+      </mat-card>
+      <app-spinner [loadingText]="snackbarMsg" *ngIf="loading"></app-spinner>
+    </div>
+  </div>
+</mat-card>

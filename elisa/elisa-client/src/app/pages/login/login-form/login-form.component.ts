@@ -4,7 +4,7 @@ import {HttpClient } from '@angular/common/http';
 import {AuthService} from '../../../services/auth/auth.service';
 import {Subscription} from 'rxjs';
 import {FormControl, FormGroup, Validators, FormGroupDirective} from '@angular/forms';
-import {Router} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
 import {Account} from '../../../models/account.model';
 import { catchError } from 'rxjs/operators';
 import { MyErrorStateMatcher } from 'src/app/common/form-error-state';
@@ -52,7 +52,8 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     this.onRequestSent('Submitting login credentials');
     this.response = this.authService.login(this.account).subscribe(
       (response: any) => {
-        this.router.navigateByUrl('/admin');
+        // this.router.navigateByUrl('/admin');
+        this.router.navigateByUrl('/version-select');
         // return response['token'];
       }, (error) => {
         console.error('login failed');

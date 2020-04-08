@@ -28,10 +28,16 @@ class Timetable(models.Model):
     name = models.CharField(max_length=300)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = FSMField(max_length=3, choices=STATUSES, default=NEW, protected=True)
+    status = FSMField(
+        max_length=3,
+        choices=STATUSES,
+        default=NEW,
+        protected=True)
     major_version = models.PositiveSmallIntegerField()
     minor_version = models.PositiveSmallIntegerField()
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['-updated_at']
@@ -48,11 +54,17 @@ class Timetable(models.Model):
     def merge_done(self):
         print("Merged")
 
-    @transition(field=status, source=WORK_IN_PROGRESS, target=PUBLISHED_FOR_TEACHERS)
+    @transition(
+        field=status,
+        source=WORK_IN_PROGRESS,
+        target=PUBLISHED_FOR_TEACHERS)
     def publish_teachers(self):
         print("Publish working version for teachers")
 
-    @transition(field=status, source=PUBLISHED_FOR_TEACHERS, target=PUBLISH_PUBLIC)
+    @transition(
+        field=status,
+        source=PUBLISHED_FOR_TEACHERS,
+        target=PUBLISH_PUBLIC)
     def publish_public(self):
         print("Publish for everyone")
 
@@ -86,7 +98,9 @@ class Event(models.Model):
     #     max_length=127, validators=[validate_comma_separated_integer_list])
     timetable = models.ForeignKey(Timetable, on_delete=models.CASCADE)
     groups = models.ManyToManyField(Group)
-    teacher = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -114,7 +128,8 @@ class Collision(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return '{}: status= {}, type={}'.format(self.id, self.status, self.type)
+        return '{}: status= {}, type={}'.format(
+            self.id, self.status, self.type)
 
 
 class Comment(models.Model):
@@ -135,4 +150,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return '{}'.format(self.text)
-

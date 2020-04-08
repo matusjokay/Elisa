@@ -11,7 +11,8 @@ from school.serializers import ActivitySerializer
 def get_major_version(user, default):
     try:
         query = Q(owner=user) & Q(status=models.Timetable.WORK_IN_PROGRESS)
-        return models.Timetable.objects.filter(query).latest('updated_at').major_version
+        return models.Timetable.objects.filter(
+            query).latest('updated_at').major_version
     except models.Timetable.DoesNotExist:
         return default
 
@@ -19,7 +20,8 @@ def get_major_version(user, default):
 def get_minor_version(user, default):
     try:
         query = Q(owner=user) & Q(status=models.Timetable.WORK_IN_PROGRESS)
-        return models.Timetable.objects.filter(query).latest('updated_at').minor_version + 1
+        return models.Timetable.objects.filter(
+            query).latest('updated_at').minor_version + 1
     except models.Timetable.DoesNotExist:
         return default
 
@@ -39,8 +41,11 @@ class TimetableSerializer(serializers.ModelSerializer):
         major_version = get_major_version(user, 1)
         minor_version = get_minor_version(user, 0)
 
-        timetable = models.Timetable(name=validated_data['name'], major_version=major_version,
-                                     minor_version=minor_version, owner=user)
+        timetable = models.Timetable(
+            name=validated_data['name'],
+            major_version=major_version,
+            minor_version=minor_version,
+            owner=user)
         timetable.save()
         return timetable
 
@@ -75,9 +80,15 @@ class EventSerializerPost(serializers.ModelSerializer):
             timetable.start_work()
             timetable.save()
 
-        r = NumericRange(validated_data["duration"]["start"], validated_data["duration"]["end"])
-        event = models.Event(day=validated_data["day"], duration=r, activity=act,
-                             timetable=timetable, teacher=validated_data["teacher"])
+        r = NumericRange(
+            validated_data["duration"]["start"],
+            validated_data["duration"]["end"])
+        event = models.Event(
+            day=validated_data["day"],
+            duration=r,
+            activity=act,
+            timetable=timetable,
+            teacher=validated_data["teacher"])
         event.save()
 
         event.rooms.add(*validated_data["rooms"])
@@ -122,4 +133,3 @@ class CollisionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Collision
         fields = '__all__'
-

@@ -15,14 +15,32 @@ from django_fsm import TransitionNotAllowed
 from django_tenants.utils import get_tenant_model
 from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action, list_route
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly
+)
 from rest_framework.response import Response
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import (
+    PageNumberPagination
+)
 
 from .models import AppUser, Version, Period
-from .serializers import VersionSerializer, UserSerializer, UserSerializerTable, UserSerializerShort, TeachersListSerializer, PeriodSerializer
-from authentication.permissions import IsMainTimetableCreator, IsLocalTimetableCreator, IsTeacher
+from .serializers import (
+    VersionSerializer,
+    UserSerializer,
+    UserSerializerTable,
+    UserSerializerShort,
+    TeachersListSerializer,
+    PeriodSerializer,
+    AuthGroupSerializer
+)
+from authentication.permissions import (
+    IsMainTimetableCreator,
+    IsLocalTimetableCreator,
+    IsTeacher
+)
 from school.models import ActivityCategory, SubjectUser
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 15
@@ -39,6 +57,7 @@ class StandardResultsSetPagination(PageNumberPagination):
             'results': data
         })
 
+
 def get_schema(schema_name):
     try:
         version = get_tenant_model().objects.get(name=schema_name)
@@ -54,7 +73,20 @@ class VersionViewSet(viewsets.ModelViewSet):
     serializer_class = VersionSerializer
     permission_classes = (IsMainTimetableCreator,)
 
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticatedOrReadOnly])
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.action == 'list':
+            permission_classes = [IsAuthenticatedOrReadOnly]
+        else:
+            permission_classes = [IsMainTimetableCreator]
+        return [permission() for permission in permission_classes]
+
+    @action(
+        detail=False,
+        methods=['get'],
+        permission_classes=[IsAuthenticatedOrReadOnly])
     def latest(self, request, pk=None):
         """
         API endpoint that returns latest version according to status
@@ -98,25 +130,40 @@ class VersionViewSet(viewsets.ModelViewSet):
             try:
                 serializer.save()
             except IntegrityError:
-                return Response("Schema already exists.", status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    "Schema already exists.",
+                    status=status.HTTP_400_BAD_REQUEST)
             schema_name = serializer.data['name']
             connection.set_tenant(get_schema(schema_name))
-            # if setting exists and nothing is in database table, create activity categories
-            if hasattr(settings, 'ACTIVITY_CATEGORIES') and ActivityCategory.objects.count() == 0:
+            # if setting exists and nothing is in database table, create
+            # activity categories
+            if hasattr(
+                    settings,
+                    'ACTIVITY_CATEGORIES'
+                    ) and ActivityCategory.objects.count() == 0:
                 for category in settings.ACTIVITY_CATEGORIES:
                     print('Creating category %s.' % category)
-                    new_category = ActivityCategory.objects.get_or_create(name_sk=category.get('name_sk'),
-                                                                          name_en=category.get('name_en'),
-                                                                          color=category.get('color'))
+                    new_category = ActivityCategory.objects.get_or_create(
+                        name_sk=category.get('name_sk'),
+                        name_en=category.get('name_en'),
+                        color=category.get('color'))
 
             if 'parent_schema' in request.data:
                 tmpfile = serializer.data["name"] + '.json'
 
                 with open(tmpfile, 'w', encoding="utf-8") as f:
-                    call_command("dump_tenant", "dump", request.data['parent_schema'], stdout=f)
+                    call_command(
+                        "dump_tenant",
+                        "dump",
+                        request.data['parent_schema'],
+                        stdout=f)
 
                 with open(tmpfile, 'r', encoding="utf-8") as f:
-                    call_command("dump_tenant", "load", schema_name, fixture=tmpfile)
+                    call_command(
+                        "dump_tenant",
+                        "load",
+                        schema_name,
+                        fixture=tmpfile)
 
                 if os.path.exists(tmpfile):
                     print("Removing %s." % tmpfile)
@@ -180,40 +227,69 @@ class UserViewSet(viewsets.ModelViewSet):
             response_data.append(Dict)
         return response_data
 
-    # def list(self, request):
-    #     # super().list(request, *args, **kwargs)
-    #     queryset = AppUser.objects.all()
-    #     page = self.paginate_queryset(queryset)
-    #     serializer = UserSerializerTable(page, read_only=True)
-    #     return self.get_paginated_response(serializer.data)
-
     @action(detail=False)
     def table_users(self, request):
-        table_users = AppUser.objects.values('id', 'username', 'title_before', 'first_name', 'last_name', 'title_after', 'groups')
+        table_users = AppUser.objects.values(
+            'id',
+            'username',
+            'title_before',
+            'first_name',
+            'last_name',
+            'title_after',
+            'groups')
         page = self.paginate_queryset(table_users)
         if page is not None:
             serializer = UserSerializerTable(page, many=True, read_only=True)
             return self.get_paginated_response(serializer.data)
-    
+
+    """
+    Fetches list of users with desired specified fields 
+    """
     @action(detail=False)
     def list_for_role(self, request):
-        # serialize without serializer class
-        # users_list = list(AppUser.objects.values('id', 'username'))
-        users_list = list(AppUser.objects.values('id', 'title_before', 'first_name', 'last_name', 'title_after'))
+        users_list = list(
+            AppUser.objects.values(
+                'id',
+                'username',
+                'title_before',
+                'first_name',
+                'last_name',
+                'title_after'))
         return JsonResponse(users_list, safe=False)
 
-    @action(detail=False)
-    def list_for_role_detail(self, request):
-        # serialize without serializer class
-        # users_list = list(AppUser.objects.values('id', 'title_before', 'first_name', 'last_name', 'title_after'))
-        results = AppUser.objects.values('id', 'title_before', 'first_name', 'last_name', 'title_after')
-        data = self.create_full_names(results)
-        return JsonResponse(data, safe=False)
+    @action(
+        detail=True,
+        methods=['put'],
+        permission_classes=[
+            IsMainTimetableCreator,
+            IsLocalTimetableCreator,
+            IsTeacher]
+        )
+    def update_roles(self, request, pk=None):
+        user = self.get_object()
+        # clear previous roles
+        user.groups.clear()
+        # add the roles from payload
+        for role in request.data:
+            group = Group.objects.get(name=role["name"])
+            user.groups.add(group)
+        try:
+            user.save()
+            return Response("OK", status=status.HTTP_200_OK)
+        except IntegrityError:
+            return Response(
+                "Failed during updating",
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response("data invalid ", status=status.HTTP_400_BAD_REQUEST)
+
 
     """
     Set user as main timetable maker
     """
-    @action(detail=True, methods=['post'], permission_classes=[IsMainTimetableCreator])
+    @action(
+        detail=True,
+        methods=['post'],
+        permission_classes=[IsMainTimetableCreator])
     def set_main_timetable_maker(self, request, pk=None):
         user = self.get_object()
         try:
@@ -227,12 +303,33 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response("error2 ", status=status.HTTP_400_BAD_REQUEST)
 
-    @list_route(methods=['get'])
-    def logged(self, request):
+    @action(detail=True, methods=['get'])
+    def get_user_roles(self, request, pk=None):
+        try:
+            user = AppUser.objects.get(pk=pk)
+            results = list(
+                user.groups.values(
+                    'id',
+                    'name')
+            )
+            return JsonResponse(results, safe=False)
+        except AppUser.DoesNotExist:
+            return Response(
+                "User with provided ID doesn't exist",
+                status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['get'])
+    def logout(self, request):
         current_user = request.user
-        if current_user.id is not None:
-            serializer = UserSerializer(current_user)
-            return Response(serializer.data)
+        if current_user.access_id is not None:
+            current_user.access_id = None
+            current_user.save()
+            request.COOKIES.pop('XSRF-TOKEN', None)
+            return Response("OK", status=status.HTTP_200_OK)
+        else:
+            return Response(
+                "Already logged out!",
+                status=status.HTTP_204_NO_CONTENT)
 
 
 class TeachersList(generics.ListAPIView):
@@ -247,10 +344,10 @@ class TeachersList(generics.ListAPIView):
         """
         return SubjectUser.objects.filter(role=3)
 
-
     @classmethod
     def get_extra_actions(cls):
         return []
+
 
 class PeriodViewSet(viewsets.ModelViewSet):
     queryset = Period.objects.all()
@@ -258,14 +355,19 @@ class PeriodViewSet(viewsets.ModelViewSet):
     # when read only just get requests are available in swagger
     permission_classes = (IsAuthenticatedOrReadOnly, )
 
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticatedOrReadOnly])
+    @action(
+        detail=False,
+        methods=['get'],
+        permission_classes=[IsAuthenticatedOrReadOnly])
     def current(self, request, pk=None):
         headers = request.headers['Timetable-Version']
         headers_array = headers.split('_')
         current_year = '/'.join(headers_array[1:])
         current_semester = headers_array[0] + ' ' + current_year
-        print(f'current semester -> {current_semester} and current year -> {current_year}')
+        print(
+            f'current semester -> {current_semester} and current year -> {current_year}')
         current_year += ' - '
-        periods = Period.objects.filter(Q(name__icontains=current_semester) | Q(name__icontains=current_year))
+        periods = Period.objects.filter(
+            Q(name__icontains=current_semester) | Q(name__icontains=current_year))
         serializer = PeriodSerializer(periods, many=True)
         return Response(serializer.data)

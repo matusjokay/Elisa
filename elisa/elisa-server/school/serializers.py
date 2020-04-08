@@ -4,6 +4,7 @@ from . import models
 from fei import models as fei_models
 from fei import serializers as fei_serializers
 
+
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Group
@@ -14,6 +15,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = fei_models.Department
         fields = ('id', 'name', 'abbr', 'parent')
+
 
 class DepartmentSerializerShort(serializers.ModelSerializer):
     class Meta:
@@ -26,15 +28,18 @@ class CourseSerializer(serializers.ModelSerializer):
         model = models.Course
         fields = '__all__'
 
+
 class CourseSerializerShort(serializers.ModelSerializer):
     class Meta:
         model = models.Course
         fields = ('id', 'name')
 
+
 class CourseSerializerFull(serializers.ModelSerializer):
     teacher = fei_serializers.UserSerializerCourse()
     # period = fei_serializers.PeriodSerializerJustName(read_only=True)
     department = DepartmentSerializerShort()
+
     class Meta:
         model = models.Course
         fields = '__all__'
@@ -87,16 +92,20 @@ class ActivitySerializer(serializers.ModelSerializer):
         model = models.Activity
         fields = '__all__'
 
+
 class FormOfStudySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.FormOfStudy
         fields = '__all__'
 
 # TODO: foreign keys and self references keys
+
+
 class PeriodSerializer(serializers.ModelSerializer):
     class Meta:
         model = fei_models.Period
         fields = '__all__'
+
 
 class UserSubjectRoleSerializer(serializers.ModelSerializer):
     class Meta:
@@ -105,12 +114,14 @@ class UserSubjectRoleSerializer(serializers.ModelSerializer):
 
 # TODO: missing user group
 
+
 class SubjectUserSerializer(serializers.ModelSerializer):
     subject = CourseSerializerShort()
     user = fei_serializers.UserSerializerCourse()
     # role = UserSubjectRoleSerializer()
     # subject_id = serializers.PrimaryKeyRelatedField(queryset=models.Course.objects.all())
     # user_id = serializers.PrimaryKeyRelatedField(queryset=fei_models.AppUser.objects.all())
+
     class Meta:
         model = models.SubjectUser
         # fields = ('id', 'subject', 'user')

@@ -1,100 +1,104 @@
-import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
-import {Observable, throwError, BehaviorSubject} from 'rxjs';
-import {Injectable} from '@angular/core';
-import {AuthService} from './services/auth/auth.service';
-import {catchError, filter, take, switchMap, map, tap} from 'rxjs/operators';
+import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse, HttpHeaders } from '@angular/common/http';
+import { Observable, throwError, BehaviorSubject, Subject } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { AuthService } from './services/auth/auth.service';
+import { catchError, filter, take, switchMap, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { BaseService } from './services/base-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TokenInterceptor implements HttpInterceptor {
-  // boolean variable to check if we are refreshing token or not
-  private tokenRefreshInProgress = false;
-  // Refresh Token Subject tracks the current token, or is null if no token is currently
-  // available (e.g. refresh pending).
-  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
-      null
-  );
-  constructor(public auth: AuthService, private router: Router) {}
 
-  intercept(req: HttpRequest<any>,
-            next: HttpHandler): Observable<HttpEvent<any>> {
-            // next: HttpHandler): Observable<HttpEvent<any>> {
-    // const jwt = localStorage.getItem('token');
-    // if (jwt) {
-    //   const cloned = req.clone({
-    //     headers: req.headers.set('Authorization',
-    //       `Bearer ${jwt}`)
-    //   });
-    //   req = cloned;
-    // }
-    return next.handle(req).pipe(
+  constructor(public auth: AuthService,
+    private router: Router,
+    private baseService: BaseService) { }
+
+  private _refreshSubject: Subject<any> = new Subject<any>();
+
+  private _ifTokenExpired() {
+    this._refreshSubject.subscribe({
+      complete: () => {
+        this._refreshSubject = new Subject<any>();
+      }
+    });
+    if (this._refreshSubject.observers.length === 1) {
+      // Hit refresh-token API passing the refresh token stored into the request
+      // to get new access token and refresh token pair
+      this.auth.refreshToken().subscribe(this._refreshSubject);
+    }
+    return this._refreshSubject;
+  }
+
+  private _checkTokenExpiryErr(error: HttpErrorResponse): boolean {
+    return (
+      error.status &&
+      error.status === 401 &&
+      error.error &&
+      error.error.code === 'token_not_valid'
+    );
+  }
+
+
+  intercept(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+    req = req.clone({
+      setHeaders: {
+        accept: 'application/json',
+        'content-type': 'application/json'
+      },
+      withCredentials: true
+    });
+    if (req.url.endsWith('/logout') ||
+      req.url.endsWith('/login')) {
+      return next.handle(req);
+    } else if (req.url.endsWith('/token/refresh/')) {
+      return next.handle(req).pipe(
         catchError((error: HttpErrorResponse) => {
-        if (req.url.includes('token/refresh') || req.url.includes('login')) {
-          if (req.url.includes('token/refresh')) {
-            this.auth.logout();
+          if (error.status === 401) {
+            localStorage.clear();
             this.router.navigate(['login']);
+            return throwError(error);
           }
-
-          return throwError(error);
-        }
-        // if unauthorized
-        if (error.status !== 401) {
-          return throwError(error);
-        } else if (error.status === 401 && this.refreshTokenSubject.value) {
-          this.auth.logout();
-          this.router.navigate(['login']);
-        }
-        if (this.tokenRefreshInProgress) {
-          return this.refreshTokenSubject
-            .pipe(
-              filter(result => result !== null),
-              take(1),
-              switchMap(() => next.handle(this.setAuthentificationToken(req)))
-            );
-        } else {
-          this.tokenRefreshInProgress = true;
-          // Set the refreshTokenSubject to null so that subsequent API calls will wait until the new token has been retrieved
-          this.refreshTokenSubject.next(null);
-
-          return this.auth.refreshToken().pipe(
-            tap((token: any) => {
-              console.log('access token obtained through refresh call');
-              this.tokenRefreshInProgress = false;
-              this.refreshTokenSubject.next(token['access']);
-              localStorage.setItem('token', token['access']);
-
-              return next.handle(this.setAuthentificationToken(req));
-            })
-          );
-        }
-        // this.auth.refreshToken().subscribe(
-        //   (res) => {
-        //     const token = res['access'];
-        //     localStorage.setItem('token', token);
-        //     // maybe not return
-        //     return true;
-        //   }
-        // );
-    }));
+        })
+      );
+    } else {
+      return next.handle(req).pipe(
+        catchError((error, caught) => {
+          if (error instanceof HttpErrorResponse) {
+            if (this._checkTokenExpiryErr(error)) {
+              return this._ifTokenExpired().pipe(
+                switchMap(() => {
+                  return next.handle(this.setAuthentificationToken(req));
+                })
+              );
+            } else {
+              return throwError(error);
+            }
+          }
+          return caught;
+        })
+      );
+    }
   }
 
   setAuthentificationToken(request) {
-    // Get access token from Local Storage
-    const accessToken = localStorage.getItem('token');
+    const token = this.baseService.getAccess();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
 
     // If access token is null this means that user is not logged in
     // And we return the original request
-    if (!accessToken) {
-        return request;
+    if (!headers) {
+      return request;
     }
 
-    // We clone the request, because the original request is immutable
     return request.clone({
-        setHeaders: {
-            Authorization: `Bearer ${accessToken}`
-        }
+      headers: headers
     });
   }
 }

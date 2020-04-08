@@ -3,26 +3,36 @@ import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '
 import {AuthService} from './auth.service';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { BaseService } from '../base-service.service';
+import { Role } from 'src/app/models/role.model';
+import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuardService implements CanActivate {
 
-  constructor(public auth: AuthService, public router: Router) { }
+  constructor(public auth: AuthService,
+     public router: Router,
+     private baseService: BaseService) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> {
-    const expectedRole = route.data.role;
+    const expectedRoles = route.data.roles;
     // return this.auth.isAuthenticated().pipe(
     //   map(res => {
     //     if (res) {
     //       console.log(res);
     //       console.log('now to check if you have roles to access this');
-    //       if (localStorage.getItem('active_role') >= expectedRole) {
+    //       const roleId: Role = JSON.parse(localStorage.getItem('active_role')).id;
+    //       console.log(`roleId -> ${roleId}`);
+    //       if (roleId <= expectedRole) {
     //         return true;
     //       } else {
     //         return false;
     //       }
+    //     } else if (res === false) {
+    //       this.auth.refreshToken();
     //     } else {
     //       this.router.navigate(['login']);
     //     }
@@ -32,62 +42,55 @@ export class AuthGuardService implements CanActivate {
     //     return of(false);
     //   })
     // );
-
-    return this.auth.isAuthenticated().then(
-      (result) => {
-        if (result) {
-          console.log(result);
-          console.log('now to check if you have roles to access this');
-          if (localStorage.getItem('active_role') >= expectedRole) {
+    if (this.auth.isAuthenticated()) {
+      console.log('token is present no refresh needed');
+      console.log('now to check if you have roles to access this');
+      // const roleId: Role = JSON.parse(localStorage.getItem('active_role')).id;
+      const userRoles = this.baseService.getUserRoles();
+      // const isAuthorized = userRoles.some(role => role === expectedRole);
+      // const isAuthorized = _.intersection(userRoles, expectedRoles).length === expectedRoles.length;
+      const isAuthorized = expectedRoles.some(role => userRoles.includes(role));
+      // console.log(`roleId -> ${roleId}`);
+      // if (roleId <= expectedRole) {
+      console.log(`is user authorized? ${isAuthorized}`);
+      if (isAuthorized) {
+        return of(true);
+      } else {
+        return of(false);
+      }
+    } else {
+      return this.auth.refreshToken().pipe(
+        map(res => {
+          if (res) {
             return true;
           } else {
             return false;
           }
-        } else {
-          return false;
-        }
-      }
-    );
-    // return this.auth.isAuthenticated().subscribe(
-    //   (next) => {
-    //     console.log('Token is still valid user is authentificated');
-    //     if (localStorage.getItem('active_role') >= expectedRole) {
-    //       return true;
+        })
+      );
+    }
+    // return this.auth.isAuthenticated().pipe(
+    //   map(res => {
+    //     if (res) {
+    //       console.log(res);
+    //       console.log('now to check if you have roles to access this');
+    //       const roleId: Role = JSON.parse(localStorage.getItem('active_role')).id;
+    //       console.log(`roleId -> ${roleId}`);
+    //       if (roleId <= expectedRole) {
+    //         return true;
+    //       } else {
+    //         return false;
+    //       }
+    //     } else if (res === false) {
+    //       this.auth.refreshToken();
     //     } else {
-    //       return false;
+    //       this.router.navigate(['login']);
     //     }
-    //   },
-    //   (error) => {
-    //     console.error('Users token has expired');
+    //   }),
+    //   catchError(() => {
     //     this.router.navigate(['login']);
-    //     return false;
-    //   }
+    //     return of(false);
+    //   })
     // );
-    // if (status) {
-    //   console.log('Token is still valid user is authentificated');
-    //   if (localStorage.getItem('active_role') >= expectedRole) {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // } else {
-    //   console.error('Users tokens had expired');
-    //   this.router.navigate(['login']);
-    //   return false;
-    // }
-    // if (this.auth.isAuthenticated()) {
-    //   // this.router.navigate([{outlets: {primary: 'admin' , adminView: 'dashboard'}}]);
-    //   // return false;
-    //   if (localStorage.getItem('active_role') >= expectedRole) {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // } else {
-    //   this.router.navigate(['login']);
-    //   return false;
-    // }
-    // this.router.navigate(['login'])
-    // return false;
   }
 }
