@@ -1,9 +1,9 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError, BehaviorSubject, Subject } from 'rxjs';
+import { Observable, throwError, Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { AuthService } from './services/auth/auth.service';
-import { catchError, filter, take, switchMap, map, tap } from 'rxjs/operators';
-import { Router } from '@angular/router';
+import { catchError, switchMap } from 'rxjs/operators';
+import { Router, ActivatedRoute } from '@angular/router';
 import { BaseService } from './services/base-service.service';
 
 @Injectable({
@@ -59,8 +59,10 @@ export class TokenInterceptor implements HttpInterceptor {
       return next.handle(req).pipe(
         catchError((error: HttpErrorResponse) => {
           if (error.status === 401) {
-            localStorage.clear();
-            this.router.navigate(['login']);
+            // TODO: different way of fetching pathname
+            this.router.navigate(['login'], { queryParams: {
+              'urlRedirect': location.pathname
+            } });
             return throwError(error);
           }
         })

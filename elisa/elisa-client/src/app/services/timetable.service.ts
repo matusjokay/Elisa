@@ -1,3 +1,4 @@
+import { SemesterVersion } from './../models/semester-version.model';
 import { Injectable } from '@angular/core';
 import {environment} from '../../environments/environment';
 import {map, share, distinctUntilChanged, shareReplay} from 'rxjs/operators';
@@ -11,7 +12,7 @@ import { Observable } from 'rxjs';
 })
 export class TimetableService {
 
-  private cachePeriodList$: Observable<Array<Period>>;
+  private cacheVersionList$: Observable<Array<SemesterVersion>>;
 
   constructor(private http: HttpClient,
     private baseService: BaseService) { }
@@ -119,17 +120,7 @@ export class TimetableService {
   }
 
   getTimetableVersionLatest() {
-    // const token = localStorage.getItem('token');
-    // const version = localStorage.getItem('active_scheme');
-    // const httpOptions = {
-    //   headers: new HttpHeaders({
-    //     'Authorization': `Bearer ${token}`,
-    //     'Timetable-Version': version
-    //   })
-    // };
-
     const httpOptions = this.baseService.getSchemaHeader();
-
     return this.http.get(environment.APIUrl + 'timetables/latest/', { headers: httpOptions }).
     pipe(
       distinctUntilChanged(),
@@ -138,7 +129,6 @@ export class TimetableService {
   }
 
   getLastScheme() {
-
     const httpOptions = this.baseService.getAuthHeaderOnly();
     return this.http.get(environment.APIUrl + 'versions/latest/', { headers: httpOptions }).
     pipe(share());
@@ -154,12 +144,22 @@ export class TimetableService {
       ));
   }
 
-  getAllSchemas() {
+  private requestAllSchemas(): Observable<SemesterVersion[]> {
     const httpOptions = this.baseService.getAuthHeaderOnly();
-    return this.http.get(environment.APIUrl + 'versions/', { headers: httpOptions }).
-    pipe(
-      share()
-      );
+    return this.http.get<SemesterVersion[]>(environment.APIUrl + 'versions/',
+      { headers: httpOptions });
+  }
+
+  getAllSchemas(clear?: boolean) {
+    this.cacheVersionList$ = clear ? null : this.cacheVersionList$;
+    if (!this.cacheVersionList$) {
+      this.cacheVersionList$ = this.requestAllSchemas()
+        .pipe(
+          shareReplay(1)
+        );
+    }
+
+    return this.cacheVersionList$;
   }
 
   createVersion(body){
@@ -192,18 +192,16 @@ export class TimetableService {
       ));
   }
 
-  getCurrentSelectedPeriods() {
-    if (!this.cachePeriodList$) {
-      this.cachePeriodList$ = this.requestPeriods().pipe(
-        shareReplay(1)
-      );
-    }
-
-    return this.cachePeriodList$;
+  importByPeriod(versionName: string, periodId: number): Observable<any> {
+    const httpOptions = this.baseService.getAuthHeaderOnly();
+    return this.http.post(`${environment.APIUrl}versions/create_and_import/`,
+      { name: versionName, period: periodId },
+      { headers: httpOptions });
   }
 
-  private requestPeriods(): Observable<Period[]> {
-    const httpOptions = this.baseService.getSchemaHeader();
-    return this.http.get<Period[]>(environment.APIUrl + 'periods/current/', { headers: httpOptions });
+  removeVersion(versionId: number): Observable<any> {
+    const httpOptions = this.baseService.getAuthHeaderOnly();
+    return this.http.delete(`${environment.APIUrl}versions/${versionId}`,
+    { headers: httpOptions });
   }
 }

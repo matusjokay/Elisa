@@ -1,4 +1,4 @@
-<span class="spinner-wrapper">{{loadingText}}
+<span [ngStyle]="{'display': hidden ? 'none' : 'block'}" class="spinner-wrapper"><p [innerHTML]="loadingText"></p>
   <mat-progress-spinner
     [color]="color"
     [mode]="mode"

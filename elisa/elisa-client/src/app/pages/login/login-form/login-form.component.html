@@ -17,10 +17,11 @@
       </mat-form-field>
       <mat-form-field>
         <input matInput
-        type="password"
+        [type]="hidePwd ? 'password' : 'text'"
         placeholder="Enter Password"
         formControlName="password"
         [errorStateMatcher]="matcher">
+        <mat-icon matSuffix (click)="hidePwd = !hidePwd">{{!hidePwd ? 'visibility_off' : 'visibility'}}</mat-icon>
         <mat-hint>Enter corresponding password</mat-hint>
         <mat-error *ngIf="loginForm.get('password').hasError('required')">
           Password field is required!
@@ -32,5 +33,5 @@
     </mat-card-actions>
     </form>
   </mat-card>
-  <app-spinner [loadingText]="statusText" *ngIf="loading"></app-spinner>
+  <app-spinner [loadingText]="statusText" [hidden]="loading ? false : true"></app-spinner>
 </div>

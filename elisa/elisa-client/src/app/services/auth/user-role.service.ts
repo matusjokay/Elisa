@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Role } from 'src/app/models/role.model';
 import { BaseService } from '../base-service.service';
 import { Observable } from 'rxjs';
+import { Account } from '../../models/account.model';
 import { environment } from 'src/environments/environment';
 import { tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
@@ -36,6 +37,24 @@ export class UserRoleService {
     return this.http.put<string>(`${environment.APIUrl}users/${userId}/update_roles/`,
       roles,
       { headers: httpOptions });
+  }
+
+  setInitUserRoles(account: Account, userId: number): Observable<any> {
+    const loginData = {
+      'username': account.username,
+      'password': account.password
+    };
+    const httpOptions = this.baseService.getAuthHeaderOnly();
+    return this.http.put(`${environment.APIUrl}users/${userId}/set_user_init_roles/`,
+      loginData, { headers: httpOptions , withCredentials: true}
+    ).pipe(
+      tap((response: any) => {
+        if ((typeof response === 'string' || response instanceof String)) {
+          return;
+        }
+        this.baseService.setAccess(response.access);
+      }
+    ));
   }
 
 }

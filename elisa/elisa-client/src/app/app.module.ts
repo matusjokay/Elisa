@@ -48,6 +48,12 @@ import { LoginFormComponent } from './pages/login/login-form/login-form.componen
 import { UserManagerComponent } from './pages/users/user-manager/user-manager.component';
 import { VersionSelectComponent } from './pages/version/version-select/version-select.component';
 import { UserRoleDetailComponent } from './pages/users/user-manager/user-role-detail/user-role-detail.component';
+import { VersionImportComponent } from './pages/version/version-import/version-import.component';
+import { ParsePeriodsPipe } from './pipes/parse-periods.pipe';
+import { CourseTeacherComponent } from './pages/course/course-teacher/course-teacher.component';
+import { CourseRolesPipe } from './pipes/course-roles.pipe';
+import { CourseRolesAvailablePipe } from './pipes/course-roles-available.pipe';
+import { UserSearchComponent } from './common/user-search/user-search.component';
 
 
 @NgModule({
@@ -83,7 +89,13 @@ import { UserRoleDetailComponent } from './pages/users/user-manager/user-role-de
     SpinnerComponent,
     UserManagerComponent,
     VersionSelectComponent,
-    UserRoleDetailComponent
+    UserRoleDetailComponent,
+    VersionImportComponent,
+    ParsePeriodsPipe,
+    CourseTeacherComponent,
+    CourseRolesPipe,
+    CourseRolesAvailablePipe,
+    UserSearchComponent
   ],
   imports: [
     BrowserModule,

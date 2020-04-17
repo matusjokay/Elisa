@@ -34,6 +34,9 @@ class VersionSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         name = str(validated_data['name']).lower()
+        period_id = None
+        if validated_data['period']:
+            period_id = validated_data['period'].id
 
         # TODO: For now there can be multiple schemas that are work in progress
 
@@ -43,7 +46,8 @@ class VersionSerializer(serializers.ModelSerializer):
 
         version = Version(
             schema_name=name,
-            name=validated_data['name']
+            name=validated_data['name'],
+            period_id=period_id
         )
 
         # TODO : move to creating timetables or remove
@@ -54,7 +58,7 @@ class VersionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Version
-        fields = ('id', 'name', 'status', 'parent_schema')
+        fields = ('id', 'name', 'status', 'parent_schema', 'period')
 
 
 class UserSerializer(UserMixin, serializers.ModelSerializer):
@@ -68,6 +72,8 @@ class UserSerializer(UserMixin, serializers.ModelSerializer):
             'id',
             'username',
             'fullname',
+            'title_before',
+            'title_after',
             'first_name',
             'last_name',
             'groups')

@@ -1,0 +1,44 @@
+<mat-card class="selection-wrapper">
+    <mat-card-header>
+        <label>Select Version type import</label>
+        <mat-radio-group 
+            fxLayout="column" fxLayoutAlign="space-evenly center"
+            [(ngModel)]="customVersion">
+            <mat-radio-button [value]="false">Period based Version</mat-radio-button>
+            <mat-radio-button [value]="true">Custom Version (TODO:)</mat-radio-button>
+        </mat-radio-group>
+    </mat-card-header>
+    <mat-card-content fxLayout="column" fxLayoutAlign="space-around center">
+    <div *ngIf="!customVersion; else customForm">
+        <mat-form-field>
+            <mat-label>Select period</mat-label>
+            <mat-select [(ngModel)]="selectedPeriod">
+                <mat-optgroup *ngFor="let periodGroup of academicPeriodsGrouped" [label]="periodGroup.year">
+                    <mat-option
+                        *ngFor="let period of periodGroup.periods | parsePeriods:importedPeriodIds"
+                        [value]="period">{{period.name}} <small *ngIf="period.active">Active</small></mat-option>
+                </mat-optgroup>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <ng-template #customForm>
+        <mat-form-field>
+            <mat-label>Add Custom Version: </mat-label>
+            <input matInput placeholder="Insert name of the Version" [value]="" [disabled]="true">
+        </mat-form-field>
+    </ng-template>
+    </mat-card-content>
+    <app-spinner [loadingText]="spinnerText" *ngIf="loading"></app-spinner>
+    <mat-card-actions>
+        <div class="button-wrapper" fxLayout="column" fxLayoutAlign="space-around center">
+            <!-- For now it will be disabled when customVersion variable is being set -->
+            <button mat-raised-button color="primary"
+                [disabled]="customVersion || !selectedPeriod || importing"
+                (click)="onImportVersion()">Import Version</button>
+            <button mat-raised-button color="primary"
+                [disabled]="importing"
+                (click)="onClose()">Close</button>
+        </div>
+        
+    </mat-card-actions>
+</mat-card>

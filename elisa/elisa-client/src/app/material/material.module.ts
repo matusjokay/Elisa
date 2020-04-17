@@ -23,6 +23,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTreeModule } from '@angular/material/tree';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {LayoutModule} from '@angular/cdk/layout';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -56,6 +58,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     MatSlideToggleModule,
     MatTabsModule,
     MatSortModule,
+    MatRadioModule,
+    MatTooltipModule,
     MatPaginatorModule
   ],
   exports: [
@@ -85,6 +89,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     MatSlideToggleModule,
     MatTabsModule,
     MatSortModule,
+    MatRadioModule,
+    MatTooltipModule,
     MatPaginatorModule,
   ],
   declarations: [

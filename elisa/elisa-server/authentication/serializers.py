@@ -3,9 +3,15 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import status
 from rest_framework.response import Response
+from . import backend
 from django.conf import settings
 from django.db import IntegrityError
 import secrets
+from ldap3.core.exceptions import (
+    LDAPInvalidCredentialsResult,
+    LDAPSocketOpenError
+)
+from rest_framework.exceptions import ValidationError
 
 
 class LoginSerializer(TokenObtainPairSerializer):

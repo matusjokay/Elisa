@@ -1,3 +1,4 @@
+import { RoleAuth } from 'src/app/models/role.model';
 export interface NavItem {
   displayName: string;
   iconName?: string;

@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {Account} from '../../models/account.model';
 import {environment} from '../../../environments/environment';
-import {catchError, map, share, tap} from 'rxjs/operators';
-import {BehaviorSubject, Observable, throwError, of} from 'rxjs';
+import {catchError, map, tap} from 'rxjs/operators';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import { BaseService } from '../base-service.service';
 
 
@@ -35,10 +35,7 @@ export class AuthService {
   logout(): Observable<any> {
     const httpOptions = this.baseService.getAuthHeaderOnly();
     return this.http.get(environment.APIUrl + 'users/logout/', { headers: httpOptions }).pipe(
-      tap(res => {
-        console.log(`Result -> ${res} clearing storage`);
-        localStorage.clear();
-      })
+      tap(res => localStorage.clear())
     );
   }
 
@@ -56,13 +53,11 @@ export class AuthService {
       .post(environment.APIUrl + 'api/token/refresh/', { headers: httpOptions, withCredentials: true})
         .pipe(
           tap(result => {
-            console.log(result);
             this.baseService.setAccess(result['access']);
           }),
           map(succes => true),
           catchError((error: HttpErrorResponse) => {
             return of(false);
-            // return throwError(error);
         })
       );
   }

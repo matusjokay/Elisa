@@ -9,9 +9,12 @@ export class SpinnerComponent {
 
   @Input()
   public loadingText: string;
+  @Input()
+  public hidden: boolean;
   color = 'primary';
   mode = 'indeterminate';
-  diameter = 55;
+  @Input()
+  public diameter = 55;
 
   constructor() { }
 

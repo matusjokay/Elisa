@@ -56,7 +56,19 @@ export class RoleManager {
    }
   };
 
-  public static readonly ALL = [1, 2, 3, 4];
+  public static readonly ALL = [
+    RoleManager.MAIN_TIMETABLE_CREATOR,
+    RoleManager.LOCAL_TIMETABLE_CREATOR,
+    RoleManager.TEACHER,
+    RoleManager.STUDENT
+  ];
+
+  public static readonly ID_ALL = [
+    RoleManager.MAIN_TIMETABLE_CREATOR.id,
+    RoleManager.LOCAL_TIMETABLE_CREATOR.id,
+    RoleManager.TEACHER.id,
+    RoleManager.STUDENT.id
+  ];
 
   /** Function to create authorization object
    * from all of users provided roles.
@@ -64,7 +76,7 @@ export class RoleManager {
    * @returns A single RoleAuth object for specific
    * component/page
    */
-  public static setRolePrivileges(roles: number[]): RoleAuth {
+  public static getRolePrivileges(roles: number[]): RoleAuth {
     const authorization = {};
     const authorizations = [];
     roles.forEach(role => {

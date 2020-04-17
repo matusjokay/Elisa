@@ -6,6 +6,7 @@ import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Course} from '../models/course';
 import { IPage } from '../models/page.model';
 import { BaseService } from './base-service.service';
+import { CourseUser, CourseRole, CourseUserRole } from '../models/course-users.model';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +44,74 @@ export class CourseService {
         }
       ),
       share());
+  }
+
+  getUsersBySubject(courseId: number): Observable<CourseUser[]> {
+    const httpOptions = this.baseService.getSchemaHeader();
+    const params = new HttpParams().set('subject', courseId.toString());
+    return this.http.get<CourseUser[]>(`${environment.APIUrl}subject-users/get_users/`,
+      { headers: httpOptions, params: params });
+  }
+
+  getRolesOfUserOnCourse(courseId: number, userId: number): Observable<CourseUserRole[]> {
+    const httpOptions = this.baseService.getSchemaHeader();
+    const params = new HttpParams()
+      .set('subject', courseId.toString())
+      .set('user', userId.toString());
+    return this.http.get<CourseUserRole[]>(`${environment.APIUrl}subject-users/get_entries_user/`,
+      { headers: httpOptions, params: params });
+  }
+
+  getCourseRoles(): Observable<CourseRole[]> {
+    const httpOptions = this.baseService.getSchemaHeader();
+    return this.http.get<CourseRole[]>(`${environment.APIUrl}user-subject-roles/`,
+      { headers: httpOptions });
+  }
+
+  addCourseRole(userId: number, courseId: number, roleId: number): Observable<CourseUserRole> {
+    const httpOptions = this.baseService.getSchemaHeader();
+    return this.http.post<CourseUserRole>(`${environment.APIUrl}subject-users/`,
+      {
+        user_id: userId,
+        subject_id: courseId,
+        role_id: roleId
+      }, { headers : httpOptions }).pipe(
+        map(res => {
+          return { idRow: res['id'], roleId: res['role']['id'] };
+        })
+      );
+  }
+
+  addCourseUserRole(userId: number, courseId: number, roleId: number): Observable<CourseUser> {
+    const httpOptions = this.baseService.getSchemaHeader();
+    return this.http.post<CourseUser>(`${environment.APIUrl}subject-users/`,
+      {
+        user_id: userId,
+        subject_id: courseId,
+        role_id: roleId
+      }, { headers : httpOptions }).pipe(
+        map(res => {
+          return {
+            userId: res['user']['id'], userFullname: res['user']['fullname'],
+            roles: [{idRow: res['id'], roleId: res['role']['id']}], rolesAmount: 1
+          };
+        })
+      );
+  }
+
+  deleteCourseRoleEntry(rowId: number) {
+    const httpOptions = this.baseService.getSchemaHeader();
+    return this.http.delete(`${environment.APIUrl}subject-users/${rowId}/`,
+      { headers: httpOptions });
+  }
+
+  deleteUserFromCourse(userId: number, courseId: number) {
+    const httpOptions = this.baseService.getSchemaHeader();
+    const params = new HttpParams()
+      .set('subject', courseId.toString())
+      .set('user', userId.toString());
+    return this.http.delete(`${environment.APIUrl}subject-users/remove_entries/`,
+      { headers: httpOptions, params: params });
   }
 
   deleteCourse(courseId: number) {

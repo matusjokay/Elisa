@@ -1,3 +1,5 @@
+import { SemesterVersion } from 'src/app/models/semester-version.model';
+import { TimetableService } from './../../services/timetable.service';
 import { Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
 import {navItems} from './menu';
@@ -20,7 +22,8 @@ export class NavigationComponent implements OnInit {
   roleObjects: Role[];
   constructor(private router: Router,
               private authService: AuthService,
-              private baseService: BaseService
+              private baseService: BaseService,
+              private timetableService: TimetableService
   ) { }
 
   ngOnInit() {
@@ -30,6 +33,26 @@ export class NavigationComponent implements OnInit {
     // has an authorized view to see a menu item
     this.menu = this.menu.filter(this.hasRole(this.userRoles));
     this.roleObjects = RoleManager.getRoleObjects(this.userRoles);
+    this.versionValidate();
+  }
+
+  versionValidate() {
+    this.timetableService.getAllSchemas()
+      .subscribe(
+        (success: SemesterVersion[]) => {
+          if (success && success.length > 0 &&
+              localStorage.getItem('active_scheme')) {
+            const versionUsed = localStorage.getItem('active_scheme');
+            const isLegit = success.some(version => version.name === versionUsed);
+            if (!isLegit) {
+              localStorage.removeItem('active_scheme');
+              this.selectVersion();
+            }
+          } else {
+            this.selectVersion();
+          }
+        }
+      );
   }
 
   hasRole(userRoles) {
@@ -46,6 +69,11 @@ export class NavigationComponent implements OnInit {
       localStorage.setItem('locale', 'en');
     }
   }
+
+  selectVersion() {
+    this.router.navigateByUrl('/version-select');
+  }
+
   logout() {
     this.authService.logout().subscribe(
       (success) => {

@@ -1,0 +1,129 @@
+<div fxLayout="row" fxLayoutAlign="space-between center">
+    <span></span>
+    <h3>Manage Users for {{courseName}}</h3>
+    <button mat-mini-fab color="primary" (click)="onCloseDialog()">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+<div fxLayout="row" fxLayoutAlign="space-around center">
+    <div fxLayout="column">
+    <app-spinner 
+        [hidden]="loadingData ? false : true" 
+        [loadingText]="spinnerText"></app-spinner>
+    <div *ngIf="emptyUsers">
+        <mat-card class="empty-users">
+            <mat-card-content>
+            <h4>
+            There are no users assigned for {{courseName}}!<br>
+            Expand the panel on the right of the dialog to add users.
+            </h4>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <ng-container class="container-wrapper" *ngFor="let user of users">
+        <mat-expansion-panel (opened)="onOpened(user)"
+                            (closed)="user.isOpened = false"
+                            [disabled]="clickBtn"
+                            (click)="clickBtn = false">
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+            <p>{{user.userFullname}}<mat-icon *ngIf="courseTeacherId === user.userId">grade</mat-icon></p>
+            <button 
+                mat-icon-button
+                matTooltip="Remove User"
+                [disabled]="courseTeacherId === user.userId && users.length > 1"
+                (click)="removeUser(user, removingUserSpinner)"
+                color="warn">
+                <mat-icon>clear</mat-icon>
+            </button>
+            <app-spinner [hidden]="true" [diameter]="22" #removingUserSpinner></app-spinner>
+            </mat-panel-title>
+            <mat-panel-description>
+            <p *ngIf="user.isOpened; else openPls">Number of users roles is -> {{user.rolesAmount}}</p>
+            <ng-template #openPls>Click to adjust roles</ng-template>
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <mat-list>
+            <div *ngIf="user.roles">
+                <mat-list-item *ngFor="let role of user.roles | courseRolesShow:courseRoles">
+                {{ role.name }}
+                <button 
+                mat-icon-button
+                matTooltip="Remove User Role"
+                (click)="removeRoleEntry(user, role, removingUserRoleSpinner)"
+                [disabled]="courseTeacherId === user.userId &&
+                users.length > 1 &&
+                user.roles.length === 1"
+                color="warn">
+                <mat-icon>clear</mat-icon>
+                </button>
+                <app-spinner [hidden]="true" #removingUserRoleSpinner></app-spinner>
+                </mat-list-item>
+                <!-- <form #roleAddForm="ngForm" (ngSubmit)="onRoleAdd(roleAddForm)"> -->
+                <form #roleAddForm="ngForm">
+                <mat-form-field *ngIf="courseRoles">
+                    <mat-select name="roleSelect" [(ngModel)]="courseRole"
+                        (selectionChange)="onRoleAddChange($event, addRoleBtn)">
+                        <mat-option
+                         *ngFor="let courseRole of courseRoles | courseRolesAvailable:user.roles"
+                         [value]="courseRole">{{courseRole.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button #addRoleBtn
+                    mat-raised-button
+                    [disabled]="true"
+                    (click)="onRoleAdd(addRoleBtn, roleAddForm, user, addingUserRoleSpinner)"
+                    style="margin:2%;" color="primary">Add Role</button>
+                <app-spinner [hidden]="true" #addingUserRoleSpinner></app-spinner>
+                </form>
+            </div>
+        </mat-list>
+        </mat-expansion-panel>
+    </ng-container>
+    </div>
+    <div fxLayout="column">
+        <mat-expansion-panel class="container-wrapper"
+        (opened)="onOpenedAdding()"
+        (closed)="false">
+        <mat-expansion-panel-header>
+        <mat-panel-title>
+        <p>Expand to add user</p>
+        </mat-panel-title>
+        <mat-panel-description>
+        <!-- <p *ngIf="user.isOpened; else openPls">Number of users roles is -> {{user.rolesAmount}}</p>
+        <ng-template #openPls>Click to adjust roles</ng-template> -->
+        </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div *ngIf="usersForAdding; else showSpinner">
+            <form #userAddForm="ngForm">
+            <app-user-search #searcher
+            [users]="usersForAdding"
+            (selectedUser)="onSelectedUser($event)"
+            (selected)="onSelected($event)"
+            style="width: 50%;"></app-user-search>
+                <mat-form-field *ngIf="courseRoles">
+                    <mat-select 
+                        name="roleSelectForAdd"
+                        [(ngModel)]="courseRole"
+                        [disabled]="isSelectedUser ? false : true"
+                        (selectionChange)="onUserAddChange($event)">
+                        <mat-option
+                            *ngFor="let courseRole of courseRoles"
+                            [value]="courseRole">{{courseRole.name}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button #addUserBtn
+                    mat-raised-button
+                    [disabled]="isSelectedUser && isSelectedRole ? false : true"
+                    (click)="onUserAdd(searcher, userAddForm, addingUserRoleSpinner)"
+                    style="margin:2%;" color="primary">Add User for Course</button>
+                <app-spinner [hidden]="true" #addingUserRoleSpinner></app-spinner>
+            </form>
+        </div>
+        <ng-template #showSpinner>
+            <app-spinner *ngIf="loadingAdding" [loadingText]="'Fetching users for search...'"></app-spinner>
+        </ng-template>
+        </mat-expansion-panel>
+    </div>
+</div>
+        

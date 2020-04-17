@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.db.utils import IntegrityError
 from django_fsm import TransitionNotAllowed
 from django_tenants.utils import get_tenant_model
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action, list_route
 from rest_framework.permissions import (
@@ -23,7 +24,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import (
     PageNumberPagination
 )
-
+from io import StringIO
 from .models import AppUser, Version, Period
 from .serializers import (
     VersionSerializer,
@@ -40,6 +41,7 @@ from authentication.permissions import (
     IsTeacher
 )
 from school.models import ActivityCategory, SubjectUser
+from authentication.views import LoginView
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -172,6 +174,21 @@ class VersionViewSet(viewsets.ModelViewSet):
             return Response("OK", status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=False, methods=['post'])
+    def create_and_import(self, request):
+        response = self.create(request)
+        version_name = request.data.pop('name', None)
+        out = StringIO()
+        call_command('import', 'fei-data-new', version_name, stdout=out)
+        result_command = out.getvalue()
+        if "IMPORT DONE" in result_command:
+            return Response("OK", status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                "FAILED",
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
     @action(detail=True, methods=['post'])
     def publish(self, request, pk=None):
         """
@@ -293,7 +310,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def set_main_timetable_maker(self, request, pk=None):
         user = self.get_object()
         try:
-            group = Group.objects.get(name='main_timetable_maker')
+            group = Group.objects.get(name='MAIN_TIMETABLE_CREATOR')
             if user is not None:
                 user.groups.add(group)
                 user.save()
@@ -302,6 +319,60 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response("error", status=status.HTTP_400_BAD_REQUEST)
 
         return Response("error2 ", status=status.HTTP_400_BAD_REQUEST)
+
+    """
+    After (ONLY) logging in this method will check
+    whether user has some roles or if even is
+    a superuser to begin with. If user has some roles
+    already it will just return an 'empty' response.
+    Otherwise it will set default roles accordingly:
+    First logged user ever => will be set as the admin
+    First time logged user when admin is present =>
+    default role of STUDENT will be set.
+    During this process a new JWT token pair 
+    will be generated.
+    """
+    @action(
+        detail=True,
+        methods=['put'],
+        permission_classes=[IsAuthenticated])
+    def set_user_init_roles(self, request, pk=None):
+        user = self.get_object()
+        has_groups = list(user.groups.all())
+        if len(has_groups) > 0:
+            return Response(
+                "OK",
+                status=status.HTTP_200_OK
+            )
+        try:
+            main_group = Group.objects.get(name='MAIN_TIMETABLE_CREATOR')
+            main_group_users = list(main_group.user_set.all())
+            has_superuser = list(AppUser.objects.filter(is_superuser=True))
+            default = False
+            if len(main_group_users) > 0 or len(has_superuser) > 0:
+                default_group = Group.objects.get(
+                    name='STUDENT'
+                )
+                user.groups.add(default_group)
+                user.save()
+                default = True
+            else:
+                all_groups = Group.objects.all()
+                for group in all_groups:
+                    user.groups.add(group)
+                user.is_superuser = True
+                user.save()
+            login_view_response = LoginView.post(
+                self,
+                request=request
+                )
+            login_view_response.data['default'] = True if default is True else False
+            return login_view_response
+        except IntegrityError:
+            return Response(
+                "Failed to set init roles!",
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     @action(detail=True, methods=['get'])
     def get_user_roles(self, request, pk=None):
@@ -322,6 +393,9 @@ class UserViewSet(viewsets.ModelViewSet):
     def logout(self, request):
         current_user = request.user
         if current_user.access_id is not None:
+            refresh = RefreshToken(current_user.access_id)
+            # invalidate token
+            refresh.blacklist()
             current_user.access_id = None
             current_user.save()
             request.COOKIES.pop('XSRF-TOKEN', None)

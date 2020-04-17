@@ -5,6 +5,10 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from rest_framework.response import Response
 from rest_framework.request import Request
 from django_python3_ldap.auth import LDAPBackend
+from ldap3.core.exceptions import (
+    LDAPSocketOpenError,
+    LDAPInvalidCredentialsResult
+)
 from rest_framework import status
 from fei.models import AppUser
 from . import serializers, backend
@@ -12,6 +16,7 @@ from django.db import IntegrityError
 from django.conf import settings
 import jwt
 import datetime
+from rest_framework.exceptions import ValidationError
 
 
 class LoginView(TokenViewBase):
@@ -25,12 +30,12 @@ class LoginView(TokenViewBase):
 
     def post(self, request, *args, **kwargs):
         serializer = serializers.LoginSerializer(data=request.data)
-
-        if serializer.is_valid():
+        try:
+            serializer.is_valid(raise_exception=True)
             user = AppUser.objects.get(username=request.data['username'])
             session_id = user.access_id
             expiration = (datetime.datetime.now() +
-                          settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'])
+                        settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'])
 
             response = Response(
                 data=serializer.validated_data,
@@ -42,6 +47,11 @@ class LoginView(TokenViewBase):
                 expires=expiration,
                 httponly=True)
             return response
+        except ValidationError:
+            return Response(
+                "Invalid credentials OR The server is unable to login through LDAP",
+                status=status.HTTP_401_UNAUTHORIZED
+            )
 
 
 token_obtain_pair = LoginView.as_view()

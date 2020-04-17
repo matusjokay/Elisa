@@ -33,13 +33,14 @@ SHARED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles'
 ]
 
 # apps neeeded in application that not contains models
 ELISA_APPS = [
     'django_filters',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
     'django_extensions',
     'django_python3_ldap',
@@ -183,6 +184,10 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = default_headers + (
     'cache-control',
     'Timetable-Version')
+
+CSRF_COOKIE_HTTPONLY = True
+CSRF_HEADER_NAME = 'Authorization'
+CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 
 ROOT_URLCONF = 'elisa.urls'
 

@@ -54,8 +54,14 @@ export class UserService {
     return this.http.get<User[]>(environment.APIUrl + 'users/list_for_role/', { headers: httpOptions });
   }
 
+  fetchUser(userId: number): Observable<User> {
+    const httpOptions = this.baseService.getAuthHeaderOnly();
+    return this.http.get<User>(`${environment.APIUrl}users/${userId}/`,
+      { headers: httpOptions });
+  }
+
   deleteUser(user: User) {
-    return this.http.delete(environment.APIUrl + 'users/' + user.id + '/').
+    return this.http.delete(`${environment.APIUrl}users/${user.id}/`).
     pipe(
       map((response: any) => {
           return response;

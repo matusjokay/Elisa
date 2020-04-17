@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { UserData } from '../models/user-data';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { Role } from '../models/role.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +10,9 @@ export class BaseService {
 
   private _access: string;
   private _userData: UserData;
+  public redirectUrl: string;
 
-  constructor(private http: HttpClient) { }
+  constructor() { }
 
   public setAccess(access: string) {
     this._access = access;

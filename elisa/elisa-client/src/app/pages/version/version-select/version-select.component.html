@@ -1,10 +1,9 @@
+<button class="logout-btn" mat-raised-button color="warn" (click)="logout()">Logout</button>
 <div class="select-content" fxLayout="column" fxLayoutAlign="space-around center">
   <mat-card class="semester-select-card">
     <mat-card-header>
       <mat-icon mat-card-avatar>assignment</mat-icon>
-      <!-- <mat-card-title>User User</mat-card-title> -->
       <mat-card-title>{{userName}}</mat-card-title>
-      <!-- <mat-card-subtitle>Dog Breed</mat-card-subtitle> -->
     </mat-card-header>
     <mat-card-content>
       <h3>
@@ -12,8 +11,22 @@
       </h3>
     </mat-card-content>
     <mat-card-content>
+      <div *ngIf="empty">
+          <mat-card class="empty-versions">
+            <mat-card-content>
+              <h4>
+                There are no imported schemas!<br>
+                Please click the import button to import data to scheme.
+              </h4>
+            </mat-card-content>
+          </mat-card>
+      </div>
       <mat-form-field>
-        <mat-select [formControl]="selectedVersionControl" required>
+        <mat-select 
+          [formControl]="selectedVersionControl"
+          [disabled]="empty"
+          (selectionChange)="onSelectionChanged($event)"
+          required>
           <mat-option *ngFor="let semester of versionsMap" [value]="semester">
             {{semester.name}}
           </mat-option>
@@ -21,9 +34,18 @@
         <mat-error *ngIf="selectedVersionControl.hasError('required')">Version must be selected!</mat-error>
         <mat-hint>Pick a version from the dropdown</mat-hint>
       </mat-form-field>
+      <button mat-raised-button 
+        color="warn"
+        style="margin-left: 5%"
+        [disabled]="!selected"
+        (click)="onDeleteVersion()">Delete Version</button>
     </mat-card-content>
+    <app-spinner *ngIf="loading" [loadingText]="spinnerText"></app-spinner>
     <mat-card-actions>
-      <button mat-raised-button color="primary" (click)="onProceed()">Proceed</button>
+      <div fxLayout="row" fxLayoutAlign="space-evenly center">
+        <button mat-raised-button color="primary" [disabled]="!authorization.creating" (click)="onImport()">Import</button>
+        <button mat-raised-button color="primary" [disabled]="!selected" (click)="onProceed()">Proceed</button>
+      </div>
     </mat-card-actions>
   </mat-card>
 </div>

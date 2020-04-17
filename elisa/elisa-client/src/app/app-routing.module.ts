@@ -23,19 +23,14 @@ import { RoleManager } from './models/role.model';
 
 const routes: Routes = [
   {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: '/dashboard',
-    canActivate: [AuthGuardService],
-    data: {roles: RoleManager.ALL}
-  },
-  {
     path: 'login',
     component: LoginFormComponent
   },
   {
     path: 'version-select',
-    component: VersionSelectComponent
+    component: VersionSelectComponent,
+    canActivate: [AuthGuardService],
+    data: {roles: RoleManager.ALL},
   },
   {
     path: '',
@@ -49,61 +44,91 @@ const routes: Routes = [
       },
       { path: 'dashboard',
         component: DashboardComponent,
-        canActivate: [AuthGuardService],
-        // IT FIRST GOES THROUGH THE PARENT AND THEN CHECKS
-        // THE CHILDREN WHICH COULD HAVE DIFFERENT ROLE ACCESS
-        // AUTH GUARD IS THEREFORE CALLED TWICE
-        data: {roles: RoleManager.ALL}
+        // canActivate: [AuthGuardService],
+        // data: {roles: RoleManager.ALL}
       },
       { path: 'timetable',
         component: HomeComponent,
         canActivate: [AuthGuardService],
-        data: {roles: [1]}
+        data: {roles: [
+          RoleManager.MAIN_TIMETABLE_CREATOR,
+          RoleManager.LOCAL_TIMETABLE_CREATOR,
+        ]}
       },
       { path: 'new-timetable',
         component: TimetableNewComponent,
         canActivate: [AuthGuardService],
-        data: {roles: [3]}
+        data: {roles: [
+          RoleManager.MAIN_TIMETABLE_CREATOR,
+          RoleManager.LOCAL_TIMETABLE_CREATOR,
+        ]}
       },
       { path: 'update-timetable',
         component: TimetableUpdateWrapperComponent,
         canActivate: [AuthGuardService],
-        data: {roles: [2]}
+        data: {roles: [
+          RoleManager.MAIN_TIMETABLE_CREATOR,
+          RoleManager.LOCAL_TIMETABLE_CREATOR,
+        ]}
       },
       { path: 'user-manager',
         component: UserManagerComponent,
         canActivate: [AuthGuardService],
-        data: {roles: [1]}
+        data: {roles: RoleManager.ALL}
       },
       { path: 'requirement-form',
         component: RequirementFormComponent,
         canActivate: [AuthGuardService],
-        data: {roles: [1]}
+        data: {roles: [
+          RoleManager.MAIN_TIMETABLE_CREATOR,
+          RoleManager.LOCAL_TIMETABLE_CREATOR,
+          RoleManager.TEACHER
+        ]}
       },
       { path: 'course-list',
         component: CourseListComponent,
         canActivate: [AuthGuardService],
-        data: {roles: [2]}
+        data: {roles: [
+          RoleManager.MAIN_TIMETABLE_CREATOR,
+          RoleManager.LOCAL_TIMETABLE_CREATOR,
+          RoleManager.TEACHER
+        ]}
       },
       { path: 'group-list',
         component: GroupListComponent,
         canActivate: [AuthGuardService],
-        data: {roles: [2]}
+        data: {roles: [
+          RoleManager.MAIN_TIMETABLE_CREATOR,
+          RoleManager.LOCAL_TIMETABLE_CREATOR,
+          RoleManager.TEACHER
+        ]}
       },
       { path: 'user-list',
         component: UserListComponent,
         canActivate: [AuthGuardService],
-        data: {roles: [2]}
+        data: {roles: [
+          RoleManager.MAIN_TIMETABLE_CREATOR,
+          RoleManager.LOCAL_TIMETABLE_CREATOR,
+          RoleManager.TEACHER
+        ]}
       },
       { path: 'department-list',
         component: DepartmentListComponent,
         canActivate: [AuthGuardService],
-        data: {roles: [2]}
+        data: {roles: [
+          RoleManager.MAIN_TIMETABLE_CREATOR,
+          RoleManager.LOCAL_TIMETABLE_CREATOR,
+          RoleManager.TEACHER
+        ]}
       },
       { path: 'room-list',
         component: RoomsListComponent,
         canActivate: [AuthGuardService],
-        data: {roles: [2]}
+        data: {roles: [
+          RoleManager.MAIN_TIMETABLE_CREATOR,
+          RoleManager.LOCAL_TIMETABLE_CREATOR,
+          RoleManager.TEACHER
+        ]}
       },
     ]
   },

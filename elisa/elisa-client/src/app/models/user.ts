@@ -5,4 +5,5 @@ export class User {
   public last_name?: string;
   public title_before?: string;
   public title_after?: string;
+  public fullname?: string;
 }

@@ -1,10 +1,9 @@
+import { BaseService } from 'src/app/services/base-service.service';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { startWith, map } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { User } from 'src/app/models/user';
 import { UserService } from 'src/app/services/user.service';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { RoleAuth, RoleManager } from 'src/app/models/role.model';
 
 @Component({
   selector: 'app-user-manager',
@@ -13,85 +12,40 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 })
 export class UserManagerComponent implements OnInit {
 
-  searchForm: FormGroup;
-  options = [
-    { id: '1', name: 'Jano' },
-    { id: '2', name: 'Fero' },
-    { id: '3', name: 'Miso' }
-  ];
   users: User[];
   selectedUser: User;
   selected = false;
   manage = false;
+  loading: boolean;
+  authorization: RoleAuth;
 
-  filteredOptions: Observable<any>;
-
-  constructor(private fb: FormBuilder,
-    private userService: UserService) { }
+  constructor(private userService: UserService,
+    private baseService: BaseService) { }
 
   ngOnInit() {
-    this.searchForm = this.fb.group({
-      id: ['', [Validators.required]],
-      name: ['', [Validators.required]]
-    });
-
+    this.authorization = RoleManager.getRolePrivileges(this.baseService.getUserRoles());
     this.fetchAllUsers();
-
-    this.filteredOptions = this.searchForm.get('name').valueChanges
-      .pipe(
-        startWith(''),
-        map(value => value && value.length >= 2 ? this._filter(value).splice(0, 50) : [])
-      );
   }
 
   fetchAllUsers() {
-    this.userService.getCachedAllUsers().subscribe(
+    this.loading = true;
+    this.userService.getCachedAllUsers()
+      .pipe(tap(() => this.loading = false))
+      .subscribe(
       (result) => this.users = result,
       (error) => console.error('failed to fetch users')
     );
   }
 
-  displayFn(user: User): string {
-    const titleBefore = user.title_before ? user.title_before : '';
-    const titleAfter = user.title_after ? ` ${user.title_after}` : '';
-    const fullName = `${titleBefore}${user.first_name} ${user.last_name}${titleAfter}`;
-    return user ? fullName : '';
-  }
-
-  /**
-   * Filters based on first and last name
-   * without being case sensitive
-   * @param value provided string in the input box
-   */
-  private _filter(value: string) {
-    value = value.toLowerCase();
-    return this.users.filter(user => {
-      const combinedFirst = `${user.first_name.toLowerCase()} ${user.last_name.toLowerCase()}`;
-      const combinedSecond = `${user.last_name.toLowerCase()} ${user.first_name.toLowerCase()}`;
-      if (user.first_name.toLowerCase().includes(value)
-      || user.last_name.toLowerCase().includes(value)
-      || combinedFirst.includes(value)
-      || combinedSecond.includes(value)) {
-        return true;
-      }
-    });
-  }
-
-  // TODO: on enter key press call manage
-  onEnter(event: string) {
-    console.log('TODO: pressing enter and selecting');
-    console.log(event);
-  }
-
-  onClear() {
-    this.searchForm.get('name').setValue('');
-    this.selected = false;
-  }
-
-  onSelectionChanged(event: MatAutocompleteSelectedEvent) {
-    this.selectedUser = event.option.value;
-    this.selected = true;
+  onSelectedUser(user: User) {
+    console.log('received user');
+    console.log(user);
+    this.selectedUser = user;
     this.manage = false;
+  }
+
+  onSelected(selected: boolean) {
+    this.selected = selected;
   }
 
   onManageClick() {

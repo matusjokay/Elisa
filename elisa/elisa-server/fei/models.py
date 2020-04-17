@@ -121,6 +121,11 @@ class Version(TenantMixin):
         default=NEW,
         protected=True)
     auto_drop_schema = models.BooleanField(default=True)
+    period = models.ForeignKey(
+        Period,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True)
 
     @transition(field=status, source=NEW, target=WORK_IN_PROGRESS)
     def start_work(self):

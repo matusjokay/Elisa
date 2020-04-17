@@ -131,3 +131,4 @@ class Command(BaseCommand):
             resource.import_data(dataset, raise_errors=True, use_transactions=True)
         end_time = time.time() - start_time
         self.stdout.write(f"Done Importing data and it took {end_time} seconds!")
+        self.stdout.write("IMPORT DONE")

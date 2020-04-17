@@ -13,11 +13,13 @@ export class SnackbarComponent {
     failure: 'red-snackbar'
   };
 
+  private duration = 3500;
+
   constructor(public snackBar: MatSnackBar) { }
 
-  openSnackBar(message: string, action: string, className: string) {
+  openSnackBar(message: string, action: string, className: string, infinite?: boolean) {
     this.snackBar.open(message, action, {
-      duration: 3500,
+      duration: infinite ? undefined : this.duration,
       verticalPosition: 'bottom',
       horizontalPosition: 'right',
       panelClass: [className]

@@ -1,3 +1,4 @@
+import { CourseTeacherComponent } from './../course-teacher/course-teacher.component';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -6,15 +7,14 @@ import { MatTableDataSource } from '@angular/material/table';
 import {Course} from '../../../models/course';
 import {CourseService} from '../../../services/course.service';
 import {TimetableService} from '../../../services/timetable.service';
-import {zip} from 'rxjs';
 import {DepartmentService} from '../../../services/department.service';
-import {UserDetailsComponent} from '../../users/user-details/user-details.component';
 import {CourseDetailsComponent} from '../course-details/course-details.component';
 import { catchError } from 'rxjs/operators';
 import { Department } from 'src/app/models/department';
 import { SnackbarComponent } from 'src/app/common/snackbar/snackbar.component';
 import { Period } from 'src/app/models/period.model';
 import { BaseService } from 'src/app/services/base-service.service';
+import { PeriodService } from './../../../services/period.service';
 
 @Component({
   selector: 'app-course-list',
@@ -42,8 +42,7 @@ export class CourseListComponent implements OnInit {
   constructor(
     private courseService: CourseService,
     private departmentService: DepartmentService,
-    private timetableService: TimetableService,
-    private baseService: BaseService,
+    private periodService: PeriodService,
     public dialog: MatDialog,
     private snackBar: SnackbarComponent
   ) { }
@@ -56,7 +55,7 @@ export class CourseListComponent implements OnInit {
   }
 
   getSchemeData() {
-    this.timetableService.getCurrentSelectedPeriods().subscribe(
+    this.periodService.getCurrentSelectedPeriods().subscribe(
       (response) => {
         this.periods = response;
         this.loading = true;
@@ -83,30 +82,6 @@ export class CourseListComponent implements OnInit {
     console.log('page event emitter called');
     console.log(event);
   }
-
-  // getSchemeData(){
-  //   zip(
-  //     this.courseService.getAll(),
-  //     // this.departmentService.getAllMap(),
-  //   ).subscribe(([coursesData,departmentsData]) =>{
-  //     this.courses = coursesData;
-  //     // this.departments = departmentsData;
-
-  //     this.courses.forEach(course =>{
-  //       let index = course.department;
-  //       course.departmentObject = this.departments[index];
-  //     });
-  //     this.dataSource = new MatTableDataSource(this.courses);
-  //     this.dataSource.sortingDataAccessor = (item, property) => {
-  //       switch(property) {
-  //         case 'department.name': return item.departmentObject.name;
-  //         default: return item[property];
-  //       }
-  //     };
-  //     this.dataSource.sort = this.sort;
-  //     this.dataSource.paginator = this.paginator;
-  //   });
-  // }
 
   getCourseData(pageNum: number, pageSize: number) {
     this.lastPageIndex = pageNum;
@@ -176,6 +151,22 @@ export class CourseListComponent implements OnInit {
   handlerTeachersButton(row) {
     console.log('addding teachers');
     console.log(row);
+    const dialogRef = this.dialog.open(CourseTeacherComponent, {
+      width: '75vw',
+      data: { course: row }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      // if (result) {
+      //   if (result === 'updated') {
+      //     this.snackBar.openSnackBar('Course successfully updated!', 'Close', this.snackBar.styles.success);
+      //     this.loadingAction();
+      //     this.getCourseData(this.lastPageIndex, this.lastPageSize);
+      //   } else if (result === 'failed') {
+      //     this.snackBar.openSnackBar('Failed to update course!', 'Close', this.snackBar.styles.failure);
+      //   }
+      // }
+      console.log(result);
+    });
   }
 
   loadingAction() {

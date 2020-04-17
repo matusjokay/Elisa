@@ -7,7 +7,7 @@ export const navItems: NavItem[] = [
     iconName: 'home',
     route: ['/dashboard'],
     i18n: '@@dashboard',
-    forRoles: RoleManager.ALL
+    forRoles: RoleManager.ID_ALL
   },
   {
     displayName: 'Timetable',
@@ -45,7 +45,7 @@ export const navItems: NavItem[] = [
     iconName: 'note_add',
     route: ['/requirement-form'],
     i18n: '@@Requirement',
-    forRoles: RoleManager.ALL
+    forRoles: RoleManager.ID_ALL
   },
   {
     displayName: 'User Manager',
