@@ -4,7 +4,6 @@ import {environment} from '../../environments/environment';
 import {map, share, distinctUntilChanged, shareReplay} from 'rxjs/operators';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { BaseService } from './base-service.service';
-import { Period } from '../models/period.model';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -162,18 +161,20 @@ export class TimetableService {
     return this.cacheVersionList$;
   }
 
-  createVersion(body){
-    let headers: HttpHeaders = new HttpHeaders();
-    headers = headers.append('Timetable-Version', localStorage.getItem('active_scheme'));
-    let options = ({ headers: headers });
-    return this.http.post(environment.APIUrl + 'timetables/',
-      body,
-      options).
-    pipe(
-      map((response: any) =>{
-          return response;
-        }
-      ));
+  getPublicSchema(): Observable<SemesterVersion> {
+    const httpOptions = this.baseService.getAuthHeaderOnly();
+    return this.http.get<SemesterVersion>(`${environment.APIUrl}versions/get_public/`,
+      { headers: httpOptions });
+  }
+
+  createVersion(versionName: string, periodId: number): Observable<number> {
+    const httpOptions = this.baseService.getAuthHeaderOnly();
+    return this.http.post<number>(environment.APIUrl + 'versions/',
+      {
+        name: versionName,
+        period: periodId
+      },
+      { headers : httpOptions });
   }
 
   finalizeVersion(version) {
@@ -197,6 +198,18 @@ export class TimetableService {
     return this.http.post(`${environment.APIUrl}versions/create_and_import/`,
       { name: versionName, period: periodId },
       { headers: httpOptions });
+  }
+
+  importByPeriods(versionName: string, periodIds: number[]): Observable<any> {
+    let httpOptions = this.baseService.getAuthHeaderOnly();
+    httpOptions = httpOptions.append('Timetable-Version', versionName);
+    return this.http.post(`${environment.APIUrl}import/for-version/`,
+      {periods: periodIds }, { headers: httpOptions });
+  }
+
+  importInitData() {
+    const httpOptions = this.baseService.getAuthHeaderOnly();
+    return this.http.post(`${environment.APIUrl}import/init/`, null, { headers: httpOptions });
   }
 
   removeVersion(versionId: number): Observable<any> {

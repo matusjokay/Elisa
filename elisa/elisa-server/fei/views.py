@@ -42,6 +42,7 @@ from authentication.permissions import (
 )
 from school.models import ActivityCategory, SubjectUser
 from authentication.views import LoginView
+import datetime
 
 
 class StandardResultsSetPagination(PageNumberPagination):
@@ -171,7 +172,7 @@ class VersionViewSet(viewsets.ModelViewSet):
                     print("Removing %s." % tmpfile)
                     os.remove(tmpfile)
 
-            return Response("OK", status=status.HTTP_201_CREATED)
+            return Response(serializer.data['id'], status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['post'])
@@ -220,6 +221,19 @@ class VersionViewSet(viewsets.ModelViewSet):
             return Response("Transition is not allowed.", status=400)
 
         return Response(status=200)
+
+    @action(detail=False, methods=['get'])
+    def get_public(self, request):
+        try:
+            version = Version.objects.get(schema_name='public')
+            serializer = VersionSerializer(version)
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK)
+        except Version.DoesNotExist:
+            return Response(
+                'Version not found',
+                status=status.HTTP_404_NOT_FOUND)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -393,13 +407,14 @@ class UserViewSet(viewsets.ModelViewSet):
     def logout(self, request):
         current_user = request.user
         if current_user.access_id is not None:
-            refresh = RefreshToken(current_user.access_id)
+            # refresh = RefreshToken(current_user.access_id)
             # invalidate token
-            refresh.blacklist()
+            # refresh.blacklist()
             current_user.access_id = None
             current_user.save()
-            request.COOKIES.pop('XSRF-TOKEN', None)
-            return Response("OK", status=status.HTTP_200_OK)
+            response = Response("OK", status=status.HTTP_200_OK)
+            response.delete_cookie('XSRF-TOKEN')
+            return response
         else:
             return Response(
                 "Already logged out!",

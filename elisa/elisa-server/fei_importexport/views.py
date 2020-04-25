@@ -1,31 +1,34 @@
-from django.db import transaction
+from django.db import IntegrityError, transaction, connection
 from django.db.utils import ConnectionDoesNotExist, DatabaseError, DataError
+from django.utils import timezone
+from django_tenants.utils import schema_context, get_tenant_model
+from django.db.models import Q
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import status
 
 from . import models
 from authentication.permissions import IsMainTimetableCreator
 import school.models as school
-from fei.models import AppUser
+from fei.models import (
+    AppUser,
+    Department,
+    Version,
+    Period,
+    UserDepartment
+)
+import time
+from datetime import datetime
 
 DATABASE_NAME = 'import'
 
-
-def get_or_create3(model, obj_id, **kwargs):
-    try:
-        new_model = model.objects.get(id=obj_id)
-    except model.DoesNotExist:
-        new_model = model.objects.create(**kwargs)
-    return new_model
+def update_or_create(model, instance_id, default=None, **kwargs):
+    return model.objects.update_or_create(id=instance_id, defaults=default)
 
 
-def get_or_create(model, **kwargs):
-    try:
-        new_model = model.objects.get(**kwargs)
-    except model.DoesNotExist:
-        new_model = model.objects.create(**kwargs)
-    return new_model
+def create(model, **kwargs):
+    return model.objects.create(**kwargs)
 
 
 def import_resource(import_method):
@@ -33,11 +36,11 @@ def import_resource(import_method):
         import_method()
     except ConnectionDoesNotExist:
         print('No database with name %s.' % DATABASE_NAME)
-        return Response(status=500)
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     except DatabaseError as e:
         print('Database error occured: %s.' % e)
-        return Response(status=500)
-    return Response(status=200)
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(status=status.HTTP_200_OK)
 
 
 class GroupImportView(APIView):
@@ -48,23 +51,35 @@ class GroupImportView(APIView):
     permission_classes = (IsMainTimetableCreator, )
 
     def import_groups(self):
+        print('Inserting rows for Groups')
         groups = models.FeiGroups.objects.using(DATABASE_NAME).all()
 
         for group in groups:
             try:
-                kwargs = {"id": group.id}
-                new_group = get_or_create(school.Group, **kwargs)
-
-                if group.nadriadena_skupina is not None:
-                    kwargs = {"id": group.nadriadena_skupina}
-                    new_group.parent = get_or_create(school.Group, **kwargs)
-
-                new_group.name = group.nazov
-                new_group.abbr = group.skratka
-                new_group.save()
+                defaults = {}
+                if not group.nadriadena_skupina:
+                    defaults = {
+                        "name": group.nazov,
+                        "abbr": group.skratka,
+                        "parent": None
+                    }
+                else:
+                    parent, created = update_or_create(
+                        model=school.Group,
+                        instance_id=group.nadriadena_skupina)
+                    defaults = {
+                        "name": group.nazov,
+                        "abbr": group.skratka,
+                        "parent": parent
+                    }
+                obj, created = update_or_create(
+                    model=school.Group,
+                    instance_id=group.id,
+                    default=defaults
+                )
             except (DatabaseError, DataError) as e:
                 print('Error {%s} occured for group %s.' % (e, group.id))
-                pass
+        print('Inserted')
 
     @transaction.atomic
     def post(self, request):
@@ -79,27 +94,149 @@ class DepartmentImportView(APIView):
     permission_classes = (IsMainTimetableCreator, )
 
     def import_departments(self):
+        print('Inserting rows for Department')
         departments = models.FeiDepartments.objects.using(DATABASE_NAME).all()
 
         for department in departments:
             try:
-                kwargs = {"id": department.id}
-                new_department = get_or_create(school.Department, **kwargs)
-
-                if department.nadriadene_prac:
-                    kwargs = {"id": int(department.nadriadene_prac)}
-                    new_department.parent = get_or_create(school.Department, **kwargs)
-
-                new_department.name = department.nazov
-                new_department.abbr = department.skratka
-                new_department.save()
+                nadriadene_prac = None if not department.nadriadene_prac else int(department.nadriadene_prac)
+                defaults = {
+                    "name": department.nazov,
+                    "abbr": department.skratka,
+                    "parent": nadriadene_prac
+                    }
+                obj, created = update_or_create(
+                    model=Department,
+                    instance_id=department.id,
+                    default=defaults)
             except (DatabaseError, DataError) as e:
-                print('Error {%s} occured for department %s.' % (e, department.id))
-                pass
+                print(f'Error {e} occured for department {department.name} ID -> {department.id}.')
+        print('Inserted')
+        self.import_users_departments()
+
+    def import_users_departments(self):
+        print('Inserting rows for UsersDepartment')
+        rows = models.FeiUsersDepartments.objects.using(DATABASE_NAME).all()
+
+        for row in rows:
+            try:
+                kwargs = {
+                    "employment": row.typ_pracovneho_pomeru,
+                    "department_id": row.pracovisko,
+                    "user_id": row.ais_id
+                    }
+
+                obj = create(UserDepartment, **kwargs)
+            except IntegrityError as e:
+                print(f'Error {e} occured for row AISID {row.ais_id} department {row.pracovisko}.')
+        print('Inserted')
 
     @transaction.atomic
     def post(self, request):
         return import_resource(self.import_departments)
+
+
+class PeriodImportView(APIView):
+    """
+        API endpoint for import of Periods from AIS
+    """
+
+    permission_classes = (IsMainTimetableCreator, )
+
+    def import_periods(self):
+        # periods = models.AISObdobia.objects.using(DATABASE_NAME).all()
+        # Only pracovisko 30 which is FEI faculty
+        # Due to courses data being only from FEI
+        print('Inserting rows for Period')
+        periods = models.AISObdobia.objects.using(DATABASE_NAME).filter(
+            pracovisko=30)
+
+        for period in periods:
+            try:
+                defaults = {
+                    "name": period.nazov_sk,
+                    "department_id": period.pracovisko,
+                    "active": period.aktivne,
+                    "start_date": period.zaciatok,
+                    "end_date": period.koniec,
+                    "next_period": period.nasledujuce,
+                    "previous_period": period.predchadzajuce,
+                    "academic_sequence": period.por_ar,
+                    "university_period": period.univ_obdobie
+                    }
+                obj, created = update_or_create(
+                    model=Period,
+                    instance_id=period.id,
+                    default=defaults)
+            except IntegrityError as e:
+                print(f'Error {e} occured for Period {period.nazov_sk} id {period.id}.')
+                pass
+        print('Inserted')
+
+    def post(self, request):
+        return import_resource(self.import_periods)
+
+
+class StudiesGroupsImportView(APIView):
+    """
+        API endpoint for import of FormOfStudy, StudyType
+        and Users_Groups from AIS
+    """
+    permission_classes = (IsMainTimetableCreator, )
+
+    studies = {
+        "prezencna": 1,
+        "distancna": 2
+    }
+    types = {
+        "denna": 1,
+        "externa": 2
+    }
+
+    def import_groups_users(self):
+        print('Inserting rows for UserGroups')
+        groups_users = models.FeiUsersGroups.objects.using(DATABASE_NAME).all()
+
+        for group_user in groups_users:
+            try:
+                kwargs = {
+                    "group_id": group_user.skupina,
+                    "user_id": group_user.ais_id,
+                    "group_number": None if not group_user.kruzok else int(group_user.kruzok),
+                    "form_of_study_id": self.types[group_user.forma],
+                    "study_type_id": self.studies[group_user.metoda]
+                }
+                obj = create(school.UserGroup, **kwargs)
+            except IntegrityError as e:
+                print(f'Error {e} occured for Group_user {group_user.ais_id}.')
+        print('Inserted!')
+
+    def import_form_and_types(self):
+        print('Inserting rows for Form and Types studies')
+
+        for name, value in self.studies.items():
+            defaults = {
+                "name": name
+            }
+            obj, created = update_or_create(
+                model=school.FormOfStudy,
+                instance_id=value,
+                default=defaults)
+        
+        for name, value in self.types.items():
+            kwargs = {
+                "name": name
+            }
+            obj, created = update_or_create(
+                model=school.StudyType,
+                instance_id=value,
+                default=defaults)
+        print('Inserted!')
+        self.import_groups_users()
+
+    @transaction.atomic
+    def post(self, request):
+        return import_resource(self.import_form_and_types)
 
 
 class EquipmentImportView(APIView):
@@ -109,17 +246,21 @@ class EquipmentImportView(APIView):
     permission_classes = (IsMainTimetableCreator, )
 
     def import_equipments(self):
+        print('Inserting rows for Equipment')
         equipments = models.FeiEquipments.objects.using(DATABASE_NAME).all()
 
         for equipment in equipments:
             try:
-                kwargs = {"id": equipment.id}
-                new_equipment = get_or_create(school.Equipment, **kwargs)
-                new_equipment.name = equipment.nazov
-                new_equipment.save()
+                defaults = {
+                    "name": equipment.nazov
+                    }
+                obj, created = update_or_create(
+                    model=school.Equipment,
+                    instance_id=equipment.id,
+                    default=defaults)
             except (DatabaseError, DataError) as e:
-                print('Error {%s} occured for equipment %s.' % (e, equipment.id))
-                pass
+                print(f'Error {e} occured for equipment {equipment.id}.')
+        print('Inserted!')
 
     @transaction.atomic
     def post(self, request):
@@ -133,27 +274,27 @@ class UsersImportView(APIView):
     permission_classes = (IsMainTimetableCreator, )
 
     def import_users(self):
+        print('Inserting rows for Users')
         users = models.FeiUsers.objects.using(DATABASE_NAME).all()
 
         for user in users:
             try:
-                kwargs = {"id": user.ais_id, "is_active": True, "username": user.login}
-                new_user = get_or_create3(AppUser, user.ais_id, **kwargs)
-
-                new_user.first_name = user.meno
-                new_user.last_name = user.priezvisko
-                new_user.title_before = user.tituly_pred
-                new_user.title_after = user.tituly_za
-
-                new_user.save()
+                defaults = {
+                    "is_active": True,
+                    "username": user.login,
+                    "first_name": user.meno,
+                    "last_name": user.priezvisko,
+                    "title_before": user.tituly_pred,
+                    "title_after": user.tituly_za
+                }
+                obj, created = update_or_create(
+                    model=AppUser,
+                    instance_id=user.ais_id,
+                    defaults=defaults)
             except (DatabaseError, DataError) as e:
                 print('Error {%s} occured for user %s.' % (e, user.ais_id))
                 pass
-            except:
-                print('Other error occured for user %s.' % user.ais_id)
-                pass
-
-        # TODO doriesit este user_group, aktualne nepresne premapovanie na studyType
+        print('Inserted!')
 
     def post(self, request):
         return import_resource(self.import_users)
@@ -165,6 +306,9 @@ class CoursesImportView(APIView):
     """
     permission_classes = (IsMainTimetableCreator, )
 
+    for_periods = []
+    imported_ids = []
+
     role_map = {
         "student": 1,
         "garant": 2,
@@ -175,47 +319,89 @@ class CoursesImportView(APIView):
         "tutor": 7
     }
 
-    def import_subject_users(self):
-        subject_users = models.FeiSubjectsUsers.objects.using(DATABASE_NAME).all()
-
-        for subject_user in subject_users:
+    def import_course_users(self):
+        print('Inserting rows for UserCourses')
+        # TODO: Using __in causes performance hit when selecting specific
+        # entries from this view. However right now there are just data for
+        # the current active period. Later there may be other entries from 
+        # different periods
+        course_users = models.FeiSubjectsUsers.objects.using(DATABASE_NAME).filter(
+            Q(predmet__in=self.imported_ids))
+        for course_user in course_users:
             try:
-                with transaction.atomic():
-                    new_subject_user = school.SubjectUser()
-                    kw = {"id": subject_user.predmet}
-                    new_subject_user.subject = get_or_create(school.Course, **kw)
-
-                    kw = {"id": subject_user.ais_id}
-                    new_subject_user.user = get_or_create(AppUser, **kw)
-                    new_subject_user.role = self.role_map.get(subject_user.rola)
-
-                    new_subject_user.save()
+                roles_strs = school.SubjectUser().parse_roles(                    
+                    role_text=course_user.rola)
+                for s in roles_strs:
+                    kwargs = {
+                        "user_id": course_user.ais_id,
+                        "subject_id": course_user.predmet,
+                        "role_id": self.role_map[s.strip()]
+                    }
+                    obj = create(school.SubjectUser, **kwargs)
             except (DatabaseError, DataError) as e:
-                print('Error {%s} occured for subject_user %s.' % (e, subject_user.ais_id))
-                pass
+                print(f'Error {e} occured for subject_user {course_user.ais_id}.')
+        print('Inserted!')
+
+    def import_user_course_role(self):
+        print('Inserting rows for UserCourseRole')
+        for role_name, role_value in self.role_map.items():
+            try:
+                defaults = {
+                    "name": role_name
+                }
+                obj, created = update_or_create(
+                    model=school.UserSubjectRole,
+                    instance_id=role_value,
+                    default=defaults)
+            except IntegrityError as e:
+                print(f'Error {e} occured for course_user_role {role_name}.')
+        print('Inserted!')
+        self.import_course_users()
 
     def import_courses(self):
-        courses = models.CPredmetyFei.objects.using(DATABASE_NAME).all()
+        print('Inserting rows for Courses')
+        period_map = {}
+        if len(self.for_periods) == 1:
+            courses = models.CPredmetyFei.objects.using(DATABASE_NAME).filter(Q(obdobie__icontains=self.for_periods[0]['name']))
+            period_map = {
+                self.for_periods[0]['name']: self.for_periods[0]['id']
+            }
+        elif len(self.for_periods) == 2:
+            courses = models.CPredmetyFei.objects.using(DATABASE_NAME).filter(
+                Q(obdobie__icontains=self.for_periods[0]['name']) |
+                Q(obdobie__icontains=self.for_periods[1]['name']))
+            period_map = {
+                self.for_periods[0]['name']: self.for_periods[0]['id'],
+                self.for_periods[1]['name']: self.for_periods[1]['id']
+            }
+        else:
+            courses = models.CPredmetyFei.objects.using(DATABASE_NAME).all()
 
         for course in courses:
             try:
-
-                kw = {"id": course.garantujuce_pracovisko}
-                department = get_or_create(school.Department, **kw)
-                kwargs = {"department": department, "id": course.id}
-                new_course = get_or_create3(school.Course, course.id, **kwargs)
-                new_course.name = course.nazov
-                new_course.code = course.kod
-                new_course.completion = course.std_ukonc
-
-                new_course.save()
+                # kw = {"id": course.garantujuce_pracovisko}
+                defaults = {
+                    "period_id": period_map[course.obdobie],
+                    "department_id": course.garantujuce_pracovisko,
+                    "teacher_id": course.garant,
+                    "code": course.kod,
+                    "name": course.nazov,
+                    "completion": course.std_ukonc,
+                    "credits": int(course.kredity)
+                    }
+                obj, created = update_or_create(
+                    model=school.Course,
+                    instance_id=course.id,
+                    default=defaults)
+                if created:
+                    self.imported_ids.append(obj.id)
             except (DatabaseError, DataError) as e:
-                print('Error {%s} occured for course %s.' % (e, course.id))
-                pass
-
-        self.import_subject_users()
+                print(f'Error {e} occured for course {course.id}.')
+        print('Inserted!')
+        self.import_user_course_role()
 
     def post(self, request):
+        self.for_periods = request.data['periods']
         return import_resource(self.import_courses)
 
 
@@ -226,17 +412,22 @@ class RoomTypesImportView(APIView):
     permission_classes = (IsMainTimetableCreator, )
 
     def import_room_types(self):
+        print('Inserting rows for RoomTypes')
         room_types = models.FeiRoomtypes.objects.using(DATABASE_NAME).all()
 
         for room_type in room_types:
             try:
-                kwargs = {"id": room_type.id}
-                new_room_type = get_or_create(school.RoomCategory, **kwargs)
-                new_room_type.name = room_type.nazov
-                new_room_type.save()
+                # kwargs = {"id": room_type.id}
+                defaults = {
+                    "name": room_type.nazov
+                }
+                obj, created = update_or_create(
+                    model=school.RoomType,
+                    instance_id=room_type.id,
+                    default=defaults)
             except (DatabaseError, DataError) as e:
-                print('Error {%s} occured for room_type %s.' % (e, room_type.id))
-                pass
+                print(f'Error {e} occured for room_type {room_type.id}.')
+        print('Inserted!')
 
     @transaction.atomic
     def post(self, request):
@@ -249,45 +440,122 @@ class RoomsImportView(APIView):
     """
     permission_classes = (IsMainTimetableCreator, )
 
+
     def import_rooms(self):
+        print('Inserting rows for Rooms')
         rooms = models.FeiRooms.objects.using(DATABASE_NAME).all()
 
         for room in rooms:
             try:
-                kwargs = {"id": room.typ}
-                category = get_or_create(school.RoomCategory, **kwargs)
-                kwargs = {"id": room.pracovisko}
-                department = get_or_create(school.Department, **kwargs)
-
-                kwargs = {"department": department, "id": room.id, "category": category}
-                new_room = get_or_create3(school.Room, room.id, **kwargs)
-                new_room.name = room.nazov
-                new_room.capacity = room.kapacita
-
-                new_room.save()
+                defaults = {
+                    "name": room.nazov,
+                    "capacity": room.kapacita,
+                    "room_type_id": room.typ,
+                    "department_id": room.pracovisko
+                }
+                obj, created = update_or_create(
+                    model=school.Room,
+                    instance_id=room.id,
+                    default=defaults)
             except (DatabaseError, DataError) as e:
-                print('Error {%s} occured for room %s.' % (e, room.id))
-                pass
-
+                print(f'Error {e} occured for room {room.id}.')
+        print('Inserted')
         self.import_rooms_equipment()
-
+    
     def import_rooms_equipment(self):
+        print('Inserting rows for RoomEquipment')
         rooms_equipments = models.FeiRoomsEquipments.objects.using(DATABASE_NAME).all()
 
         for room_equipment in rooms_equipments:
             try:
-                new_equipment = school.RoomEquipment()
-                new_equipment.count = int(room_equipment.pocet)
-                kwargs = {"id": room_equipment.miestnost}
-                new_equipment.room = get_or_create(school.Room, **kwargs)
-                kwargs = {"id": room_equipment.pomocka}
-                new_equipment.equipment = get_or_create(school.Equipment, **kwargs)
-
-                new_equipment.save()
+                kwargs = {
+                    "room_id": room_equipment.miestnost,
+                    "equipment_id": room_equipment.pomocka,
+                    "count": int(room_equipment.pocet)
+                }
+                obj = create(school.RoomEquipment, **kwargs)
             except (DatabaseError, DataError) as e:
-                print('Error {%s} occured for room %s and equipment %s.' % (e, room_equipment.miestnost, room_equipment.pomocka))
-                pass
+                print(f'Error {e} occured for room {room_equipment.miestnost} and equipment {room_equipment.pomocka}.')
+        print('Inserted')
 
+    @transaction.atomic
     def post(self, request):
         return import_resource(self.import_rooms)
 
+
+class InitImportView(APIView):
+    """
+        API endpoint for importing initial data so user
+        can continue creating schemas based on periods
+    """
+    permission_classes = (IsMainTimetableCreator, )
+
+    views_dict = {
+        "Users": UsersImportView(),
+        "Departments": DepartmentImportView(),
+        "Periods": PeriodImportView()
+    }
+
+    @transaction.atomic
+    def post(self, request):
+        start_time = time.time()
+        for name, view in self.views_dict.items():
+            print(f'Importing {name}...')
+            response = view.post(request)
+            if response.status_code == 500:
+                return Response(
+                    'Import Init data FAILED!',
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print(f'{name} done.')
+        try:
+            public_version = Version.objects.get(name='public')
+            public_version.last_updated = datetime.now(tz=timezone.utc)
+            public_version.save()
+        except IntegrityError as e:
+            print(f'Failed to set updated datetime reason: \n{e}')
+        end_time = time.time() - start_time
+        print(f"Done Importing data and it took {end_time} seconds!")
+        return Response('Imported!', status=status.HTTP_200_OK)
+
+
+class VersionDataImportView(APIView):
+    """
+        API endpoint for importing schema specific data so user
+        can then access this version with the latest data
+    """
+    permission_classes = (IsMainTimetableCreator, )
+
+    views_dict = {
+        "Groups": GroupImportView(),
+        "Courses": CoursesImportView(),
+        "UserGroupsFormsAndStudies": StudiesGroupsImportView(),
+        "Equipment": EquipmentImportView(),
+        "RoomTypes": RoomTypesImportView(),
+        "RoomsAndEquipment": RoomsImportView()
+    }
+
+    def post(self, request):
+        version_name = request.headers['Timetable-Version']
+        period_ids = request.data['periods']
+        tenant_model = get_tenant_model().objects.get(schema_name=version_name.lower())
+        periods = Period.objects.filter(id__in=period_ids).values('id', 'name')
+        periods = list(periods)
+        connection.set_tenant(tenant_model)
+        start_time = time.time()
+        for name, view in self.views_dict.items():
+            if name == 'Courses':
+                request.data['periods'] = periods
+            response = view.post(request)
+            if response.status_code == 500:
+                return Response(
+                    'Import Init data FAILED!',
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print(f'{name} done.')
+        try:
+            tenant_model.last_updated = datetime.now(tz=timezone.utc)
+            tenant_model.save()
+        except IntegrityError as e:
+            print(f'Failed to set updated datetime reason: \n{e}')
+        end_time = time.time() - start_time
+        print(f"Done Importing data and it took {end_time} seconds!")
+        return Response('Imported!', status=status.HTTP_200_OK)

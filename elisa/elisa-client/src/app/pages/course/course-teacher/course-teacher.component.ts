@@ -10,6 +10,7 @@ import { NgForm } from '@angular/forms';
 import { tap } from 'rxjs/operators';
 import { User } from 'src/app/models/user';
 import { UserService } from 'src/app/services/user.service';
+import { SnackbarComponent } from 'src/app/common/snackbar/snackbar.component';
 
 @Component({
   selector: 'app-course-teacher',
@@ -39,7 +40,8 @@ export class CourseTeacherComponent implements OnInit {
   constructor(private courseService: CourseService,
     private userService: UserService,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<CourseTeacherComponent>) {
+    private dialogRef: MatDialogRef<CourseTeacherComponent>,
+    private snackbar: SnackbarComponent) {
       this.fetchCourseRoles();
     }
 
@@ -64,8 +66,6 @@ export class CourseTeacherComponent implements OnInit {
     this.courseService.getUsersBySubject(this.courseId)
       .subscribe(
       (success) => {
-        console.log('fetched users');
-        console.log(success);
         // Try to create teacher entry from course data
         if (success &&
             success.length === 0 &&
@@ -98,9 +98,17 @@ export class CourseTeacherComponent implements OnInit {
           this.courseChanged = true;
           this.emptyUsers = false;
           this.users = [success];
+          this.snackbar.openSnackBar(
+            `Added User ${success.userFullname} for ${this.courseName}!`,
+            'Close',
+            this.snackbar.styles.success);
         },
         (error) => {
           console.error(error);
+          this.snackbar.openSnackBar(
+            `Failed to add INIT user for ${this.courseName}!`,
+            'Close',
+            this.snackbar.styles.failure);
         }
       ).add(() => this.loadingData = false);
   }
@@ -119,7 +127,6 @@ export class CourseTeacherComponent implements OnInit {
   }
 
   onOpenedAdding() {
-    console.log('opened adding');
     if (!this.usersForAdding) {
       this.loadingAdding = true;
       this.userService.getCachedAllUsers()
@@ -154,9 +161,17 @@ export class CourseTeacherComponent implements OnInit {
           el.disabled = true;
           user.roles = [...user.roles, success];
           user.rolesAmount = user.roles.length;
+          this.snackbar.openSnackBar(
+            `Added role for ${user.userFullname}!`,
+            'Close',
+            this.snackbar.styles.success);
         },
         (error) => {
           console.error(error);
+          this.snackbar.openSnackBar(
+            `Failed to add role for ${user.userFullname}!`,
+            'Close',
+            this.snackbar.styles.failure);
         }
       );
   }
@@ -176,9 +191,17 @@ export class CourseTeacherComponent implements OnInit {
           this.users = [...this.users, success];
           this.usersForAdding = this.usersForAdding.filter(addUser => success.userId !== addUser.id);
           this.clearSearcher(searcher);
+          this.snackbar.openSnackBar(
+            `Added User ${success.userFullname} for ${this.courseName}!`,
+            'Close',
+            this.snackbar.styles.success);
         },
         (error) => {
           console.error(error);
+          this.snackbar.openSnackBar(
+            `Failed to add user for ${this.courseName}!`,
+            'Close',
+            this.snackbar.styles.failure);
         }
       );
   }
@@ -209,10 +232,18 @@ export class CourseTeacherComponent implements OnInit {
             this.courseChanged = true;
           }
           this.users = this.users.filter(removedUser => user.userId !== removedUser.userId);
+          this.snackbar.openSnackBar(
+            `Successfully removed user ${user.userFullname} from ${this.courseName}!`,
+            'Close',
+            this.snackbar.styles.success);
           this.fetchAndAddUserAfterRemoval(user.userId);
         },
         (error) => {
           console.error(error);
+          this.snackbar.openSnackBar(
+            `Failed to remove user for ${this.courseName}!`,
+            'Close',
+            this.snackbar.styles.failure);
         }
       ).add(() => spinner.hidden = true);
   }
@@ -226,15 +257,27 @@ export class CourseTeacherComponent implements OnInit {
           if (user.rolesAmount > 1) {
             user.roles = user.roles.filter(oldRole => oldRole.idRow !== roleEntry.idRow);
             user.rolesAmount = user.roles.length;
+            this.snackbar.openSnackBar(
+              `Successfully removed role from ${user.userFullname} for ${this.courseName}!`,
+              'Close',
+              this.snackbar.styles.success);
           } else {
             if (success && success['modified']) {
               this.courseChanged = true;
             }
+            this.snackbar.openSnackBar(
+              `Successfully removed user ${user.userFullname} from ${this.courseName}!`,
+              'Close',
+              this.snackbar.styles.success);
             this.users = this.users.filter(removedUser => user.userId !== removedUser.userId);
             this.fetchAndAddUserAfterRemoval(user.userId);
           }
         }, (error) => {
           console.error(error);
+          this.snackbar.openSnackBar(
+            `Failed to remove role for ${this.courseName}!`,
+            'Close',
+            this.snackbar.styles.failure);
         }
     ).add(() => spinner.hidden = true);
   }

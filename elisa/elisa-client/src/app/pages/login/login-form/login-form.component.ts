@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Account } from '../../../models/account.model';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { MyErrorStateMatcher } from 'src/app/common/form-error-state';
 import { SnackbarComponent } from 'src/app/common/snackbar/snackbar.component';
 import { ErrorMessageCreator } from 'src/app/common/error-message';
@@ -69,6 +69,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
         this.afterLoginRoleInit();
       }, (error) => {
         console.error('login failed');
+        this.onRequestDone();
         const msg = this.errorMessageCreator.createStringMessage(error);
         this.snackBar.openSnackBar(msg, 'Close', this.snackBar.styles.failure);
         catchError(error);

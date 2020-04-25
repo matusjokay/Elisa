@@ -40,7 +40,7 @@ SHARED_APPS = [
 ELISA_APPS = [
     'django_filters',
     'rest_framework',
-    'rest_framework_simplejwt.token_blacklist',
+    # 'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
     'django_extensions',
     'django_python3_ldap',
@@ -189,6 +189,11 @@ CSRF_COOKIE_HTTPONLY = True
 CSRF_HEADER_NAME = 'Authorization'
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 
+CSRF_TRUSTED_ORIGINS = [
+    'localhost:4200',
+    '127.0.0.1:4200'
+]
+
 ROOT_URLCONF = 'elisa.urls'
 
 SECURE_SSL_REDIRECT = True
@@ -217,16 +222,16 @@ DATABASES = {
         'PASSWORD': 'secret',
         'HOST': '127.0.0.1',
         'PORT': '5432',
+    },
+    'import': {
+        'ENGINE': 'django.db.backends.oracle',
+        'NAME': config('DB_IMPORT_NAME'),
+        'USER': config('DB_IMPORT_USER'),
+        'PASSWORD': config('DB_IMPORT_PASSWORD'),
+        # 'HOST': 'db-new.is.stuba.sk',
+        'HOST': config('DB_IMPORT_HOST'),
+        'PORT': config('DB_IMPORT_PORT', default='1521'),
     }
-    # 'import': {
-    #     'ENGINE': 'django.db.backends.oracle',
-    #     'NAME': config('DB_IMPORT_NAME'),
-    #     'USER': config('DB_IMPORT_USER'),
-    #     'PASSWORD': config('DB_IMPORT_PASSWORD'),
-    #     # 'HOST': 'db-new.is.stuba.sk',
-    #     'HOST': config('DB_IMPORT_HOST'),
-    #     'PORT': config('DB_IMPORT_PORT', default='1521'),
-    # }
 }
 
 DATABASE_ROUTERS = (

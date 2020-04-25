@@ -20,6 +20,7 @@ import { UserManagerComponent } from './pages/users/user-manager/user-manager.co
 import { VersionSelectComponent } from './pages/version/version-select/version-select.component';
 import { MaterialModule } from './material/material.module';
 import { RoleManager } from './models/role.model';
+import { NotFoundComponent } from './common/not-found/not-found.component';
 
 const routes: Routes = [
   {
@@ -132,6 +133,10 @@ const routes: Routes = [
       },
     ]
   },
+  {
+    path: '**',
+    component: NotFoundComponent
+  }
 ];
 
 @NgModule({

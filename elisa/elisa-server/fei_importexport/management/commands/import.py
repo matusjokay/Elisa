@@ -28,7 +28,7 @@ class Command(BaseCommand):
     # Order sensitive because of foreign keys.
 
     resource_mapping = [
-        ('users_departments.csv', resources.UserDepartmentResource()),
+        # ('users_departments.csv', resources.UserDepartmentResource()),
         ('groups.csv', resources.GroupResource()),
         ('subjects.csv', resources.CourseResource()),
         ('user_subject_role.csv', resources.UserSubjectRoleResource()),

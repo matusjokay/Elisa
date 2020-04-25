@@ -58,7 +58,7 @@ class VersionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Version
-        fields = ('id', 'name', 'status', 'parent_schema', 'period')
+        fields = ('id', 'name', 'status', 'parent_schema', 'last_updated', 'period')
 
 
 class UserSerializer(UserMixin, serializers.ModelSerializer):

@@ -9,4 +9,7 @@ urlpatterns = [
     url('courses/import', CoursesImportView.as_view(), name='import_courses'),
     url('room-categories/import', RoomTypesImportView.as_view(), name='import_room_categories'),
     url('rooms/import', RoomsImportView.as_view(), name='import_rooms'),
+    url('periods/import', PeriodImportView.as_view(), name='import_periods'),
+    url('import/init', InitImportView.as_view(), name='init_import'),
+    url('import/for-version', VersionDataImportView.as_view(), name='version_data_import')
 ]

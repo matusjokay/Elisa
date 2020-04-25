@@ -3,7 +3,7 @@ from import_export import resources, fields, widgets
 from import_export.widgets import ForeignKeyWidget
 
 from school import models
-from fei.models import AppUser, Department, Period
+from fei.models import AppUser, Department, Period, UserDepartment
 
 
 class ForeignKeyWidgetWithCreation(widgets.ForeignKeyWidget):
@@ -299,7 +299,8 @@ class UserDepartmentResource(resources.ModelResource):
         super().skip_row(instance, original)
 
     class Meta:
-        model = models.UserDepartment
+        # model = models.UserDepartment
+        model = UserDepartment
         # import_id_fields = ('user', 'department')
         skip_unchanged = True
         export_order = ('user', 'department', 'employment')

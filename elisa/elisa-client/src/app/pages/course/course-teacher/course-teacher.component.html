@@ -5,10 +5,13 @@
         <mat-icon>close</mat-icon>
     </button>
 </div>
-<div fxLayout="row" fxLayoutAlign="space-around center">
-    <div fxLayout="column">
-    <app-spinner 
-        [hidden]="loadingData ? false : true" 
+<div
+  fxLayout="row"
+  fxLayoutAlign="space-around center"
+  style="position: relative; height: 75vh;">
+    <div fxLayout="column" class="container-wrapper">
+    <app-spinner
+        [hidden]="loadingData ? false : true"
         [loadingText]="spinnerText"></app-spinner>
     <div *ngIf="emptyUsers">
         <mat-card class="empty-users">
@@ -20,7 +23,8 @@
             </mat-card-content>
         </mat-card>
     </div>
-    <ng-container class="container-wrapper" *ngFor="let user of users">
+    <h2>Users and their Course Roles :</h2>
+    <ng-container *ngFor="let user of users">
         <mat-expansion-panel (opened)="onOpened(user)"
                             (closed)="user.isOpened = false"
                             [disabled]="clickBtn"
@@ -28,7 +32,7 @@
         <mat-expansion-panel-header>
             <mat-panel-title>
             <p>{{user.userFullname}}<mat-icon *ngIf="courseTeacherId === user.userId">grade</mat-icon></p>
-            <button 
+            <button
                 mat-icon-button
                 matTooltip="Remove User"
                 [disabled]="courseTeacherId === user.userId && users.length > 1"
@@ -47,7 +51,7 @@
             <div *ngIf="user.roles">
                 <mat-list-item *ngFor="let role of user.roles | courseRolesShow:courseRoles">
                 {{ role.name }}
-                <button 
+                <button
                 mat-icon-button
                 matTooltip="Remove User Role"
                 (click)="removeRoleEntry(user, role, removingUserRoleSpinner)"
@@ -81,8 +85,8 @@
         </mat-expansion-panel>
     </ng-container>
     </div>
-    <div fxLayout="column">
-        <mat-expansion-panel class="container-wrapper"
+    <div fxLayout="column" class="adder-wrapper">
+        <mat-expansion-panel style="margin: 5%"
         (opened)="onOpenedAdding()"
         (closed)="false">
         <mat-expansion-panel-header>
@@ -102,7 +106,7 @@
             (selected)="onSelected($event)"
             style="width: 50%;"></app-user-search>
                 <mat-form-field *ngIf="courseRoles">
-                    <mat-select 
+                    <mat-select
                         name="roleSelectForAdd"
                         [(ngModel)]="courseRole"
                         [disabled]="isSelectedUser ? false : true"
@@ -126,4 +130,3 @@
         </mat-expansion-panel>
     </div>
 </div>
-        

@@ -43,6 +43,6 @@ export class TimetableNewComponent implements OnInit {
     let defaultVersion = {
       name: "Nový rozvrh",
     };
-    this.timetableService.createVersion(defaultVersion).subscribe();
+    // this.timetableService.createVersion(defaultVersion).subscribe();
   }
 }

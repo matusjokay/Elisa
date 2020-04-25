@@ -15,7 +15,8 @@ export class VersionImportComponent implements OnInit {
   academicPeriods: Period[];
   selectedPeriod: Period;
   importedPeriodIds: number[];
-  customVersion = false;
+  customVersionCSV = false;
+  customVersionDB = false;
   import: boolean;
   importing: boolean;
   academicPeriodsGrouped: { year: string, periods: Period[]}[];
@@ -72,7 +73,7 @@ export class VersionImportComponent implements OnInit {
         storage[group] = storage[group] || [];
         // add this item to its group within `storage`
         storage[group].push(item);
-        // return the updated storage to the reduce function, which will then loop through the next 
+        // return the updated storage to the reduce function, which will then loop through the next
         return storage;
       }, {}); // {} is the initial value of the storage
     };
@@ -90,7 +91,7 @@ export class VersionImportComponent implements OnInit {
       a[0].university_period < b[0].university_period ? 1 : 0);
   }
 
-  onImportVersion() {
+  onImportVersionCSV() {
     const versionName = this.prepareNameForImport(this.selectedPeriod.name);
     const periodId = this.selectedPeriod.id;
     this.onRequestSent('Importing data for selected period...<br>This will take a while please wait...',
@@ -113,6 +114,67 @@ export class VersionImportComponent implements OnInit {
     ).add(() => {
       this.onRequestDone();
     });
+  }
+
+  onImportVersionDB() {
+    const versionName = this.prepareNameForImport(this.selectedPeriod.name);
+    const periodId = this.selectedPeriod.id;
+    this.onRequestSent(`Creating Version for ${this.selectedPeriod.name}`,
+      true);
+    this.timetableService.createVersion(versionName, periodId).subscribe(
+      (success) => {
+        this.doImportForVersion(versionName, success);
+      },
+      (error) => {
+        console.error(error);
+        this.snackbar.openSnackBar(
+          'Failed to create Version!',
+          'Close',
+          this.snackbar.styles.failure,
+          true);
+      }
+    );
+  }
+
+  doImportForVersion(versionName: string, versionId: number) {
+    const periodIds = this.filterBySelectedPeriod(this.selectedPeriod.year, this.selectedPeriod.id);
+    this.onRequestSent('Importing data for selected period...<br>This will take a while please wait...',
+      true);
+    this.timetableService.importByPeriods(versionName, periodIds).subscribe(
+      (success) => {
+        this.snackbar.openSnackBar(`Successfully imported data for -> ${versionName}`,
+        'Close',
+        this.snackbar.styles.success);
+        this.dialogRef.close(true);
+      },
+      (error) => {
+        console.error(error);
+        this.snackbar.openSnackBar(
+          'Failed to import data! DELETING VERSION...',
+          'Close',
+          this.snackbar.styles.failure,
+          true);
+        this.dialogRef.close({
+          id: versionId,
+          name: versionName
+        });
+      }
+    ).add(() => {
+      this.onRequestDone();
+    });
+  }
+
+  filterBySelectedPeriod(year: string, selectedId: number): number[] {
+    const doctoratePeriodSubstring = `${year} - `;
+    const selectedGroup = this.academicPeriodsGrouped.filter(group => group.year === year);
+    const periods = selectedGroup[0].periods.filter(period => {
+      if (period.id === selectedId || period.name.includes(doctoratePeriodSubstring)) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    return periods.map(period => period.id);
   }
 
   prepareNameForImport(periodName: string): string {

@@ -10,5 +10,6 @@ export interface Period {
   start_date: Date;
   end_date: Date;
   active: boolean;
+  year?: string;
   department: number | Department;
 }

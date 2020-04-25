@@ -20,6 +20,8 @@ export class NavigationComponent implements OnInit {
   userName: string;
   userRoles: number[];
   roleObjects: Role[];
+  loading: boolean;
+  loadingText: string;
   constructor(private router: Router,
               private authService: AuthService,
               private baseService: BaseService,
@@ -74,11 +76,23 @@ export class NavigationComponent implements OnInit {
     this.router.navigateByUrl('/version-select');
   }
 
+  onRequestSent(msg: string) {
+    this.loadingText = msg;
+    this.loading = true;
+  }
+
+  onRequestDone() {
+    this.loadingText = '';
+    this.loading = false;
+  }
+
   logout() {
+    this.onRequestSent('Logging out...');
     this.authService.logout().subscribe(
       (success) => {
+        this.onRequestDone();
         this.router.navigate(['login']);
-      }
+      }, (error) => console.error(error)
     );
   }
 }

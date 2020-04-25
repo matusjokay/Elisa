@@ -153,6 +153,7 @@ export class CourseListComponent implements OnInit {
     console.log(row);
     const dialogRef = this.dialog.open(CourseTeacherComponent, {
       width: '75vw',
+      height: '50hw',
       data: { course: row }
     });
     dialogRef.afterClosed().subscribe(result => {

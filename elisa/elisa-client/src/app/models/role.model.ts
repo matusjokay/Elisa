@@ -13,6 +13,7 @@ export class RoleManager {
    name: 'MAIN_TIMETABLE_CREATOR',
    authorization : {
      creating: true,
+     importing: true,
      updating: true,
      deleting: true,
      requesting: true,
@@ -25,6 +26,7 @@ export class RoleManager {
     name: 'LOCAL_TIMETABLE_CREATOR',
     authorization : {
      creating: true,
+     importing: false,
      updating: true,
      deleting: false,
      requesting: true,
@@ -37,6 +39,7 @@ export class RoleManager {
     name: 'TEACHER',
     authorization : {
      creating: false,
+     importing: false,
      updating: false,
      deleting: false,
      requesting: true,
@@ -49,6 +52,7 @@ export class RoleManager {
     name: 'STUDENT',
     authorization : {
      creating: false,
+     importing: false,
      updating: false,
      deleting: false,
      requesting: true,
@@ -146,6 +150,7 @@ export class RoleManager {
 
 export interface RoleAuth {
   creating?: boolean;
+  importing?: boolean;
   updating?: boolean;
   deleting?: boolean;
   requesting?: boolean;

@@ -11,6 +11,7 @@ export class SpinnerComponent {
   public loadingText: string;
   @Input()
   public hidden: boolean;
+  @Input()
   color = 'primary';
   mode = 'indeterminate';
   @Input()

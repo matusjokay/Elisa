@@ -64,6 +64,9 @@ export class TokenInterceptor implements HttpInterceptor {
               'urlRedirect': location.pathname
             } });
             return throwError(error);
+          } else {
+            this.router.navigate(['login']);
+            return throwError(error);
           }
         })
       );

@@ -128,17 +128,14 @@ class FormOfStudy(models.Model):
 class UserGroup(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     user = models.ForeignKey('fei.AppUser', on_delete=models.CASCADE)
-    group_number = models.CharField(max_length=32, blank=True)
-    form_of_study = models.ForeignKey(FormOfStudy, on_delete=models.CASCADE)
+    group_number = models.CharField(max_length=32, blank=True, null=True)
+    form_of_study = models.ForeignKey(
+        FormOfStudy,
+        on_delete=models.CASCADE,
+        null=True)
     study_type = models.ForeignKey(
         StudyType, on_delete=models.CASCADE, null=True)
     # form_of_study = models.CharField(max_length=7)
-
-
-class UserDepartment(models.Model):
-    user = models.ForeignKey('fei.AppUser', on_delete=models.CASCADE)
-    department = models.ForeignKey('fei.Department', on_delete=models.CASCADE)
-    employment = models.CharField(max_length=9, blank=True)
 
 
 class UserSubjectRole(models.Model):
@@ -152,6 +149,28 @@ class SubjectUser(models.Model):
     user = models.ForeignKey('fei.AppUser', on_delete=models.CASCADE)
     subject = models.ForeignKey(Course, on_delete=models.CASCADE)
     role = models.ForeignKey(UserSubjectRole, on_delete=models.CASCADE)
+
+    role_map = {
+        "student": 1,
+        "garant": 2,
+        "prednasajuci": 3,
+        "cviciaci": 4,
+        "skusajuci": 5,
+        "administrator": 6,
+        "tutor": 7
+    }
+
+    def parse_roles(self, role_text):
+        roles = []
+        if '/' in role_text:
+            roles = role_text.split('/')
+        elif ',' in role_text:
+            roles = role_text.split(',')
+        else:
+            roles = [role_text]
+        # role_id_from_text = self.role_map.get(roles[len(roles)-1])
+        # row['role'] = role_id_from_text
+        return roles
 
 
 # class SubjectStudyType(models.Model):

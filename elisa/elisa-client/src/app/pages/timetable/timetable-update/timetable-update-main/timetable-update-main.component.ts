@@ -677,7 +677,7 @@ export class TimetableUpdateMainComponent implements OnInit {
     let body = {
       name: "new_version"
     }
-    this.timetableService.createVersion(body).subscribe();
+    // this.timetableService.createVersion(body).subscribe();
   }
 
   /**

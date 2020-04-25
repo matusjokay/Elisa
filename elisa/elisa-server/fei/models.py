@@ -20,11 +20,6 @@ class AppUser(AbstractUser):
         blank=True,
         null=True,
         default=None)
-    session_id = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        default=None)
     access_id = models.CharField(
         max_length=500,
         blank=True,
@@ -75,7 +70,11 @@ class AppUser(AbstractUser):
 class Department(models.Model):
     name = models.CharField(max_length=300)
     abbr = models.CharField(max_length=30, blank=True, null=True)
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+    # parent should be a ForeignKey of its self BUT the data
+    # from Oracle DB seems to have entries missing.
+    # Uncomment when this issue will be resolved
+    # parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+    parent = models.IntegerField(null=True)
 
     class Meta:
         db_table = u'"public\".\"fei_department"'
@@ -83,6 +82,14 @@ class Department(models.Model):
 
     def __str__(self):
         return '{}'.format(self.name)
+
+
+class UserDepartment(models.Model):
+    # user = models.ForeignKey('fei.AppUser', on_delete=models.CASCADE)
+    # department = models.ForeignKey('fei.Department', on_delete=models.CASCADE)
+    user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    employment = models.CharField(max_length=9, blank=True)
 
 
 class Period(models.Model):
@@ -126,6 +133,11 @@ class Version(TenantMixin):
         on_delete=models.CASCADE,
         null=True,
         blank=True)
+    last_updated = models.DateTimeField(
+        default=None,
+        null=True,
+        blank=True)
+
 
     @transition(field=status, source=NEW, target=WORK_IN_PROGRESS)
     def start_work(self):

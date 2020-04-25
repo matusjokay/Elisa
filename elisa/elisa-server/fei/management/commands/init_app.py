@@ -18,11 +18,12 @@ class Command(BaseCommand):
     resource_mapping = [
         ('users.csv', resources.UserResource()),
         ('departments.csv', resources.DepartmentResource()),
-        ('periods.csv', resources.PeriodResource())
+        ('periods.csv', resources.PeriodResource()),
+        ('users_departments.csv', resources.UserDepartmentResource())
     ]
 
     def add_arguments(self, parser):
-        parser.add_argument('directory', type=str, help='Directory where to get csv data to initialize initial to the database.')
+        parser.add_argument('--directory', type=str, help='Directory where to get csv data to initialize initial to the database.')
 
     def handle(self, *args, **options):
         error = None
@@ -43,7 +44,8 @@ class Command(BaseCommand):
         if error is None:
             self.stdout.write("Tenant initialized")
         # insert initial data
-        self.insert_data(options['directory'])
+        if options['directory']:
+            self.insert_data(options['directory'])
 
     def insert_data(self, directory):
         # connection.set_schema_to_public()
@@ -56,7 +58,7 @@ class Command(BaseCommand):
                 data = tablib.Dataset()
                 data.headers = reader.fieldnames
                 for row in reader:
-                        data.append(row.values())
+                    data.append(row.values())
             infile.close()
             dataset = data
             self.stdout.write(f"Importing {csvFile}...")

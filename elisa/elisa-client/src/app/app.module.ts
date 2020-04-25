@@ -54,6 +54,8 @@ import { CourseTeacherComponent } from './pages/course/course-teacher/course-tea
 import { CourseRolesPipe } from './pipes/course-roles.pipe';
 import { CourseRolesAvailablePipe } from './pipes/course-roles-available.pipe';
 import { UserSearchComponent } from './common/user-search/user-search.component';
+import { ConfirmDialogComponent } from './common/confirm-dialog/confirm-dialog.component';
+import { NotFoundComponent } from './common/not-found/not-found.component';
 
 
 @NgModule({
@@ -95,7 +97,9 @@ import { UserSearchComponent } from './common/user-search/user-search.component'
     CourseTeacherComponent,
     CourseRolesPipe,
     CourseRolesAvailablePipe,
-    UserSearchComponent
+    UserSearchComponent,
+    ConfirmDialogComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
@@ -104,7 +108,9 @@ import { UserSearchComponent } from './common/user-search/user-search.component'
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    HttpClientXsrfModule,
+    HttpClientXsrfModule.withOptions(
+      { headerName: 'Authorization' }
+    ),
     FullCalendarModule,
     AngularDraggableModule,
   ],

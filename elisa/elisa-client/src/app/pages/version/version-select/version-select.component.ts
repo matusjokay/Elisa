@@ -11,6 +11,7 @@ import { BaseService } from 'src/app/services/base-service.service';
 import { TimetableService } from 'src/app/services/timetable.service';
 import { SemesterVersion } from 'src/app/models/semester-version.model';
 import { tap } from 'rxjs/operators';
+import { ConfirmDialogComponent } from 'src/app/common/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-version-select',
@@ -21,6 +22,8 @@ export class VersionSelectComponent implements OnInit {
 
   userName: string;
   versionsMap: SemesterVersion[];
+  lastUpdated: Date;
+  deleteFailedVersion: boolean;
   selectedVersion: SemesterVersion;
   selectedVersionControl: FormControl;
   authorization: RoleAuth;
@@ -41,7 +44,24 @@ export class VersionSelectComponent implements OnInit {
     this.selectedVersionControl = new FormControl('', Validators.required);
     this.userName = this.baseService.getUserName();
     this.authorization = RoleManager.getRolePrivileges(this.baseService.getUserRoles());
-    this.getVersions();
+    this.getInfoAboutData();
+  }
+
+  getInfoAboutData() {
+    this.timetableService.getPublicSchema().subscribe(
+      (success) => {
+        if (success.last_updated) {
+          this.lastUpdated = new Date(success.last_updated);
+        }
+      },
+      (error) => {
+        console.error(error);
+        this.snackbar.openSnackBar(
+          'Failed to fetch basic public version! SERVER ISSUE!',
+          'Close',
+          this.snackbar.styles.failure);
+      }
+    ).add(() => this.getVersions());
   }
 
   getVersions(clear?: boolean) {
@@ -97,14 +117,18 @@ export class VersionSelectComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.getVersions(true);
+        if (result['id'] && result['name']) {
+          this.onDeleteVersion(result['id'], result['name']);
+        } else {
+          this.getVersions(true);
+        }
       }
     });
   }
 
-  onDeleteVersion() {
-    const versionId = this.selectedVersion.id;
-    const name = this.selectedVersion.name;
+  onDeleteVersion(failedId?: number, failedName?: string) {
+    const versionId = !failedId ? this.selectedVersion.id : failedId;
+    const name = !failedName ? this.selectedVersion.name : failedName;
     this.onRequestSent(`Removing ${name}...`);
     this.timetableService.removeVersion(versionId).subscribe(
       (success) => this.snackbar.openSnackBar(
@@ -122,6 +146,51 @@ export class VersionSelectComponent implements OnInit {
         this.selected = false;
         this.getVersions(true);
       });
+  }
+
+  performImportOfInitData() {
+    console.log('importing');
+    this.onRequestSent('Performing Import of the latest data');
+    this.timetableService.importInitData().subscribe(
+      (success) => {
+        this.snackbar.openSnackBar(
+          `Successfully Inserted / Updated Data!`,
+          'Close',
+          this.snackbar.styles.success),
+        setTimeout(() => {
+          this.onRequestSent('Data updated! Logging out...');
+          this.logout();
+        }, 1000);
+      },
+      (error) => {
+        this.snackbar.openSnackBar(
+          'Failed to insert/update data!',
+          'Close',
+          this.snackbar.styles.failure);
+      }
+    ).add(() => this.onRequestDone());
+  }
+
+  onDataRefresh() {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '25%',
+      data: `This will <b>insert/update</b> the most recent data for :<br>
+      <ul>
+        <li>Users</li>
+        <li>Periods</li>
+        <li>Departments</li>
+      </ul><br><br>
+      After that you'll be logged out.<br>
+      This is to make sure data is displayed correctly<br><br>
+      It may take some time... <br>
+      <b>Continue?</b>`
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.performImportOfInitData();
+      }
+    });
   }
 
   onRequestSent(msg?: string) {

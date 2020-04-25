@@ -1,10 +1,37 @@
-<button class="logout-btn" mat-raised-button color="warn" (click)="logout()">Logout</button>
+<button
+  class="logout-btn"
+  mat-raised-button color="warn"
+  [disabled]="loading"
+  (click)="logout()">Logout</button>
 <div class="select-content" fxLayout="column" fxLayoutAlign="space-around center">
   <mat-card class="semester-select-card">
+      <mat-card [ngClass]="{'not-updated': !lastUpdated, 'updated': lastUpdated}">
+        <mat-card-content>
+          <span *ngIf="!lastUpdated; else isUpdated">
+            <h4>
+              Data not updated! Please click the refresh button underneath this warning box
+            </h4>
+          </span>
+          <ng-template #isUpdated>
+            <h4>
+              Last update of data was on : {{lastUpdated}}
+            </h4>
+          </ng-template>
+        </mat-card-content>
+      </mat-card>
+    <div fxLayout="row" fxLayoutAlign="space-evenly center">
     <mat-card-header>
-      <mat-icon mat-card-avatar>assignment</mat-icon>
-      <mat-card-title>{{userName}}</mat-card-title>
+        <mat-icon mat-card-avatar>assignment</mat-icon>
+        <mat-card-title>{{userName}}</mat-card-title>
+        <button mat-icon-button
+          matTooltip="Update data from Remote Database"
+          color="primary"
+          [disabled]="!authorization.importing || loading"
+          (click)="onDataRefresh()">
+          <mat-icon>refresh</mat-icon>
+        </button>
     </mat-card-header>
+  </div>
     <mat-card-content>
       <h3>
         Select the version you want to use.
@@ -21,20 +48,20 @@
             </mat-card-content>
           </mat-card>
       </div>
-      <mat-form-field>
-        <mat-select 
+      <mat-form-field style="width: 50%;">
+        <mat-select
           [formControl]="selectedVersionControl"
-          [disabled]="empty"
+          [disabled]="empty || loading"
           (selectionChange)="onSelectionChanged($event)"
           required>
           <mat-option *ngFor="let semester of versionsMap" [value]="semester">
-            {{semester.name}}
+            {{semester.name}}<span *ngIf="semester.last_updated"><small> | Created on: {{semester.last_updated}}</small></span>
           </mat-option>
         </mat-select>
         <mat-error *ngIf="selectedVersionControl.hasError('required')">Version must be selected!</mat-error>
         <mat-hint>Pick a version from the dropdown</mat-hint>
       </mat-form-field>
-      <button mat-raised-button 
+      <button mat-raised-button
         color="warn"
         style="margin-left: 5%"
         [disabled]="!selected"
@@ -43,8 +70,8 @@
     <app-spinner *ngIf="loading" [loadingText]="spinnerText"></app-spinner>
     <mat-card-actions>
       <div fxLayout="row" fxLayoutAlign="space-evenly center">
-        <button mat-raised-button color="primary" [disabled]="!authorization.creating" (click)="onImport()">Import</button>
-        <button mat-raised-button color="primary" [disabled]="!selected" (click)="onProceed()">Proceed</button>
+        <button mat-raised-button color="primary" [disabled]="!authorization.importing || !lastUpdated || loading" (click)="onImport()">Import</button>
+        <button mat-raised-button color="primary" [disabled]="!selected || loading" (click)="onProceed()">Proceed</button>
       </div>
     </mat-card-actions>
   </mat-card>

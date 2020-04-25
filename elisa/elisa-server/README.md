@@ -79,9 +79,11 @@ We recommend using virtual environment to manage dependencies. To run locally:
       More info in django-tenants [doc](https://django-tenants.readthedocs.io/en/latest/)
 
 6. On server where application is run, you have to run these commands:
-     - initialize groups , tenants and insert initial data
+     - initialize groups , tenants and optionally insert initial data
+     when you want to get data from local csv folder instead of remote
+     oracle connection
           ```
-          ./manage.py init_app <directory-of-data>
+          ./manage.py init_app --directory=<directory-of-data>
           ```
      - EXPLICITLY set main timetable creator by username
           ```
@@ -107,7 +109,8 @@ We recommend using virtual environment to manage dependencies. To run locally:
       Then you can go ahead and repeat steps 3 , 4 and 6
 
 7. Install required software to work with Oracle databases depending on yor OS. More info in cx-oracle
-    [doc](https://cx-oracle.readthedocs.io/en/latest/installation.html)
+    [doc](https://oracle.github.io/odpi/doc/installation.html). You have to download Oracle Instant client to be able to make a connection to Oracle DB for python cx-oracle package. <b>Check your PATH if the client is present and make sure you restart your OS after proper installation!
+    
 
 8. Create file `elisa-server/settings.ini` or `elisa-server/settings.env` and override these settings:
       ```
@@ -133,7 +136,7 @@ We recommend using virtual environment to manage dependencies. To run locally:
           ```
           ./manage.py import fei-data-new <schema>
           ```
-      - or from import database using URLS defined in fei_importexport module (file `fei_importexport/urls.py`)). **TODO:** This script still needs some work to be updated since it then can build proper model definitions OR it will serve a look up functionality to check on new schema changes and then recreate it based on the previous ones.
+      - or from import database using URLS defined in fei_importexport module (file `fei_importexport/urls.py`)). This module is best called from the client. Check the swagger URL for different ways to call import endpoints.
 
 10. Run the server:
 

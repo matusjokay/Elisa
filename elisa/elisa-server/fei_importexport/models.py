@@ -27,6 +27,25 @@ class CPredmetyFei(models.Model):
         db_table = u'"PRENOS"."C_PREDMETY_FEI"'
 
 
+class AISObdobia(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    pracovisko = models.IntegerField(null=False)
+    aktivne = models.BooleanField(null=True, default=None)
+    zaciatok = models.DateField(null=True, default=None)
+    koniec = models.DateField(null=True, default=None)
+    nasledujuce = models.IntegerField(null=True, default=None)
+    predchadzajuce = models.IntegerField(null=True, default=None)
+    por_ar = models.IntegerField(null=False)
+    univ_obdobie = models.IntegerField(null=False)
+    pracovisko = models.IntegerField(null=False)
+    nazov_ang = models.CharField(max_length=100, null=False)
+    nazov_sk = models.CharField(max_length=100, null=False)
+
+    class Meta:
+        managed = False
+        db_table = u'"PRENOS"."AIS_OBDOBIA"'
+
+
 class FeiDepartments(models.Model):
     id = models.BigIntegerField(primary_key=True)
     skratka = models.CharField(max_length=20, blank=True, null=True)
@@ -140,6 +159,7 @@ class FeiUsersGroups(models.Model):
     ais_id = models.BigIntegerField(primary_key=True)
     skupina = models.IntegerField(blank=True, null=True)
     kruzok = models.CharField(max_length=1500, blank=True, null=True)
+    forma = models.CharField(max_length=7, blank=True, null=True)
     metoda = models.CharField(max_length=11, blank=True, null=True)
 
     class Meta:
