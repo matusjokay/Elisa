@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs';
 import {environment} from '../../environments/environment';
 import {map, share, shareReplay} from 'rxjs/operators';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Department} from '../models/department';
 import { BaseService } from './base-service.service';
 
@@ -33,10 +33,35 @@ export class DepartmentService {
       ),share());
   }
 
+  // Hardcodes FEI departments
+  getDepartmentsFei(): Observable<Department[]> {
+    const httpOptions = this.baseService.getAuthHeaderOnly();
+    const params = new HttpParams().set('department', '30');
+    return this.http.get<Department[]>(`${environment.APIUrl}departments/get_fei_departments`,
+      { headers: httpOptions, params: params });
+  }
+
+  // TODO: For now it considers only FEI
+  // but it must be change in the future
+  getDepartmentsThatHaveUsers(): Observable<Department[]> {
+    const httpOptions = this.baseService.getAuthHeaderOnly();
+    return this.http.get<Department[]>(`${environment.APIUrl}user-department/get_departments_users`,
+      { headers: httpOptions });
+  }
+
+  getDepartment(depId: number): Observable<Department> {
+    const httpOptions = this.baseService.getAuthHeaderOnly();
+    return this.http.get<Department>(`${environment.APIUrl}departments/${depId}`,
+      { headers: httpOptions });
+  }
+
   getCachedDepartments() {
     if (!this.cacheDepartmentList$) {
       this.cacheDepartmentList$ = this.requestDepartments().pipe(
-        shareReplay(1) // just create one observable that can multicast
+        shareReplay({
+          bufferSize: 1,
+          refCount: true
+        }) // just create one observable that can multicast
       );
     }
 

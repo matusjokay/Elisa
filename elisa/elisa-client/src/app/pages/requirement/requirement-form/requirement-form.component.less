@@ -1,5 +1,8 @@
 .requirement-form{
   //margin-top: 40px;
+  .mat-form-field {
+    margin-right: 0.5%;
+  }
   .mat-button-toggle-group{
     overflow: visible;
     .suitable{
@@ -11,12 +14,36 @@
     .unavailable{
       background-color: rgba(255,0,0,0.25);
     }
+    .selected {
+      border: solid 2px;
+      border-color: black;
+    }
   }
 }
-mat-card{
+mat-card {
   max-width: 90%;
 }
 
-button{
+.mat-card-header {
+  .mat-radio-group {
+    position: relative;
+    top: 35%;
+    .mat-radio-button {
+      margin-right: 2%;
+    }
+  }
+
+}
+
+.tooltip-class {
+  position: absolute;
+  border: solid 1px;
+  background-color: white;
+  color: black;
+  border-radius: 2px;
+  z-index: 999;
+}
+
+button {
   width: auto;
 }

@@ -151,6 +151,8 @@ SIMPLE_JWT = {
     # just for testing purposes the validity time has been lowered
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=20),
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(hours=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
     # 'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=30),
     # 'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
 }

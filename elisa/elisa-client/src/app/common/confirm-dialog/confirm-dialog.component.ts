@@ -8,12 +8,16 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class ConfirmDialogComponent implements OnInit {
 
+  isSimpleDialog: boolean;
+  message: string;
+
   constructor(
     public dialogRef: MatDialogRef<ConfirmDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public message: string) { }
+    @Inject(MAT_DIALOG_DATA) public data: {msg: string, isSimple: boolean}) { }
 
     ngOnInit(): void {
-
+      this.message = this.data.msg;
+      this.isSimpleDialog = this.data.isSimple;
     }
 
     onNoClick(): void {

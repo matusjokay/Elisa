@@ -8,11 +8,13 @@
     <button mat-button *ngIf="searchForm.get('name')" matSuffix mat-icon-button aria-label="Clear" (click)="onClear()">
     <mat-icon>close</mat-icon>
     </button>
-    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelectionChanged($event)" [displayWith]="displayFn">
-    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-        {{option.title_before}} {{option.first_name}} {{option.last_name}} {{option.title_after}}
-        <small class="mat-caption">(email: {{option.username}}@stuba.sk)</small>
-    </mat-option>
+    <mat-autocomplete #auto="matAutocomplete"
+      (optionSelected)="onSelectionChanged($event)"
+      [displayWith]="displayFn">
+      <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+          {{option.title_before}} {{option.first_name}} {{option.last_name}} {{option.title_after}}
+          <small class="mat-caption">(email: {{option.username}}@stuba.sk)</small>
+      </mat-option>
     </mat-autocomplete>
 </mat-form-field>
 </form>

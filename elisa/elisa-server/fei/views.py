@@ -25,7 +25,12 @@ from rest_framework.pagination import (
     PageNumberPagination
 )
 from io import StringIO
-from .models import AppUser, Version, Period
+from .models import (
+    AppUser,
+    Version,
+    Period,
+    Department,
+    UserDepartment)
 from .serializers import (
     VersionSerializer,
     UserSerializer,
@@ -33,7 +38,9 @@ from .serializers import (
     UserSerializerShort,
     TeachersListSerializer,
     PeriodSerializer,
-    AuthGroupSerializer
+    AuthGroupSerializer,
+    DepartmentSerializer,
+    UserDepartmentSerializer
 )
 from authentication.permissions import (
     IsMainTimetableCreator,
@@ -277,7 +284,7 @@ class UserViewSet(viewsets.ModelViewSet):
     Fetches list of users with desired specified fields 
     """
     @action(detail=False)
-    def list_for_role(self, request):
+    def list_all(self, request):
         users_list = list(
             AppUser.objects.values(
                 'id',
@@ -421,21 +428,86 @@ class UserViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_204_NO_CONTENT)
 
 
-class TeachersList(generics.ListAPIView):
+class DepartmentViewSet(viewsets.ModelViewSet):
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, )
 
-    serializer_class = TeachersListSerializer
-    permission_classes = (IsAuthenticated, )
+    @action(
+        detail=False,
+        methods=['get'],
+        permission_classes=[IsAuthenticated])
+    def get_fei_departments(self, request):
+        id_department = request.query_params.get('department')
+        departments = Department.objects.filter(
+            Q(id=id_department) | Q(parent=id_department))
+        serializer = DepartmentSerializer(departments, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    def get_queryset(self):
-        """
-        This view should return a list of all teachers
-        that can add requirements
-        """
-        return SubjectUser.objects.filter(role=3)
 
-    @classmethod
-    def get_extra_actions(cls):
-        return []
+class UserDepartmentViewSet(viewsets.ModelViewSet):
+    queryset = UserDepartment.objects.all()
+    serializer_class = UserDepartmentSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly, )
+
+    @action(
+        detail=False,
+        methods=['get'],
+        permission_classes=[IsAuthenticated])
+    def get_users_by_department(self, request):
+        department_id = request.query_params.get('department')
+        parent_id = request.query_params.get('parent') if request.query_params.get('parent') else None
+        rows = None
+        if not parent_id:
+            rows = UserDepartment.objects.filter(
+                Q(department_id=department_id) |
+                Q(department__parent=department_id)).distinct('user_id')
+        else:
+            rows = UserDepartment.objects.filter(
+                department_id=department_id).distinct('user_id')
+        result = list()
+        # TODO: Make this somehow faster
+        for row in rows:
+            result.append({
+                'id': row.user_id,
+                'username': row.user.username,
+                'title_before': row.user.title_before,
+                'first_name': row.user.first_name,
+                'last_name': row.user.last_name,
+                'title_after': row.user.title_after
+            })
+        return JsonResponse(result, safe=False)
+
+    @action(
+        detail=False,
+        methods=['get'],
+        permission_classes=[IsAuthenticated])
+    def get_departments_users(self, request):
+        rows = UserDepartment.objects.all().distinct('department_id')
+        result = list()
+        for row in rows:
+            result.append({
+                'id': row.department_id,
+                'name': row.department.name,
+                'abbr': row.department.abbr,
+                'parent': row.department.parent
+            })
+        return JsonResponse(result, safe=False)
+
+    @action(
+        detail=False,
+        methods=['delete'],
+        permission_classes=[IsMainTimetableCreator, IsLocalTimetableCreator])
+    def remove_user_from_department(self, request):
+        department_id = request.query_params.get('department')
+        user_id = request.query_params.get('user')
+        try:
+            result = UserDepartment.objects.filter(
+                user_id=user_id,
+                department_id=department_id).delete()
+            return Response('Removed!', status=status.HTTP_200_OK)
+        except IntegrityError as e:
+            return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class PeriodViewSet(viewsets.ModelViewSet):

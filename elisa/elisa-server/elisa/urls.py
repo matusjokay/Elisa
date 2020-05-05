@@ -23,6 +23,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+
 import school.views as school
 import fei.views as fei
 import requirements.views as requirements
@@ -30,11 +31,13 @@ import requirements.views as requirements
 # TODO: Add missing view sets
 router = SimpleRouter()
 router.register(r'groups', school.GroupViewSet)
-router.register(r'departments', school.DepartmentViewSet)
+router.register(r'departments', fei.DepartmentViewSet)
+router.register(r'user-department', fei.UserDepartmentViewSet)
 router.register(r'courses', school.CourseViewSet)
 router.register(r'equipments', school.EquipmentViewSet)
-router.register(r'room-categories', school.RoomTypeViewSet)
+router.register(r'room-types', school.RoomTypeViewSet)
 router.register(r'rooms', school.RoomViewSet)
+router.register(r'room-equipment', school.RoomEquipmentViewSet)
 router.register(r'activity-categories', school.ActivityCategoryViewSet)
 router.register(r'activities', school.ActivityViewSet)
 router.register(r'subject-users', school.SubjectUserViewSet)
@@ -73,9 +76,6 @@ urlpatterns = [
     path(
         '',
         include('authentication.urls')),
-    path(
-        'teachers/',
-        fei.TeachersList.as_view()),
     path(
         'api-auth/',
         include(

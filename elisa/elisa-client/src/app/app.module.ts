@@ -22,7 +22,6 @@ import { HomeComponent } from './pages/home/home.component';
 
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { NavListItemComponent } from './components/nav-list-item/nav-list-item.component';
-import { RequirementDetailsComponent } from './pages/requirement/requirement-details/requirement-details.component';
 import { RequirementListComponent } from './pages/requirement/requirement-list/requirement-list.component';
 import { RequirementFormComponent } from './pages/requirement/requirement-form/requirement-form.component';
 import {
@@ -56,6 +55,8 @@ import { CourseRolesAvailablePipe } from './pipes/course-roles-available.pipe';
 import { UserSearchComponent } from './common/user-search/user-search.component';
 import { ConfirmDialogComponent } from './common/confirm-dialog/confirm-dialog.component';
 import { NotFoundComponent } from './common/not-found/not-found.component';
+import { RequirementListDatePipe } from './pipes/requirement-list-date.pipe';
+import { DepartmentUserDetailComponent } from './pages/departments/department-user-detail/department-user-detail.component';
 
 
 @NgModule({
@@ -70,7 +71,6 @@ import { NotFoundComponent } from './common/not-found/not-found.component';
     NavigationComponent,
     HomeComponent,
     NavListItemComponent,
-    RequirementDetailsComponent,
     RequirementListComponent,
     RequirementFormComponent,
     TimetableUpdateWrapperComponent,
@@ -99,7 +99,9 @@ import { NotFoundComponent } from './common/not-found/not-found.component';
     CourseRolesAvailablePipe,
     UserSearchComponent,
     ConfirmDialogComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    RequirementListDatePipe,
+    DepartmentUserDetailComponent
   ],
   imports: [
     BrowserModule,

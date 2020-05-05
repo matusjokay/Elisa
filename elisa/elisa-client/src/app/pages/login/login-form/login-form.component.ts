@@ -18,7 +18,7 @@ import * as Globals from '../../../models/globals';
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.less']
 })
-export class LoginFormComponent implements OnInit, OnDestroy {
+export class LoginFormComponent implements OnInit {
   account = new Account();
   response: Subscription;
   loginForm: FormGroup;
@@ -62,7 +62,7 @@ export class LoginFormComponent implements OnInit, OnDestroy {
     this.onRequestSent('Submitting login credentials');
     this.account.username = this.loginForm.value.name;
     this.account.password = this.loginForm.value.password;
-    this.response = this.authService.login(this.account)
+    this.authService.login(this.account)
       .subscribe(
       (response: any) => {
         this.onRequestSent('Loggin Successful<br>Checking roles for user...');
@@ -123,10 +123,6 @@ export class LoginFormComponent implements OnInit, OnDestroy {
   onRequestDone() {
     this.loading = false;
     this.statusText = '';
-  }
-
-  ngOnDestroy() {
-    this.response.unsubscribe();
   }
 
 }

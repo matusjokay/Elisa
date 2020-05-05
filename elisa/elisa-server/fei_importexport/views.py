@@ -26,7 +26,6 @@ DATABASE_NAME = 'import'
 def update_or_create(model, instance_id, default=None, **kwargs):
     return model.objects.update_or_create(id=instance_id, defaults=default)
 
-
 def create(model, **kwargs):
     return model.objects.create(**kwargs)
 

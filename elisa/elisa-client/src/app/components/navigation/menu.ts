@@ -41,9 +41,9 @@ export const navItems: NavItem[] = [
     ]
   },
   {
-    displayName: 'Requirement',
+    displayName: 'Requirements',
     iconName: 'note_add',
-    route: ['/requirement-form'],
+    route: ['/requirement-list'],
     i18n: '@@Requirement',
     forRoles: RoleManager.ID_ALL
   },

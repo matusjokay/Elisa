@@ -16,6 +16,8 @@ export class UserSearchComponent implements OnInit, OnDestroy {
   users: User[];
   searchForm: FormGroup;
   cacheUser: User;
+  @Input()
+  isDisabled: boolean;
   filteredOptions: Observable<any>;
   @Output()
   selectedUser = new EventEmitter<User>();
@@ -83,6 +85,14 @@ export class UserSearchComponent implements OnInit, OnDestroy {
     this.searchForm.get('name').setValue('');
     this.cacheUser = null;
     this.selected.emit(false);
+  }
+
+  onDisable(event: boolean) {
+    if (event) {
+      this.searchForm.get('name').disable();
+    } else {
+      this.searchForm.get('name').enable();
+    }
   }
 
   ngOnDestroy() {

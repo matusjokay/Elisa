@@ -21,6 +21,7 @@ import { VersionSelectComponent } from './pages/version/version-select/version-s
 import { MaterialModule } from './material/material.module';
 import { RoleManager } from './models/role.model';
 import { NotFoundComponent } from './common/not-found/not-found.component';
+import { RequirementListComponent } from './pages/requirement/requirement-list/requirement-list.component';
 
 const routes: Routes = [
   {
@@ -85,6 +86,11 @@ const routes: Routes = [
           RoleManager.LOCAL_TIMETABLE_CREATOR,
           RoleManager.TEACHER
         ]}
+      },
+      { path: 'requirement-list',
+        component: RequirementListComponent,
+        canActivate: [AuthGuardService],
+        data: {roles: RoleManager.ALL}
       },
       { path: 'course-list',
         component: CourseListComponent,

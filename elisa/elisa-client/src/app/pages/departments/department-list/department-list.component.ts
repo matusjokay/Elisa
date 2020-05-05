@@ -1,11 +1,10 @@
-import {Component, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {environment} from '../../../../environments/environment';
-import {Department} from '../../../models/department';
-import {Observable} from 'rxjs';
-import {map} from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { Department, DepartmentNode } from '../../../models/department';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
-import {NestedTreeControl} from '@angular/cdk/tree';
+import { NestedTreeControl } from '@angular/cdk/tree';
+import { DepartmentService } from 'src/app/services/department.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DepartmentUserDetailComponent } from '../department-user-detail/department-user-detail.component';
 
 @Component({
   selector: 'app-department-list',
@@ -15,53 +14,105 @@ import {NestedTreeControl} from '@angular/cdk/tree';
 export class DepartmentListComponent implements OnInit {
   departments: Department[];
 
-  // treeControl = new NestedTreeControl<Department>(node => node.children);
-  dataSource = new MatTreeNestedDataSource<Department>();
+  treeControl = new NestedTreeControl<DepartmentNode>(node => !node.parent ? node.children : null);
+  dataSource = new MatTreeNestedDataSource<DepartmentNode>();
 
   displayedColumns: string[] = ['id', 'name', 'abbr', 'parent'];
 
-  constructor(private httpClient: HttpClient) {
+  loadingText: string;
+  loading: boolean;
+
+  constructor(private departmentService: DepartmentService,
+    public dialog: MatDialog) {
   }
 
   ngOnInit() {
-    // this.getData().subscribe(data => {
-    //   this.departments = data;
-    //   this.dataSource.data = this.createTree(this.departments,null);;
-    // });
-    console.log('todo fetch data and create tree??');
+    this.fetchDepartments();
   }
 
-  // getData(): Observable<Department[]>{
-  //   return this.httpClient.get<Department[]>(environment.APIUrl + 'departments/').pipe(map((data: any[]) => data.map((item: any) =>
-  //       new Department(
-  //         item.id,
-  //         item.name,
-  //         item.abbr,
-  //         item.parent
-  //       ))));
-  // }
+  fetchDepartments() {
+    this.onRequestSent('Fetching departments...');
+    this.departmentService.getDepartmentsFei().subscribe(
+      (success) => {
+        this.departments = success;
+        this.dataSource.data = this.createTree(success);
+      },
+      (error) => console.error(error)
+    ).add(() => this.onRequestDone());
+  }
 
-  createTree(data, parent){
-    var out = [];
-    for(var i in data) {
-      if(data[i].parent == parent) {
-        var children = this.createTree(data, data[i].id)
-
-        if(children.length) {
-          data[i].children = children
+  // Lets assume for now that the tree has depth of just 2 levels
+  createTree(departments: Department[]): DepartmentNode[] {
+    const result = [];
+    departments.forEach(dep => {
+      if (!dep.parent) {
+        if (!result.some(department => department.id === dep.id)) {
+          result.push({
+            id: dep.id,
+            name: dep.name,
+            abbr: dep.abbr,
+            parent: dep.parent,
+            children: []
+          });
         }
-        out.push(data[i])
+      } else {
+        let parent = result.find(node => node.id === dep.parent);
+        if (!parent) {
+          const parentData = this.departments.find(node => node.id === dep.parent);
+          parent = {
+            id: parentData.id,
+            name: parentData.name,
+            abbr: parentData.abbr,
+            parent: null,
+            children: []
+          };
+          const chd = {
+            id: dep.id,
+            name: dep.name,
+            abbr: dep.abbr,
+            parent: dep.parent
+          };
+          parent.children.push(chd);
+          result.push(parent);
+        } else {
+          const index = result.indexOf(parent);
+          const child = {
+            id: dep.id,
+            name: dep.name,
+            abbr: dep.abbr,
+            parent: dep.parent
+          };
+          parent.children.push(child);
+          result[index] = parent;
+        }
       }
-    }
-    return out;
+    });
+    return result;
   }
-  // onSelect(department: Department): void {
-  //   this.selectedDepartment = department;
-  // }
 
-  // hasChild = (_: number, node: Department) => !!node.children && node.children.length > 0;
-
-  save(department: Department): void{
-    this.httpClient.post(environment.APIUrl + "postDepartment/", department).subscribe();
+  onRequestSent(msg: string) {
+    this.loadingText = msg;
+    this.loading = true;
   }
+
+  onRequestDone() {
+    this.loadingText = '';
+    this.loading = false;
+  }
+
+  onDepartmentPersonManage(node: DepartmentNode) {
+    console.log(node);
+    this.dialog.open(DepartmentUserDetailComponent, {
+      width: '75vw',
+      height: '25vh',
+      data: { department: {
+        id: node.id,
+        name: node.name,
+        abbr: node.abbr,
+        parent: node.parent
+      }}
+    });
+  }
+
+  hasChild = (_: number, node: Department) => !node.parent;
 }

@@ -25,7 +25,10 @@ export class PeriodService {
   getCurrentSelectedPeriods() {
     if (!this.cachePeriodList$) {
       this.cachePeriodList$ = this.requestPeriods().pipe(
-        shareReplay(1)
+        shareReplay({
+          bufferSize: 1,
+          refCount: true
+        })
       );
     }
 

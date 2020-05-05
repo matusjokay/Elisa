@@ -154,7 +154,10 @@ export class TimetableService {
     if (!this.cacheVersionList$) {
       this.cacheVersionList$ = this.requestAllSchemas()
         .pipe(
-          shareReplay(1)
+          shareReplay({
+            bufferSize: 1,
+            refCount: true
+          })
         );
     }
 

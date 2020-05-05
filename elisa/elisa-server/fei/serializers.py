@@ -1,7 +1,12 @@
 from django.db.models import Q
 from django.contrib.auth.models import Group 
 from rest_framework import serializers
-from .models import Version, AppUser, Period
+from .models import (
+    Version,
+    AppUser,
+    Period,
+    Department,
+    UserDepartment)
 import re
 
 from school.models import Course, SubjectUser
@@ -104,6 +109,17 @@ class UserSerializerTable(UserMixin, serializers.ModelSerializer):
         model = AppUser
         fields = ('id', 'fullname_table', 'groups')
 
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = '__all__'
+
+
+class UserDepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserDepartment
+        fields = '__all__'
 
 class SubjectSerializer(serializers.ModelSerializer):
     class Meta:

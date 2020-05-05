@@ -174,16 +174,19 @@ export class VersionSelectComponent implements OnInit {
   onDataRefresh() {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '25%',
-      data: `This will <b>insert/update</b> the most recent data for :<br>
-      <ul>
-        <li>Users</li>
-        <li>Periods</li>
-        <li>Departments</li>
-      </ul><br><br>
-      After that you'll be logged out.<br>
-      This is to make sure data is displayed correctly<br><br>
-      It may take some time... <br>
-      <b>Continue?</b>`
+      data: {
+        msg: `This will <b>insert/update</b> the most recent data for :<br>
+        <ul>
+          <li>Users</li>
+          <li>Periods</li>
+          <li>Departments</li>
+        </ul><br><br>
+        After that you'll be logged out.<br>
+        This is to make sure data is displayed correctly<br><br>
+        It may take some time... <br>
+        <b>Continue?</b>`,
+        isSimple: false
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {

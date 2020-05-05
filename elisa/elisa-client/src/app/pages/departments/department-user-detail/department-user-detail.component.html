@@ -1,0 +1,35 @@
+<div fxLayout="row" fxLayoutAlign="space-between center">
+  <span></span>
+  <h3>Manage Users for {{department.name}}</h3>
+  <button mat-mini-fab color="primary" (click)="onCloseDialog()">
+      <mat-icon>close</mat-icon>
+  </button>
+</div>
+<div fxLayout="column" fxLayoutAlign="space-around center">
+  <app-spinner [loadingText]="loadingText" [hidden]="!loading"></app-spinner>
+  <mat-radio-group
+    [(ngModel)]="isRemoving"
+    (change)="onActionChange($event)">
+    <mat-radio-button [value]="false">Add</mat-radio-button>
+    <mat-radio-button [value]="true">Remove</mat-radio-button>
+  </mat-radio-group>
+  <app-user-search #searcher
+    [users]="getUsersByActionType()"
+    (selectedUser)="onSelectedUser($event)"
+    (selected)="onSelected($event)"
+    style="width: 50%;">
+  </app-user-search>
+  <mat-radio-group
+    *ngIf="!isRemoving"
+    [(ngModel)]="employment"
+    (change)="onEmploymentChange($event)">
+    <mat-radio-button [value]="'interny'">Internal</mat-radio-button>
+    <mat-radio-button [value]="'externy'">External</mat-radio-button>
+  </mat-radio-group>
+  <button mat-raised-button
+    [disabled]="!selected || (!isRemoving ? !employment : false)"
+    [color]="isRemoving ? 'warn' : 'primary'"
+    (click)="onButtonClick()">
+    {{isRemoving ? 'Remove' : 'Add'}}
+  </button>
+</div>

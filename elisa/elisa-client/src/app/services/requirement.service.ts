@@ -4,13 +4,15 @@ import {environment} from '../../environments/environment';
 import {map, share} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {Requirement} from '../models/requirement';
+import { BaseService } from './base-service.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RequirementService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+    private baseService: BaseService) { }
 
   getUser(): Observable<any[]>{
     const token = localStorage.getItem('token');
@@ -40,31 +42,27 @@ export class RequirementService {
         share());
   }
 
-  createRequirement(body){
-    let headers: HttpHeaders = new HttpHeaders();
-    headers = headers.append('Timetable-Version', localStorage.getItem('active_scheme'));
-    let options = ({headers: headers});
-
-    this.http.post(environment.APIUrl + "requirements/",
-      body,
-      options
-    ).pipe(
-      map((response: any) => {
-          return response;
-        }
-      )).subscribe();
+  createRequirement(requirement) {
+    const httpOptions = this.baseService.getSchemaHeader();
+    return this.http.post(`${environment.APIUrl}requirements/`,
+      requirement, { headers: httpOptions });
   }
 
-  getAll(): Observable<Requirement[]>{
-    let headers: HttpHeaders = new HttpHeaders();
-    headers = headers.append('Timetable-Version', localStorage.getItem('active_scheme'));
-    let options = ({headers: headers});
+  getAll(): Observable<Requirement[]> {
+    const httpOptions = this.baseService.getSchemaHeader();
+    return this.http.get<Requirement[]>(`${environment.APIUrl}requirements/`,
+     { headers: httpOptions });
+  }
 
-    return this.http.get<Requirement[]>(environment.APIUrl + 'requirements/',options).
-    pipe(
-      map((data: Requirement[]) =>{
-          return data;
-        }
-      ),share());
+  getRequirement(reqId: number): Observable<Requirement> {
+    const httpOptions = this.baseService.getSchemaHeader();
+    return this.http.get<Requirement>(`${environment.APIUrl}requirements/${reqId}/`,
+      { headers: httpOptions });
+  }
+
+  editRequirement(existingRequirement) {
+    const httpOptions = this.baseService.getSchemaHeader();
+    return this.http.put(`${environment.APIUrl}requirements/${existingRequirement.id}/`,
+      existingRequirement, { headers: httpOptions });
   }
 }

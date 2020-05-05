@@ -2,11 +2,18 @@
   <div class="col-xs-12">
     <h2 i18n="@@Departments">Departments</h2>
   </div>
+  <app-spinner [loadingText]="loadingText" [hidden]="!loading"></app-spinner>
   <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="example-tree">
     <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
       <li class="mat-tree-node">
         <button mat-icon-button disabled></button>
-        {{node.name}}
+        {{node.name}} | {{node.abbr}}
+        <button
+            mat-icon-button
+            color="primary"
+            (click)="onDepartmentPersonManage(node)">
+            <mat-icon>person</mat-icon>
+          </button>
       </li>
     </mat-tree-node>
     <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
@@ -18,7 +25,13 @@
               {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
           </button>
-          {{node.name}}
+          {{node.name}} | {{node.abbr}}
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="onDepartmentPersonManage(node)">
+            <mat-icon>person</mat-icon>
+          </button>
         </div>
         <ul [class.example-tree-invisible]="!treeControl.isExpanded(node)">
           <ng-container matTreeNodeOutlet></ng-container>

@@ -1,3 +1,37 @@
-<p>
-  requirement-list works!
-</p>
+<app-spinner [loadingText]="loadingText" [hidden]="!loading"></app-spinner>
+<mat-card>
+  <mat-card-header><h2>List of requirements</h2></mat-card-header>
+  <mat-card-content>
+    <mat-list>
+      <div *ngFor="let dt of dateGroups">
+      <div mat-subheader>On {{dt}}</div>
+      <mat-list-item *ngFor="let requirement of listOfRequirements | requirementListDate:dt">
+        <mat-icon mat-list-icon>{{requirement.requirement_type === 1 ? 'school' : 'assignment'}}</mat-icon>
+        <div mat-line>{{requirement.requirement_type === 1 ? 'Lecture' : 'Seminar'}} for Teacher: {{requirement.teacher['fullname']}}</div>
+        <div mat-line>Created By: {{requirement.created_by['fullname']}}</div>
+        <div mat-line>Last updated at: {{requirement.last_updated | date: 'fullTime'}}</div>
+        <div mat-line *ngIf="departments; else waiting">For Department: {{getDepartmentName(requirement.for_department)}}</div>
+        <ng-template #waiting>Waiting for departments...</ng-template>
+        <button mat-icon-button
+          matTooltip="Edit Requirement"
+          *ngIf="requirement.created_by['id'] === currentUser"
+          (click)="onEdit(requirement.id, requirement.for_department)">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </mat-list-item>
+    </div>
+    </mat-list>
+    <mat-form-field>
+      <mat-label>Select Department for Requirement</mat-label>
+      <mat-select [formControl]="departmentControl">
+        <mat-option *ngFor="let department of departments" [value]="department.id">
+          <mat-icon *ngIf="!department.parent">star</mat-icon>{{department.name}} | {{department.abbr}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="departmentControl.hasError('required')">Please choose a department from the dropdown!</mat-error>
+    </mat-form-field>
+    <button mat-raised-button color="primary"
+      [disabled]="!departmentControl.value"
+      (click)="onCreate()">Create a new requirement</button>
+  </mat-card-content>
+</mat-card>

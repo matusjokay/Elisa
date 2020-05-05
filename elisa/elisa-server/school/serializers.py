@@ -51,15 +51,6 @@ class EquipmentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class RoomEquipmentSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField(source='equipment.id')
-    name = serializers.ReadOnlyField(source='equipment.name')
-
-    class Meta:
-        model = models.RoomEquipment
-        fields = ('id', 'name', 'count')
-
-
 class RoomCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RoomType
@@ -67,18 +58,19 @@ class RoomCategorySerializer(serializers.ModelSerializer):
 
 
 class RoomSerializer(serializers.ModelSerializer):
-    # category = RoomCategorySerializer()
-    # category = serializers.SlugRelatedField(
-    #     slug_field='name', queryset=models.RoomType.objects.all())
-    # equipment = RoomEquipmentSerializer(
-    #     source='roomequipment_set', many=True, read_only=True)
-    department = DepartmentSerializer(
-        source='department_set', many=True, read_only=True
-    )
 
     class Meta:
         model = models.Room
         fields = ('id', 'name', 'capacity', 'room_type', 'department')
+
+
+class RoomEquipmentSerializer(serializers.ModelSerializer):
+    equipment = EquipmentSerializer(read_only=True)
+    room_id = serializers.IntegerField(source="room.id", read_only=True)
+
+    class Meta:
+        model = models.RoomEquipment
+        fields = ('count', 'equipment', 'room_id')
 
 
 class ActivityCategorySerializer(serializers.ModelSerializer):
@@ -131,28 +123,16 @@ class SubjectUserSerializerFull(serializers.ModelSerializer):
         queryset=models.UserSubjectRole.objects.all(),
         source='role',
         write_only=True)
-    # subject_id = serializers.PrimaryKeyRelatedField(queryset=models.Course.objects.all())
-    # user_id = serializers.PrimaryKeyRelatedField(queryset=fei_models.AppUser.objects.all())
 
     class Meta:
         model = models.SubjectUser
         # fields = ('id', 'subject', 'user')
         fields = '__all__'
 
-# class SubjectUserSerializerCreate(serializers.ModelSerializer):
-    
-    
 
-#     def create(self, validated_data):
-#         user_id = validated_data.pop('user')
-#         subject_id = validated_data.pop('subject')
-#         role_id = validated_data.pop('role')
-#         row = models.SubjectUser.objects.create(
-#             user=user_id,
-#             subject=subject_id,
-#             role=role_id)
-#         return row
+class SubjectUserSerializerRoleUser(serializers.ModelSerializer):
+    user = fei_serializers.UserSerializerCourse(read_only=True)
 
-#     class Meta:
-#         model = models.SubjectUser
-#         fields = '__all__'
+    class Meta:
+        model = models.SubjectUser
+        fields = ('user',)

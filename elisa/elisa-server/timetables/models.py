@@ -8,6 +8,7 @@ from django.db import models
 from django_fsm import transition, FSMField
 
 from school.models import Activity, Room, Group
+from fei.models import AppUser
 
 
 class Timetable(models.Model):
@@ -143,6 +144,7 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     type = models.PositiveSmallIntegerField(choices=COMMENT_TYPE)
+    comment_by = models.ForeignKey(AppUser, on_delete=models.CASCADE)
 
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()

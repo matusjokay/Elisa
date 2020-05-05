@@ -46,11 +46,29 @@ export class CourseService {
       share());
   }
 
+  getCoursesByUserAndRole(userId: number, roleId: number): Observable<Course[]> {
+    const httpOptions = this.baseService.getSchemaHeader();
+    const params = new HttpParams()
+      .set('user', userId.toString())
+      .set('role', roleId.toString());
+    return this.http.get<Course[]>(`${environment.APIUrl}subject-users/get_subjects_of_user/`,
+      { headers: httpOptions, params: params });
+  }
+
   getUsersBySubject(courseId: number): Observable<CourseUser[]> {
     const httpOptions = this.baseService.getSchemaHeader();
     const params = new HttpParams().set('subject', courseId.toString());
     return this.http.get<CourseUser[]>(`${environment.APIUrl}subject-users/get_users/`,
       { headers: httpOptions, params: params });
+  }
+
+  getNumberOfStudentsOnCourses(courseIds: number[]): Observable<{id: number, total: number}[]> {
+    const httpOptions = this.baseService.getSchemaHeader();
+    const body = {
+      courses: courseIds
+    };
+    return this.http.post<{id: number, total: number}[]>(`${environment.APIUrl}subject-users/get_students_number_by_courses/`,
+      body, { headers: httpOptions });
   }
 
   getRolesOfUserOnCourse(courseId: number, userId: number): Observable<CourseUserRole[]> {

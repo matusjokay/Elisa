@@ -510,11 +510,11 @@ export class TimetableUpdateMainComponent implements OnInit {
    * parse requirements by teacher
    */
   private parseRequirements() {
-    this.requirements.forEach(obj =>{
-      let index = (obj.course ? obj.course.toString() : "all");
-      // this.teachers[obj.teacher]['requirements'][index] = obj;
-      this.teachers[this.courses[obj.course].id_teacher]['requirements'][index] = obj;
-    });
+    // this.requirements.forEach(obj =>{
+    //   let index = (obj.course ? obj.course.toString() : "all");
+    //   // this.teachers[obj.teacher]['requirements'][index] = obj;
+    //   this.teachers[this.courses[obj.course].id_teacher]['requirements'][index] = obj;
+    // });
   }
 
   /**

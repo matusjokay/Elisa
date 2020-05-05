@@ -13,6 +13,8 @@ class RequirementsViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'create':
             return serializers.RequirementSerializerPost
+        elif self.action == 'update':
+            return serializers.RequirementSerializerPut
         return serializers.RequirementSerializer
 
 
@@ -22,4 +24,3 @@ class RequirementEventViewSet(ModelViewSet):
     """
     queryset = models.RequirementEvent.objects.all()
     serializer_class = serializers.RequirementEventSerializer
-

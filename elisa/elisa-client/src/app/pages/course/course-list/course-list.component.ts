@@ -157,15 +157,6 @@ export class CourseListComponent implements OnInit {
       data: { course: row }
     });
     dialogRef.afterClosed().subscribe(result => {
-      // if (result) {
-      //   if (result === 'updated') {
-      //     this.snackBar.openSnackBar('Course successfully updated!', 'Close', this.snackBar.styles.success);
-      //     this.loadingAction();
-      //     this.getCourseData(this.lastPageIndex, this.lastPageSize);
-      //   } else if (result === 'failed') {
-      //     this.snackBar.openSnackBar('Failed to update course!', 'Close', this.snackBar.styles.failure);
-      //   }
-      // }
       console.log(result);
     });
   }

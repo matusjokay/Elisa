@@ -1,11 +1,16 @@
 import django_filters
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
+from django.db.models import Count, Q
 from rest_framework import status
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly
+)
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from . import models, serializers
@@ -14,6 +19,7 @@ from django.http.response import JsonResponse
 import json
 from django.db.utils import IntegrityError
 from rest_framework.exceptions import ValidationError
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 15
@@ -98,6 +104,85 @@ class RoomViewSet(ModelViewSet):
     ordering_fields = ('name', 'capacity', 'category')
     search_fields = ('name',)
 
+    @action(
+        detail=False,
+        methods=['get'],
+        permission_classes=[IsAuthenticatedOrReadOnly])
+    def get_rooms_by_department(self, request):
+        department_id = request.query_params.get('department')
+        rooms = models.Room.objects.filter(department_id=department_id)
+        serializer = serializers.RoomSerializer(rooms, many=True)
+        return Response(
+            data=serializer.data,
+            status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
+        methods=['get'],
+        permission_classes=[IsAuthenticatedOrReadOnly])
+    def get_rooms_by_department_all(self, request):
+        department_id = request.query_params.get('department')
+        rooms = models.Room.objects.filter(
+            Q(department__id=department_id) |
+            Q(department__parent=department_id))
+        serializer = serializers.RoomSerializer(rooms, many=True)
+        return Response(
+            data=serializer.data,
+            status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
+        methods=['post'],
+        permission_classes=[IsAuthenticatedOrReadOnly])
+    def get_rooms_by_department_and_ids(self, request):
+        department_id = request.query_params.get('department')
+        room_ids = request.data['rooms']
+        rooms = models.Room.objects.filter(
+            department_id=department_id,
+            id__in=room_ids)
+        result = list()
+        for row in rooms:
+            result.append({
+                'id': row.id,
+                'name': row.name,
+            })
+        return JsonResponse(result, safe=False)
+
+    @action(
+        detail=False,
+        methods=['get'],
+        permission_classes=[IsAuthenticatedOrReadOnly])
+    def get_rooms_by_department_and_type(self, request):
+        department_id = request.query_params.get('department')
+        type_id = request.query_params.get('type')
+        rooms = models.Room.objects.filter(
+            department_id=department_id,
+            room_type_id=type_id)
+        serializer = serializers.RoomSerializer(rooms, many=True)
+        return Response(
+            data=serializer.data,
+            status=status.HTTP_200_OK)
+
+
+class RoomEquipmentViewSet(ModelViewSet):
+    """
+    API endpoint that allows rooms and their equipment to be viewed or edited.
+    """
+    queryset = models.ActivityCategory.objects.all()
+    serializer_class = serializers.RoomEquipmentSerializer
+
+    @action(
+        detail=False,
+        methods=['post'],
+        permission_classes=[IsAuthenticatedOrReadOnly])
+    def get_equipment_of_rooms(self, request):
+        room_ids = request.data['rooms']
+        queryset = models.RoomEquipment.objects.filter(room_id__in=room_ids)
+        serializer = serializers.RoomEquipmentSerializer(queryset, many=True)
+        return Response(
+            data=serializer.data,
+            status=status.HTTP_200_OK)
+
 
 class ActivityCategoryViewSet(ModelViewSet):
     """
@@ -129,18 +214,49 @@ class SubjectUserViewSet(ModelViewSet):
             queryset = models.SubjectUser.objects.all()
         else:
             role_id = int(request.query_params.get('role'))
-            queryset = models.SubjectUser.objects.filter(role=role_id)
+            queryset = models.SubjectUser.objects.filter(
+                role=role_id).distinct('user_id')
         serializer = serializers.SubjectUserSerializerFull(queryset, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['get'])
-    def get_users(self, request):
-        subject_id = request.query_params.get('subject')
-        queryset = models.SubjectUser.objects.filter(subject_id=subject_id).distinct('user_id')
+    def filter_users_by_role(self, request):
+        role_id = int(request.query_params.get('role'))
+        queryset = models.SubjectUser.objects.filter(
+            role=role_id).distinct('user_id')
+        # serializer = serializers.SubjectUserSerializerRoleUser(
+        #     queryset, many=True)
+        # return Response(serializer.data)
         result = list()
         for row in queryset:
-            result.append({'userId': row.user.id,
-            'userFullname': row.user.construct_name()})
+            # result.append({'userId': row.user_id,
+            # 'userFullname': row.user.construct_name()})
+            result.append({'userId': row.user_id})
+        return JsonResponse(result, safe=False)
+
+    @action(detail=False, methods=['get'])
+    def get_users(self, request):
+        subject_id = request.query_params.get('subject')
+        queryset = models.SubjectUser.objects.filter(
+            subject_id=subject_id).distinct('user_id')
+        result = list()
+        for row in queryset:
+            result.append({
+                'userId': row.user.id,
+                'userFullname': row.user.construct_name()})
+        return JsonResponse(result, safe=False)
+
+    @action(detail=False, methods=['get'])
+    def get_subjects_of_user(self, request):
+        user_id = request.query_params.get('user')
+        role_id = request.query_params.get('role')
+        queryset = models.SubjectUser.objects.filter(
+            user_id=user_id, role_id=role_id).distinct('subject_id')
+        result = list()
+        for row in queryset:
+            result.append({
+                'id': row.subject.id,
+                'name': row.subject.name})
         return JsonResponse(result, safe=False)
 
     @action(detail=False, methods=['get'])
@@ -153,10 +269,23 @@ class SubjectUserViewSet(ModelViewSet):
         )
         result = list()
         for row in queryset:
-            result.append({'idRow': row.id,
-            # 'userId': row.user.id,
-            # 'userFullname': row.user.construct_name(),
-            'roleId': row.role.id,
+            result.append({
+                'idRow': row.id,
+                'roleId': row.role.id,
+            })
+        return JsonResponse(result, safe=False)
+
+    @action(detail=False, methods=['post'])
+    def get_students_number_by_courses(self, request):
+        course_ids = request.data['courses']
+        queryset = models.SubjectUser.objects.filter(
+            Q(role_id=7) & Q(subject_id__in=course_ids)
+        ).values('subject_id').annotate(total=Count('user'))
+        result = list()
+        for row in queryset:
+            result.append({
+                'id': row['subject_id'],
+                'total': row['total']
             })
         return JsonResponse(result, safe=False)
 
@@ -184,7 +313,6 @@ class SubjectUserViewSet(ModelViewSet):
             return Response(
                 'Failed to remove role entry!',
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
     def create(self, request):
         subject_id = request.data['subject_id']

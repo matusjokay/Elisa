@@ -1,33 +1,96 @@
+<span #tooltip
+  [ngStyle]="{'display': tooltipShow ? 'block': 'none'}"
+  class="tooltip-class">
+  {{tooltipText}}
+</span>
 <div fxLayout="column" fxLayoutAlign="center center" class="requirement-form">
   <h2 i18n="@@Requirement">Requirement</h2>
   <mat-card>
-    <mat-card-header>
-      <mat-card-title>Elisa</mat-card-title>
+    <mat-card-header fxLayout="row">
+      <div *ngIf="!edit; else editing">
+        <div fxFlex="50">
+          <h3>Select requirement type to create: </h3>
+        </div>
+        <div fxFlex="50">
+          <mat-radio-group
+              [(ngModel)]="requirementType"
+              (change)="onRequirementTypeChange($event)">
+              <mat-radio-button [value]="1">Lecture</mat-radio-button>
+              <mat-radio-button [value]="2">Seminar</mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </div>
+      <ng-template #editing>
+        <div fxFlex="100">
+          <h3>Editing requirement...</h3>
+        </div>
+      </ng-template>
     </mat-card-header>
-    <form (ngSubmit)="onSubmit()" [formGroup]="requirementForm">
+    <form [formGroup]="requirementForm">
       <mat-card-content fxLayout="column">
+        <div fxLayout="row" *ngIf="!edit">
+          <mat-form-field fxFlex="50">
+            <mat-label>User Role Type</mat-label>
+            <mat-select [formControl]="requirementForm.controls.user_role_id" (selectionChange)="onUserRoleType($event)">
+              <mat-option *ngFor="let role of courseRoles" [value]="role.id">
+                {{role.name}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <app-user-search #searcher
+            fxFlex="50"
+            [users]="users"
+            (selectedUser)="onSelectedUser($event)"
+            (selected)="onSelected($event)">
+          </app-user-search>
+        </div>
         <div fxLayout="column">
-          <mat-form-field fxFlex="100">
-            <mat-label>Teacher</mat-label>
-            <mat-select formControlName="teacher_id" (selectionChange)="setCoursesForm($event)">
-              <mat-option *ngFor="let option of optionsUsers | keyvalue" [value]="option.key">
-                {{option.value.fullname}}
+          <div fxLayout="row" fxFlex="33">
+          <mat-form-field>
+            <mat-label>Room Type</mat-label>
+            <mat-select [formControl]="requirementForm.controls.room_type_id" (selectionChange)="onRoomTypeChange($event)">
+              <mat-option *ngFor="let type of roomTypes" [value]="type.id">
+                {{type.name}}
               </mat-option>
             </mat-select>
           </mat-form-field>
-
-          <mat-form-field fxFlex="100">
+          <mat-form-field fxFlex="33">
+            <mat-label>Room</mat-label>
+            <mat-select [formControl]="requirementForm.controls.room_id" (selectionChange)="onRoomChange($event)">
+              <mat-option
+                [matTooltip]="getEquipmentText(room)"
+                matTooltipClass="my-tooltip"
+                *ngFor="let room of rooms" [value]="room.id">
+                {{room.name}} | <small>Capacity: {{room.capacity}}</small>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field fxFlex="33">
             <mat-label>Course</mat-label>
-            <mat-select formControlName="course_id">
-              <mat-option [value]="All">All</mat-option>
-              <mat-option *ngFor="let option of optionsSubjects" [value]="option.id">
-                {{option.name}}
+            <mat-select [formControl]="requirementForm.controls.course_id" (selectionChange)="onCourseChange($event)">
+              <mat-option *ngFor="let course of optionsCourses"
+                [value]="course.id">
+                {{course.name}}<span *ngIf="studentNumberCourse" [matTooltip]="getNumberOfStudentsOnCourse(course.id)"></span>
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-button-toggle-group #group="matButtonToggleGroup" [value]="1">
-            <mat-button-toggle *ngFor="let type of types" [ngClass]="type.name" (change)="selectType(type.id)" [value]="type.id">{{type.name}}</mat-button-toggle>
+        </div>
+        <app-spinner fxFlex="100" [loadingText]="loadingText" [hidden]="!loading">
+        </app-spinner>
+          <mat-button-toggle-group fxLayout="row" fxLayoutAlign="center center" #group="matButtonToggleGroup" [value]="activeType">
+            <mat-button-toggle *ngFor="let type of types"
+              [ngClass]="[type.name, activeType.id === type.id ? 'selected': '']"
+              (change)="selectType(type.id)"
+              [value]="type.id">{{type.name}}
+            </mat-button-toggle>
           </mat-button-toggle-group>
+          <mat-slide-toggle
+            color="warn"
+            [checked]="false"
+            (change)="onSlideDelete($event)"
+            [disabled]="noEvents()">
+            Remove Event on Click?
+          </mat-slide-toggle>
           <div fxFlex="100" class='app-calendar'>
             <full-calendar
               #calendar
@@ -39,6 +102,10 @@
               resourceLabelText=" "
               [resources]="resources"
               [header]="false"
+              (eventRender)="onEventRender($event)"
+              (eventMouseEnter)="onMouseEnter($event, tooltip)"
+              (eventMouseLeave)="onMouseLeave()"
+              (eventClick)="onEventClick($event)"
               minTime="7:00:00"
               maxTime="22:00:00"
               resourceAreaWidth = "100px"
@@ -52,22 +119,42 @@
               schedulerLicenseKey = 'GPL-My-Project-Is-Open-Source'
             ></full-calendar>
           </div>
-
           <mat-form-field fxFlex="100">
-            <mat-label>Notes</mat-label>
+            <mat-label>Enter a note</mat-label>
             <textarea
               matInput
               cdkTextareaAutosize
               cdkAutosizeMinRows="10"
               cdkAutosizeMaxRows="15"
-              formControlName="comment"
+              [formControl]="requirementForm.controls.comment"
               placeholder="Requirement notes"></textarea>
+              <button mat-icon-button
+                color="primary"
+                matTooltip="Add a note"
+                [disabled]="!requirementForm.controls.comment.value"
+                (click)="onNoteAdd()"
+                *ngIf="edit">
+                <mat-icon>add</mat-icon>
+              </button>
           </mat-form-field>
+          <mat-list *ngIf="edit">
+            <div mat-subheader>Notes</div>
+            <mat-list-item *ngFor="let note of requirementNotes">
+              <mat-icon>account_circle</mat-icon>
+              <div mat-line>{{note.text}}</div>
+              <!-- <div mat-line *ngIf="note.created_at">At: {{note.created_at}} </div> -->
+              <div mat-line>By: {{note.comment_by.fullname}} </div>
+              <mat-divider></mat-divider>
+            </mat-list-item>
+          </mat-list>
         </div>
       </mat-card-content>
       <mat-card-actions fxFlexAlign="end">
-        <button mat-raised-button color="primary" (click)="reset()">Reset</button>
-        <button mat-raised-button color="primary">Send</button>
+        <button mat-raised-button color="primary"
+          (click)="reset()">Reset</button>
+        <button mat-raised-button color="primary"
+          [disabled]="checkIfChanged()"
+          (click)="onSubmit()">{{!edit ? 'Send' : 'Update'}}</button>
       </mat-card-actions>
     </form>
   </mat-card>

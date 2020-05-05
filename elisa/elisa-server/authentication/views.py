@@ -35,7 +35,7 @@ class LoginView(TokenViewBase):
             user = AppUser.objects.get(username=request.data['username'])
             session_id = user.access_id
             expiration = (datetime.datetime.now() +
-                        settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'])
+                          settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'])
 
             response = Response(
                 data=serializer.validated_data,
@@ -91,7 +91,26 @@ class RefreshView(TokenViewBase):
         # remove session id and return unauthorized
         try:
             if serializer.is_valid() is True:
-                return Response(serializer.validated_data)
+                refresh_token = serializer.validated_data.pop('refresh', None)
+                expiration = (datetime.datetime.now() +
+                              settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'])
+                try:
+                    user.access_id = refresh_token
+                    user.save()
+                    response = Response(
+                        data=serializer.validated_data,
+                        status=status.HTTP_200_OK)
+                    # TODO: add secure when client will be https
+                    response.set_cookie(
+                        'XSRF-TOKEN',
+                        value=refresh_token,
+                        expires=expiration,
+                        httponly=True)
+                except IntegrityError as e:
+                    return Response(
+                        data={"message": e.message},
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return response
         except TokenError as e:
             print('is not valid remove session id')
             if user.access_id is not None:
